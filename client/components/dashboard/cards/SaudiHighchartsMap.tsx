@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import { regionToHcKey } from "@/lib/saudiRegionMapping";
 
-// Import and register the Maps module
+// Import the Maps module factory
 import HighchartsMaps from "highcharts/modules/map";
+
+// Register the Maps module
+HighchartsMaps(Highcharts);
+
+// Import and register exporting modules
 import HighchartsExporting from "highcharts/modules/exporting";
 import HighchartsExportingData from "highcharts/modules/export-data";
 
-// Register modules
-HighchartsMaps(Highcharts);
 HighchartsExporting(Highcharts);
 HighchartsExportingData(Highcharts);
 
