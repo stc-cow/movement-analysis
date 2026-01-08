@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { regionCenters, regionProperties, getIntensityColor } from "@/lib/saudiGeoData";
+import { regionCenters, getIntensityColor } from "@/lib/saudiGeoData";
 
 interface SaudiHighchartsMapProps {
   regionMetrics: Record<string, number>;
@@ -16,75 +16,64 @@ export function SaudiHighchartsMap({
 }: SaudiHighchartsMapProps) {
   const chartRef = useRef<HighchartsReact.RefObject>(null);
 
-  useEffect(() => {
-    if (!Highcharts.maps) {
-      Highcharts.maps = {};
-    }
-
-    // Create simplified Saudi Arabia map topology
-    const mapData = {
-      type: "FeatureCollection",
-      features: Object.entries(regionCenters).map(([region, coords]) => {
-        const metric = regionMetrics[region] || 0;
-        const intensity = maxMetric > 0 ? metric / maxMetric : 0;
-
-        return {
-          type: "Feature",
-          properties: {
-            name: region,
-            value: metric,
-            intensity,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [coords.lon, coords.lat],
-          },
-        };
-      }),
-    };
-
-    // Store the map data
-    Highcharts.maps["saudi-arabia"] = mapData;
-  }, [regionMetrics, maxMetric]);
-
   const options: Highcharts.Options = {
     chart: {
-      type: "map",
+      type: "scatter" as const,
       styledMode: false,
       spacingTop: 0,
       spacingBottom: 0,
       spacingLeft: 0,
       spacingRight: 0,
       borderWidth: 0,
+      backgroundColor: "transparent",
     },
     title: undefined,
     subtitle: undefined,
     legend: {
       enabled: false,
     },
-    mapNavigation: {
-      enabled: false,
+    xAxis: {
+      type: "linear" as const,
+      visible: false,
+      min: 35,
+      max: 52,
+    },
+    yAxis: {
+      visible: false,
+      min: 16,
+      max: 30,
     },
     plotOptions: {
-      mappoint: {
-        animation: false,
+      scatter: {
+        marker: {
+          lineWidth: 2,
+          lineColor: "#333",
+          fillOpacity: 0.8,
+        },
         dataLabels: {
           enabled: true,
           format: "{point.name}",
           style: {
-            fontSize: "9px",
-            fontWeight: "bold",
+            fontSize: "11px",
+            fontWeight: "bold" as const,
             color: "#333",
             textShadow: "1px 1px 2px rgba(255,255,255,0.8)",
           },
-          allowOverlap: false,
-          overflow: "justify",
+          allowOverlap: true,
+        },
+        states: {
+          hover: {
+            marker: {
+              lineWidth: 3,
+              lineColor: "#000",
+            },
+          },
         },
       },
     },
     series: [
       {
-        type: "mappoint",
+        type: "scatter",
         name: "Regions",
         data: Object.entries(regionCenters).map(([region, coords]) => {
           const metric = regionMetrics[region] || 0;
@@ -93,34 +82,23 @@ export function SaudiHighchartsMap({
 
           return {
             name: region,
-            lat: coords.lat,
-            lon: coords.lon,
+            x: coords.lon,
+            y: coords.lat,
             value: metric,
-            intensity,
             color,
             marker: {
               fillColor: color,
-              lineColor: "#333",
-              lineWidth: 1,
-              radius: 8 + intensity * 12, // Scale radius based on intensity
+              radius: 6 + Math.pow(intensity, 0.5) * 10, // Scale radius based on intensity
             },
-          } as Highcharts.SeriesMapPointOptionsObject & {
-            intensity: number;
-          };
-        }) as any,
+          } as any;
+        }),
         tooltip: {
           headerFormat: "",
           pointFormat: "<b>{point.name}</b><br/>Movements: {point.value}",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          borderColor: "#ccc",
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          borderColor: "#999",
           borderRadius: 4,
-        },
-        cursor: "pointer",
-        states: {
-          hover: {
-            borderColor: "#000",
-            lineWidth: 2,
-          },
+          padding: 8,
         },
       },
     ],
