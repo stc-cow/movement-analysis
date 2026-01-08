@@ -202,10 +202,10 @@ export function SaudiMapCard({
       </div>
 
       {/* Three-Column Layout */}
-      <div className="flex-1 flex gap-0 overflow-hidden">
+      <div className="flex-1 flex gap-0 overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-slate-900 dark:to-slate-800">
         {/* Left Panel: Movement Classification */}
         <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 p-6 overflow-auto flex flex-col">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <h3 className="card-header">
             <span>≡</span> Movements by Category
           </h3>
           {categoryChartData.length > 0 ? (
