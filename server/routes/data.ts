@@ -238,6 +238,72 @@ const processedDataHandler: RequestHandler = async (req, res) => {
   }
 };
 
+/**
+ * Diagnostic endpoint to test Google Sheet connectivity
+ */
+const diagnosticHandler: RequestHandler = async (req, res) => {
+  const diagnostics = {
+    currentSheetId: ACTUAL_SHEET_ID,
+    currentGid: GID,
+    urlsAttempted: [] as {
+      url: string;
+      status: number | string;
+      success: boolean;
+    }[],
+    recommendations: [] as string[],
+  };
+
+  for (const url of CSV_URLS) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+        },
+      });
+
+      diagnostics.urlsAttempted.push({
+        url,
+        status: response.status,
+        success: response.ok,
+      });
+
+      if (response.ok) {
+        diagnostics.recommendations.push(
+          "✓ Found working URL! Sheet is accessible."
+        );
+        break;
+      }
+    } catch (error) {
+      diagnostics.urlsAttempted.push({
+        url,
+        status: error instanceof Error ? error.message : "Network error",
+        success: false,
+      });
+    }
+  }
+
+  if (diagnostics.urlsAttempted.every((u) => !u.success)) {
+    diagnostics.recommendations.push(
+      "✗ No accessible URLs found. Please check:"
+    );
+    diagnostics.recommendations.push(
+      "1. Is this the actual Sheet ID (from /spreadsheets/d/...) or a published link ID?"
+    );
+    diagnostics.recommendations.push(
+      "2. Has the sheet been published to the web? (File → Share → Publish to web)"
+    );
+    diagnostics.recommendations.push(
+      "3. Can you access the sheet in a browser with this URL:"
+    );
+    diagnostics.recommendations.push(
+      `   https://docs.google.com/spreadsheets/d/${ACTUAL_SHEET_ID}/edit`
+    );
+  }
+
+  res.json(diagnostics);
+};
+
 router.get("/processed-data", processedDataHandler);
+router.get("/diagnostic", diagnosticHandler);
 
 export default router;
