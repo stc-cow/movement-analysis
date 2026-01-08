@@ -1,7 +1,17 @@
-import { useMemo } from "react";
-import { getIntensityColor } from "@/lib/saudiGeoData";
-import { regionCenters } from "@/lib/saudiGeoData";
-import { normalizeRegionName } from "@/lib/saudiRegionMapping";
+import { useEffect, useRef, useState } from "react";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import { regionToHcKey } from "@/lib/saudiRegionMapping";
+
+// Import and register the Maps module
+import HighchartsMaps from "highcharts/modules/map";
+import HighchartsExporting from "highcharts/modules/exporting";
+import HighchartsExportingData from "highcharts/modules/export-data";
+
+// Register modules
+HighchartsMaps(Highcharts);
+HighchartsExporting(Highcharts);
+HighchartsExportingData(Highcharts);
 
 interface SaudiHighchartsMapProps {
   regionMetrics: Record<string, number>;
@@ -16,77 +26,168 @@ export function SaudiHighchartsMap({
   title = "Movements by Region",
   totalMovements = 0,
 }: SaudiHighchartsMapProps) {
-  // Prepare region data sorted by value
-  const sortedRegions = useMemo(() => {
-    return Object.entries(regionMetrics)
-      .map(([region, value]) => ({
-        name: region,
-        value: value,
-        intensity: maxMetric > 0 ? value / maxMetric : 0,
-        color: getIntensityColor(maxMetric > 0 ? value / maxMetric : 0),
-      }))
-      .sort((a, b) => b.value - a.value);
-  }, [regionMetrics, maxMetric]);
+  const chartRef = useRef<HighchartsReact.RefObject>(null);
+  const [mapData, setMapData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Create a visual grid representation of regions
+  // Load the Saudi Arabia map data
+  useEffect(() => {
+    const loadMapData = async () => {
+      try {
+        const response = await fetch(
+          "https://code.highcharts.com/mapdata/countries/sa/sa-all.json"
+        );
+        const data = await response.json();
+        setMapData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to load map data:", error);
+        setLoading(false);
+      }
+    };
+
+    loadMapData();
+  }, []);
+
+  // Prepare chart data from regionMetrics
+  const chartData = Object.entries(regionMetrics).map(([regionName, value]) => {
+    const hcKey = regionToHcKey[regionName];
+    return {
+      "hc-key": hcKey,
+      value: value,
+    };
+  });
+
+  const options: Highcharts.Options = {
+    chart: {
+      map: mapData,
+      backgroundColor: "transparent",
+      borderWidth: 0,
+      height: "100%",
+    },
+    title: {
+      text: null,
+    },
+    subtitle: {
+      text: null,
+    },
+    mapNavigation: {
+      enabled: false,
+    },
+    colorAxis: {
+      min: 0,
+      max: maxMetric > 0 ? maxMetric : 1,
+      type: "linear",
+      minColor: "#efe6f6",
+      maxColor: "#6a1b9a",
+      stops: [
+        [0, "#efe6f6"],
+        [0.5, "#b39ddb"],
+        [1, "#6a1b9a"],
+      ],
+    },
+    legend: {
+      layout: "horizontal",
+      align: "bottom",
+      verticalAlign: "bottom",
+      floating: false,
+      y: 0,
+      enabled: true,
+    },
+    plotOptions: {
+      map: {
+        dataLabels: {
+          enabled: true,
+          format: "{point.properties.name}",
+          style: {
+            fontSize: "10px",
+            fontWeight: "bold",
+            textOutline: "1px white",
+          },
+        },
+        states: {
+          hover: {
+            color: "#4a1472",
+            brightness: 0.2,
+          },
+        },
+        borderColor: "#ffffff",
+        borderWidth: 1.5,
+      },
+    },
+    series: [
+      {
+        type: "map",
+        name: "Movements",
+        data: chartData,
+        joinBy: ["hc-key", "hc-key"],
+        states: {
+          hover: {
+            color: "#4a1472",
+          },
+        },
+        tooltip: {
+          headerFormat: "",
+          pointFormat:
+            "<b>{point.properties.name}</b><br/>Movements: {point.value}",
+        },
+      },
+    ],
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+          ],
+        },
+      },
+    },
+    credits: {
+      enabled: false,
+    },
+  };
+
+  if (loading || !mapData) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 rounded-lg">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Loading map...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full flex flex-col">
       <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
         <span>≡</span> {title}
       </h3>
 
-      {/* Region Grid */}
-      <div className="flex-1 grid grid-cols-3 gap-2 overflow-auto">
-        {sortedRegions.map((region) => (
-          <div
-            key={region.name}
-            className="rounded-lg p-3 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md hover:scale-105 duration-300"
-            style={{
-              backgroundColor: region.color,
-              opacity: 0.9,
-            }}
-          >
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-gray-900 dark:text-white truncate">
-                {region.name}
-              </p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white">
-                {region.value}
-              </p>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-700 rounded-full"
-                  style={{ width: `${region.intensity * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Legend */}
-      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 justify-center">
-          <span className="text-xs text-gray-600 dark:text-gray-400">Low</span>
-          <div className="flex gap-1">
-            {[0, 0.25, 0.5, 0.75, 1].map((intensity) => (
-              <div
-                key={intensity}
-                className="w-4 h-4 rounded"
-                style={{ backgroundColor: getIntensityColor(intensity) }}
-                title={`${Math.round(intensity * 100)}%`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-gray-600 dark:text-gray-400">High</span>
-        </div>
+      {/* Map Container */}
+      <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700">
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+          ref={chartRef}
+          containerProps={{ style: { width: "100%", height: "100%" } }}
+          immutable={false}
+        />
       </div>
 
       {/* KPI Display */}
       {totalMovements > 0 && (
-        <div className="text-center py-3 mt-3 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-800 rounded-lg">
+        <div className="text-center py-3 mt-4 px-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
           <p className="text-sm font-semibold text-gray-900 dark:text-white">
-            Total Movements: {totalMovements}
+            Total Movements: <span className="text-purple-600 dark:text-purple-400">{totalMovements}</span>
           </p>
         </div>
       )}
