@@ -37,6 +37,7 @@ export function SaudiHighchartsMap({
         const response = await fetch(
           "https://code.highcharts.com/mapdata/countries/sa/sa-all.json"
         );
+        if (!response.ok) throw new Error("Failed to fetch map data");
         const data = await response.json();
         setMapData(data);
         setLoading(false);
@@ -50,20 +51,30 @@ export function SaudiHighchartsMap({
   }, []);
 
   // Prepare chart data from regionMetrics
-  const chartData = Object.entries(regionMetrics).map(([regionName, value]) => {
-    const hcKey = regionToHcKey[regionName];
-    return {
-      "hc-key": hcKey,
-      value: value,
-    };
-  });
+  const chartData = Object.entries(regionMetrics)
+    .map(([regionName, value]) => {
+      const hcKey = regionToHcKey[regionName];
+      if (!hcKey) {
+        console.warn(`No mapping found for region: ${regionName}`);
+        return null;
+      }
+      return {
+        "hc-key": hcKey,
+        value: value,
+        name: regionName,
+      };
+    })
+    .filter((item) => item !== null);
 
   const options: Highcharts.Options = {
     chart: {
-      map: mapData,
+      map: mapData || undefined,
       backgroundColor: "transparent",
       borderWidth: 0,
-      height: "100%",
+      style: {
+        fontFamily:
+          'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+      },
     },
     title: {
       text: null,
@@ -82,54 +93,64 @@ export function SaudiHighchartsMap({
       maxColor: "#6a1b9a",
       stops: [
         [0, "#efe6f6"],
+        [0.25, "#d8b4fe"],
         [0.5, "#b39ddb"],
+        [0.75, "#9c27b0"],
         [1, "#6a1b9a"],
       ],
+      labels: {
+        format: "{value}",
+      },
     },
     legend: {
       layout: "horizontal",
-      align: "bottom",
+      align: "center",
       verticalAlign: "bottom",
       floating: false,
-      y: 0,
       enabled: true,
+      symbolWidth: 12,
+      itemDistance: 10,
     },
     plotOptions: {
       map: {
         dataLabels: {
           enabled: true,
-          format: "{point.properties.name}",
+          format: "{point.name}",
           style: {
-            fontSize: "10px",
-            fontWeight: "bold",
-            textOutline: "1px white",
+            fontSize: "11px",
+            fontWeight: "600",
+            color: "#374151",
+            textOutline: "1px 1px white",
+            textShadow: "none",
           },
         },
         states: {
           hover: {
-            color: "#4a1472",
-            brightness: 0.2,
+            brightness: 0.1,
+            borderColor: "#ffffff",
+            borderWidth: 2,
           },
         },
-        borderColor: "#ffffff",
-        borderWidth: 1.5,
+        borderColor: "#e5e7eb",
+        borderWidth: 0.5,
+        nullColor: "#f3f4f6",
       },
     },
     series: [
       {
         type: "map",
         name: "Movements",
-        data: chartData,
+        data: chartData as any,
         joinBy: ["hc-key", "hc-key"],
         states: {
           hover: {
-            color: "#4a1472",
+            brightness: 0.1,
           },
         },
         tooltip: {
           headerFormat: "",
           pointFormat:
-            "<b>{point.properties.name}</b><br/>Movements: {point.value}",
+            "<b>{point.name}</b><br/>Movements: <strong>{point.value}</strong>",
         },
       },
     ],
@@ -137,15 +158,18 @@ export function SaudiHighchartsMap({
       buttons: {
         contextButton: {
           menuItems: [
-            "viewFullscreen",
-            "printChart",
-            "separator",
             "downloadPNG",
             "downloadJPEG",
             "downloadPDF",
             "downloadSVG",
+            "separator",
+            "viewFullscreen",
           ],
+          symbolFill: "#6366f1",
         },
+      },
+      csv: {
+        dateFormat: "%Y-%m-%d",
       },
     },
     credits: {
