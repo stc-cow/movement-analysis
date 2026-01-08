@@ -130,11 +130,11 @@ export function DashboardFiltersComponent({
             Movement Type
           </label>
           <Select
-            value={filters.movementType || ""}
+            value={filters.movementType || "__all__"}
             onValueChange={(value) =>
               onFiltersChange({
                 ...filters,
-                movementType: value as any || undefined,
+                movementType: value === "__all__" ? undefined : (value as any),
               })
             }
           >
@@ -142,7 +142,7 @@ export function DashboardFiltersComponent({
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="__all__">All Types</SelectItem>
               {MOVEMENT_TYPES.map((type) => (
                 <SelectItem key={type} value={type}>
                   {type}
