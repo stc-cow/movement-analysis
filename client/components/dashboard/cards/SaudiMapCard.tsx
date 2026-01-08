@@ -17,6 +17,7 @@ import {
   generateTimelineMonths,
   TimelineMonth,
 } from "@/lib/saudiMapData";
+import { SaudiHighchartsMap } from "./SaudiHighchartsMap";
 
 interface SaudiMapCardProps {
   movements: CowMovementsFact[];
