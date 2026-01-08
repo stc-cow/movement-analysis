@@ -27,8 +27,8 @@ export function SaudiHighchartsMap({
 }: SaudiHighchartsMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
-  const [loading, setLoading] = useState(true);
   const [mapData, setMapData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   // Load the Saudi Arabia map data
   useEffect(() => {
@@ -39,6 +39,7 @@ export function SaudiHighchartsMap({
         );
         if (!response.ok) throw new Error("Failed to fetch map data");
         const data = await response.json();
+        console.log("Map data loaded successfully:", data);
         setMapData(data);
         setLoading(false);
       } catch (error) {
@@ -52,13 +53,13 @@ export function SaudiHighchartsMap({
 
   // Create the map when data is ready
   useEffect(() => {
-    if (!mapData || !containerRef.current) {
+    if (!mapData || !containerRef.current || !Highcharts.mapChart) {
       return;
     }
 
     try {
       // Prepare chart data from regionMetrics
-      const chartData = Object.entries(regionMetrics)
+      const chartData: any[] = Object.entries(regionMetrics)
         .map(([regionName, value]) => {
           const hcKey = regionToHcKey[regionName];
           if (!hcKey) {
@@ -73,38 +74,22 @@ export function SaudiHighchartsMap({
         })
         .filter((item) => item !== null);
 
-      console.log("Chart data:", chartData);
-      console.log("Map data loaded:", !!mapData);
-      console.log("Highcharts.mapChart available:", !!Highcharts.mapChart);
+      console.log("Prepared chart data:", chartData);
 
-      if (!Highcharts.mapChart) {
-        console.error("Highcharts.mapChart is not available");
-        return;
-      }
-
-      const options: Highcharts.Options = {
+      const chartOptions: any = {
         chart: {
           map: mapData,
           backgroundColor: "transparent",
           borderWidth: 0,
-          spacingTop: 0,
-          spacingBottom: 0,
-          spacingLeft: 0,
-          spacingRight: 0,
         },
-        title: {
-          text: null,
-        },
-        subtitle: {
-          text: null,
-        },
+        title: null,
+        subtitle: null,
         mapNavigation: {
           enabled: false,
         },
         colorAxis: {
           min: 0,
           max: maxMetric > 0 ? maxMetric : 1,
-          type: "linear",
           minColor: "#efe6f6",
           maxColor: "#6a1b9a",
           stops: [
@@ -120,8 +105,6 @@ export function SaudiHighchartsMap({
           align: "center",
           verticalAlign: "bottom",
           enabled: true,
-          margin: 5,
-          symbolWidth: 12,
         },
         plotOptions: {
           map: {
@@ -131,41 +114,25 @@ export function SaudiHighchartsMap({
               style: {
                 fontSize: "10px",
                 fontWeight: "600",
-                color: "#1f2937",
+                color: "#374151",
                 textOutline: "1px 1px white",
               },
             },
-            states: {
-              hover: {
-                brightness: 0.1,
-                borderColor: "#ffffff",
-                borderWidth: 2,
-              },
-            },
             borderColor: "#d1d5db",
-            borderWidth: 0.5,
+            borderWidth: 1,
             nullColor: "#f3f4f6",
-            shadow: false,
-            animation: {
-              duration: 300,
-            },
           },
         },
         series: [
           {
             type: "map",
             name: "Movements",
-            data: chartData as any,
+            data: chartData,
             joinBy: ["hc-key", "hc-key"],
-            states: {
-              hover: {
-                brightness: 0.1,
-              },
-            },
             tooltip: {
               headerFormat: "",
               pointFormat:
-                "<b>{point.name}</b><br/>Movements: <strong>{point.value}</strong>",
+                "<b>{point.name}</b><br/>Movements: {point.value:,.0f}",
             },
           },
         ],
@@ -177,8 +144,6 @@ export function SaudiHighchartsMap({
                 "downloadJPEG",
                 "downloadPDF",
                 "downloadSVG",
-                "separator",
-                "viewFullscreen",
               ],
             },
           },
@@ -188,9 +153,14 @@ export function SaudiHighchartsMap({
         },
       };
 
+      // Destroy existing chart if any
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+
       // Create the map chart
-      chartRef.current = Highcharts.mapChart(containerRef.current, options);
-      console.log("Chart created successfully");
+      chartRef.current = Highcharts.mapChart(containerRef.current, chartOptions);
+      console.log("Map chart created successfully");
     } catch (error) {
       console.error("Error creating map chart:", error);
     }
@@ -223,11 +193,9 @@ export function SaudiHighchartsMap({
   if (!mapData) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-800 rounded-lg">
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Failed to load map data
-          </p>
-        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Failed to load map data
+        </p>
       </div>
     );
   }
@@ -240,11 +208,7 @@ export function SaudiHighchartsMap({
 
       {/* Map Container */}
       <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700">
-        <div
-          ref={containerRef}
-          style={{ width: "100%", height: "100%" }}
-          className="map-container"
-        />
+        <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
       </div>
 
       {/* KPI Display */}
