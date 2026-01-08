@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
-import HighchartsMaps from "highcharts/modules/map";
+import HighchartsMaps from "highcharts/modules/map.js";
 import { Play, Pause, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import {
   BarChart,
