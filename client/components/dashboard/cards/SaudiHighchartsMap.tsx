@@ -56,7 +56,7 @@ export function SaudiHighchartsMap({
 
   // Create the map when data is ready
   useEffect(() => {
-    if (!mapData || !containerRef.current || !Highcharts.mapChart) {
+    if (!mapData || !containerRef.current) {
       return;
     }
 
@@ -77,16 +77,22 @@ export function SaudiHighchartsMap({
         })
         .filter((item) => item !== null);
 
-      console.log("Prepared chart data:", chartData);
+      console.log("Creating map with chart data:", chartData);
+      console.log("Map data available:", !!mapData);
 
       const chartOptions: any = {
         chart: {
           map: mapData,
           backgroundColor: "transparent",
           borderWidth: 0,
+          type: "map",
         },
-        title: null,
-        subtitle: null,
+        title: {
+          text: null,
+        },
+        subtitle: {
+          text: null,
+        },
         mapNavigation: {
           enabled: false,
         },
@@ -161,8 +167,9 @@ export function SaudiHighchartsMap({
         chartRef.current.destroy();
       }
 
-      // Create the map chart
-      chartRef.current = Highcharts.mapChart(containerRef.current, chartOptions);
+      // Create the map chart using the standard chart method
+      // This works because we registered the map module
+      chartRef.current = Highcharts.chart(containerRef.current, chartOptions);
       console.log("Map chart created successfully");
     } catch (error) {
       console.error("Error creating map chart:", error);
