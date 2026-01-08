@@ -102,11 +102,11 @@ export function DashboardFiltersComponent({
             Vendor
           </label>
           <Select
-            value={filters.vendor || ""}
+            value={filters.vendor || "__all__"}
             onValueChange={(value) =>
               onFiltersChange({
                 ...filters,
-                vendor: value || undefined,
+                vendor: value === "__all__" ? undefined : value,
               })
             }
           >
@@ -114,7 +114,7 @@ export function DashboardFiltersComponent({
               <SelectValue placeholder="All Vendors" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Vendors</SelectItem>
+              <SelectItem value="__all__">All Vendors</SelectItem>
               {vendors.map((vendor) => (
                 <SelectItem key={vendor} value={vendor}>
                   {vendor}
