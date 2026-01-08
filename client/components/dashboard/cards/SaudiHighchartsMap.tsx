@@ -13,7 +13,10 @@ interface SaudiHighchartsMapProps {
 const loadHighchartsMaps = (): Promise<void> => {
   return new Promise((resolve) => {
     // Check if already loaded
-    if (window.Highcharts && window.Highcharts.maps) {
+    if (
+      window.Highcharts &&
+      (window.Highcharts as any).maps
+    ) {
       resolve();
       return;
     }
