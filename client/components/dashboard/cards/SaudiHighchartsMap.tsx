@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { getIntensityColor } from "@/lib/saudiGeoData";
@@ -10,12 +10,42 @@ interface SaudiHighchartsMapProps {
   title?: string;
 }
 
+// Load bubble module from CDN
+const loadBubbleModule = async () => {
+  return new Promise<void>((resolve) => {
+    // Check if already loaded
+    if ((window as any).Highcharts?.Bubble) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://code.highcharts.com/modules/series-bubble.js";
+    script.onload = () => {
+      resolve();
+    };
+    script.onerror = () => {
+      console.error("Failed to load bubble module, will render without it");
+      resolve(); // Don't fail, try to render anyway
+    };
+    document.head.appendChild(script);
+  });
+};
+
 export function SaudiHighchartsMap({
   regionMetrics,
   maxMetric,
   title = "Movements by Region",
 }: SaudiHighchartsMapProps) {
   const chartRef = useRef<HighchartsReact.RefObject>(null);
+  const [bubbleReady, setBubbleReady] = useState(false);
+
+  // Load bubble module on mount
+  useEffect(() => {
+    loadBubbleModule().then(() => {
+      setBubbleReady(true);
+    });
+  }, []);
 
   // Prepare data for bubble chart (geographic representation)
   const chartData = useMemo(() => {
@@ -116,6 +146,22 @@ export function SaudiHighchartsMap({
       enabled: false,
     },
   };
+
+  if (!bubbleReady) {
+    return (
+      <div className="w-full h-full flex flex-col">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <span>≡</span> {title}
+        </h3>
+        <div className="flex-1 flex items-center justify-center min-h-0">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+            <p className="text-sm text-gray-500">Loading map visualization...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
