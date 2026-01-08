@@ -74,11 +74,11 @@ export function DashboardFiltersComponent({
             Region
           </label>
           <Select
-            value={filters.region || ""}
+            value={filters.region || "__all__"}
             onValueChange={(value) =>
               onFiltersChange({
                 ...filters,
-                region: value || undefined,
+                region: value === "__all__" ? undefined : value,
               })
             }
           >
@@ -86,7 +86,7 @@ export function DashboardFiltersComponent({
               <SelectValue placeholder="All Regions" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Regions</SelectItem>
+              <SelectItem value="__all__">All Regions</SelectItem>
               {REGIONS.map((region) => (
                 <SelectItem key={region} value={region}>
                   {region}
