@@ -23,7 +23,7 @@ import {
 } from "@/lib/analytics";
 
 export default function Dashboard() {
-  // Load real data from Google Sheets API (with fallback to mock)
+  // Load real data from Google Sheets API
   const { data, loading, error } = useDashboardData();
 
   // Dashboard filters state - MUST be before any conditional returns
