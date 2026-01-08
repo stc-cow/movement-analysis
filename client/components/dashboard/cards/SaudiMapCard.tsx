@@ -147,13 +147,11 @@ export function SaudiMapCard({
   return (
     <div className="h-[calc(100vh-200px)] w-full overflow-hidden flex flex-col bg-white dark:bg-slate-800">
       {/* Header with Controls */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-slate-800">
-        <div className="flex items-center gap-4">
+      <div className="flex-shrink-0 px-6 py-4 divider-modern flex items-center justify-between bg-gradient-to-r from-white to-gray-50 dark:from-slate-800 dark:to-slate-900">
+        <div className="flex items-center gap-2">
           {/* STC Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center text-white text-xs font-bold">
-              STC
-            </div>
+          <div className="w-6 h-6 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm">
+            STC
           </div>
         </div>
 
@@ -168,7 +166,7 @@ export function SaudiMapCard({
               setCurrentMonthIndex(parseInt(e.target.value));
               setIsPlaying(false);
             }}
-            className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-slate-700 dark:text-white"
+            className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-sm dark:bg-slate-700 dark:text-white bg-white hover:border-gray-300 dark:hover:border-gray-500 transition-colors"
           >
             <option value={-1}>All Months</option>
             {timelineMonths.map((month, idx) => (
@@ -181,7 +179,7 @@ export function SaudiMapCard({
           {/* Play Button */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-300 font-medium text-sm"
           >
             {isPlaying ? (
               <>
@@ -198,10 +196,8 @@ export function SaudiMapCard({
         </div>
 
         {/* ACES Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">
-            ACES
-          </div>
+        <div className="w-6 h-6 bg-gradient-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm">
+          ACES
         </div>
       </div>
 
