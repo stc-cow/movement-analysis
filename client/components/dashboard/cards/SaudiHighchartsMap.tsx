@@ -1,12 +1,20 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { regionCenters, getIntensityColor } from "@/lib/saudiGeoData";
+import { getIntensityColor } from "@/lib/saudiGeoData";
+import { normalizeRegionName } from "@/lib/saudiRegionMapping";
 
 interface SaudiHighchartsMapProps {
   regionMetrics: Record<string, number>;
   maxMetric: number;
   title?: string;
+}
+
+// Register map module if available
+declare global {
+  interface Window {
+    Highcharts: any;
+  }
 }
 
 export function SaudiHighchartsMap({
@@ -16,32 +24,43 @@ export function SaudiHighchartsMap({
 }: SaudiHighchartsMapProps) {
   const chartRef = useRef<HighchartsReact.RefObject>(null);
 
-  // Prepare data for bubble chart
-  const chartData = useMemo(() => {
-    return Object.entries(regionCenters).map(([region, coords]) => {
-      const metric = regionMetrics[region] || 0;
-      const intensity = maxMetric > 0 ? metric / maxMetric : 0;
+  // Load map data dynamically
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://code.highcharts.com/mapdata/countries/sa/sa-all.js";
+    script.async = true;
+    document.head.appendChild(script);
 
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
+  // Prepare data for map chart using region hc-keys
+  const chartData = useMemo(() => {
+    return Object.entries(regionMetrics).map(([region, value]) => {
+      const hcKey = normalizeRegionName(region);
       return {
-        name: region,
-        x: coords.lon,
-        y: coords.lat,
-        z: metric,
-        value: metric,
-        intensity,
-        color: getIntensityColor(intensity),
+        "hc-key": hcKey,
+        value: value,
       };
     });
-  }, [regionMetrics, maxMetric]);
+  }, [regionMetrics]);
+
+  // Get min and max values for color scaling
+  const minValue = 0;
+  const maxValue = maxMetric || 1;
 
   const options: Highcharts.Options = {
     chart: {
-      type: "bubble",
+      type: "map",
       styledMode: false,
-      spacingTop: 10,
-      spacingBottom: 10,
-      spacingLeft: 10,
-      spacingRight: 10,
+      spacingTop: 0,
+      spacingBottom: 0,
+      spacingLeft: 0,
+      spacingRight: 0,
       borderWidth: 0,
       backgroundColor: "transparent",
     },
@@ -50,33 +69,31 @@ export function SaudiHighchartsMap({
     legend: {
       enabled: false,
     },
-    xAxis: {
+    colorAxis: {
+      min: minValue,
+      max: maxValue,
+      minColor: "#f3e8ff",
+      maxColor: "#7030a0",
       type: "linear",
-      visible: false,
-      min: 35,
-      max: 52,
-      tickInterval: 5,
-    },
-    yAxis: {
-      visible: false,
-      min: 16,
-      max: 30,
-      tickInterval: 5,
+      tickInterval: Math.ceil(maxValue / 5) || 1,
     },
     tooltip: {
       useHTML: true,
       headerFormat: "",
       pointFormat:
         '<div style="background: rgba(255,255,255,0.95); padding: 8px; border-radius: 4px; border: 1px solid #999;">' +
-        "<b>{point.name}</b><br/>Movements: {point.z}" +
+        "<b>{point.name}</b><br/>Movements: {point.value}" +
         "</div>",
       backgroundColor: "transparent",
       borderColor: "transparent",
     },
     plotOptions: {
-      bubble: {
-        minSize: "8%",
-        maxSize: "20%",
+      map: {
+        states: {
+          hover: {
+            color: "#a855f7",
+          },
+        },
         dataLabels: {
           enabled: true,
           format: "{point.name}",
@@ -86,25 +103,13 @@ export function SaudiHighchartsMap({
             color: "#1f2937",
             textShadow: "1px 1px 2px rgba(255,255,255,0.9)",
           },
-          allowOverlap: true,
-        },
-        states: {
-          hover: {
-            enabled: true,
-            halo: {
-              size: 5,
-              attributes: {
-                fill: "rgba(0,0,0,0.2)",
-              },
-            },
-          },
         },
       },
     },
     series: [
       {
-        type: "bubble",
-        name: "Regions",
+        type: "map",
+        name: "Movements by Region",
         data: chartData as any,
       } as any,
     ],
