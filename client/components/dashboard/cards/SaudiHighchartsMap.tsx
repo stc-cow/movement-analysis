@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { regionCenters, getIntensityColor } from "@/lib/saudiGeoData";
@@ -16,14 +16,32 @@ export function SaudiHighchartsMap({
 }: SaudiHighchartsMapProps) {
   const chartRef = useRef<HighchartsReact.RefObject>(null);
 
+  // Prepare data for bubble chart
+  const chartData = useMemo(() => {
+    return Object.entries(regionCenters).map(([region, coords]) => {
+      const metric = regionMetrics[region] || 0;
+      const intensity = maxMetric > 0 ? metric / maxMetric : 0;
+
+      return {
+        name: region,
+        x: coords.lon,
+        y: coords.lat,
+        z: metric,
+        value: metric,
+        intensity,
+        color: getIntensityColor(intensity),
+      };
+    });
+  }, [regionMetrics, maxMetric]);
+
   const options: Highcharts.Options = {
     chart: {
-      type: "scatter" as const,
+      type: "bubble",
       styledMode: false,
-      spacingTop: 0,
-      spacingBottom: 0,
-      spacingLeft: 0,
-      spacingRight: 0,
+      spacingTop: 10,
+      spacingBottom: 10,
+      spacingLeft: 10,
+      spacingRight: 10,
       borderWidth: 0,
       backgroundColor: "transparent",
     },
@@ -33,39 +51,51 @@ export function SaudiHighchartsMap({
       enabled: false,
     },
     xAxis: {
-      type: "linear" as const,
+      type: "linear",
       visible: false,
       min: 35,
       max: 52,
+      tickInterval: 5,
     },
     yAxis: {
       visible: false,
       min: 16,
       max: 30,
+      tickInterval: 5,
+    },
+    tooltip: {
+      useHTML: true,
+      headerFormat: "",
+      pointFormat:
+        '<div style="background: rgba(255,255,255,0.95); padding: 8px; border-radius: 4px; border: 1px solid #999;">' +
+        "<b>{point.name}</b><br/>Movements: {point.z}" +
+        "</div>",
+      backgroundColor: "transparent",
+      borderColor: "transparent",
     },
     plotOptions: {
-      scatter: {
-        marker: {
-          lineWidth: 2,
-          lineColor: "#333",
-          fillOpacity: 0.8,
-        },
+      bubble: {
+        minSize: "8%",
+        maxSize: "20%",
         dataLabels: {
           enabled: true,
           format: "{point.name}",
           style: {
             fontSize: "11px",
-            fontWeight: "bold" as const,
-            color: "#333",
-            textShadow: "1px 1px 2px rgba(255,255,255,0.8)",
+            fontWeight: "bold",
+            color: "#1f2937",
+            textShadow: "1px 1px 2px rgba(255,255,255,0.9)",
           },
           allowOverlap: true,
         },
         states: {
           hover: {
-            marker: {
-              lineWidth: 3,
-              lineColor: "#000",
+            enabled: true,
+            halo: {
+              size: 5,
+              attributes: {
+                fill: "rgba(0,0,0,0.2)",
+              },
             },
           },
         },
@@ -73,34 +103,10 @@ export function SaudiHighchartsMap({
     },
     series: [
       {
-        type: "scatter",
+        type: "bubble",
         name: "Regions",
-        data: Object.entries(regionCenters).map(([region, coords]) => {
-          const metric = regionMetrics[region] || 0;
-          const intensity = maxMetric > 0 ? metric / maxMetric : 0;
-          const color = getIntensityColor(intensity);
-
-          return {
-            name: region,
-            x: coords.lon,
-            y: coords.lat,
-            value: metric,
-            color,
-            marker: {
-              fillColor: color,
-              radius: 6 + Math.pow(intensity, 0.5) * 10, // Scale radius based on intensity
-            },
-          } as any;
-        }),
-        tooltip: {
-          headerFormat: "",
-          pointFormat: "<b>{point.name}</b><br/>Movements: {point.value}",
-          backgroundColor: "rgba(255, 255, 255, 0.95)",
-          borderColor: "#999",
-          borderRadius: 4,
-          padding: 8,
-        },
-      },
+        data: chartData as any,
+      } as any,
     ],
     credits: {
       enabled: false,
