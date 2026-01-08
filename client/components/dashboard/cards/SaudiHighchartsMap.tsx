@@ -18,6 +18,14 @@ export function SaudiHighchartsMap({
 }: SaudiHighchartsMapProps) {
   const [saudiGeo, setSaudiGeo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [modulesReady, setModulesReady] = useState(false);
+
+  // Ensure Highcharts modules are initialized
+  useEffect(() => {
+    ensureHighchartsModules().then(() => {
+      setModulesReady(true);
+    });
+  }, []);
 
   // Load Saudi geo data from Highcharts CDN
   useEffect(() => {
