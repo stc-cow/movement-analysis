@@ -52,127 +52,157 @@ export function SaudiHighchartsMap({
 
   // Create the map when data is ready
   useEffect(() => {
-    if (!mapData || !containerRef.current) return;
+    if (!mapData || !containerRef.current) {
+      return;
+    }
 
-    // Prepare chart data from regionMetrics
-    const chartData = Object.entries(regionMetrics)
-      .map(([regionName, value]) => {
-        const hcKey = regionToHcKey[regionName];
-        if (!hcKey) {
-          console.warn(`No mapping found for region: ${regionName}`);
-          return null;
-        }
-        return {
-          "hc-key": hcKey,
-          value: value,
-          name: regionName,
-        };
-      })
-      .filter((item) => item !== null);
+    try {
+      // Prepare chart data from regionMetrics
+      const chartData = Object.entries(regionMetrics)
+        .map(([regionName, value]) => {
+          const hcKey = regionToHcKey[regionName];
+          if (!hcKey) {
+            console.warn(`No mapping found for region: ${regionName}`);
+            return null;
+          }
+          return {
+            "hc-key": hcKey,
+            value: value,
+            name: regionName,
+          };
+        })
+        .filter((item) => item !== null);
 
-    const options: Highcharts.Options = {
-      chart: {
-        map: mapData,
-        backgroundColor: "transparent",
-        borderWidth: 0,
-      },
-      title: {
-        text: null,
-      },
-      subtitle: {
-        text: null,
-      },
-      mapNavigation: {
-        enabled: false,
-      },
-      colorAxis: {
-        min: 0,
-        max: maxMetric > 0 ? maxMetric : 1,
-        type: "linear",
-        minColor: "#efe6f6",
-        maxColor: "#6a1b9a",
-        stops: [
-          [0, "#efe6f6"],
-          [0.25, "#d8b4fe"],
-          [0.5, "#b39ddb"],
-          [0.75, "#9c27b0"],
-          [1, "#6a1b9a"],
+      console.log("Chart data:", chartData);
+      console.log("Map data loaded:", !!mapData);
+      console.log("Highcharts.mapChart available:", !!Highcharts.mapChart);
+
+      if (!Highcharts.mapChart) {
+        console.error("Highcharts.mapChart is not available");
+        return;
+      }
+
+      const options: Highcharts.Options = {
+        chart: {
+          map: mapData,
+          backgroundColor: "transparent",
+          borderWidth: 0,
+          spacingTop: 0,
+          spacingBottom: 0,
+          spacingLeft: 0,
+          spacingRight: 0,
+        },
+        title: {
+          text: null,
+        },
+        subtitle: {
+          text: null,
+        },
+        mapNavigation: {
+          enabled: false,
+        },
+        colorAxis: {
+          min: 0,
+          max: maxMetric > 0 ? maxMetric : 1,
+          type: "linear",
+          minColor: "#efe6f6",
+          maxColor: "#6a1b9a",
+          stops: [
+            [0, "#efe6f6"],
+            [0.25, "#d8b4fe"],
+            [0.5, "#b39ddb"],
+            [0.75, "#9c27b0"],
+            [1, "#6a1b9a"],
+          ],
+        },
+        legend: {
+          layout: "horizontal",
+          align: "center",
+          verticalAlign: "bottom",
+          enabled: true,
+          margin: 5,
+          symbolWidth: 12,
+        },
+        plotOptions: {
+          map: {
+            dataLabels: {
+              enabled: true,
+              format: "{point.name}",
+              style: {
+                fontSize: "10px",
+                fontWeight: "600",
+                color: "#1f2937",
+                textOutline: "1px 1px white",
+              },
+            },
+            states: {
+              hover: {
+                brightness: 0.1,
+                borderColor: "#ffffff",
+                borderWidth: 2,
+              },
+            },
+            borderColor: "#d1d5db",
+            borderWidth: 0.5,
+            nullColor: "#f3f4f6",
+            shadow: false,
+            animation: {
+              duration: 300,
+            },
+          },
+        },
+        series: [
+          {
+            type: "map",
+            name: "Movements",
+            data: chartData as any,
+            joinBy: ["hc-key", "hc-key"],
+            states: {
+              hover: {
+                brightness: 0.1,
+              },
+            },
+            tooltip: {
+              headerFormat: "",
+              pointFormat:
+                "<b>{point.name}</b><br/>Movements: <strong>{point.value}</strong>",
+            },
+          },
         ],
-      },
-      legend: {
-        layout: "horizontal",
-        align: "center",
-        verticalAlign: "bottom",
-        enabled: true,
-      },
-      plotOptions: {
-        map: {
-          dataLabels: {
-            enabled: true,
-            format: "{point.name}",
-            style: {
-              fontSize: "10px",
-              fontWeight: "600",
-              color: "#1f2937",
-              textOutline: "1px 1px white",
+        exporting: {
+          buttons: {
+            contextButton: {
+              menuItems: [
+                "downloadPNG",
+                "downloadJPEG",
+                "downloadPDF",
+                "downloadSVG",
+                "separator",
+                "viewFullscreen",
+              ],
             },
           },
-          states: {
-            hover: {
-              brightness: 0.1,
-            },
-          },
-          borderColor: "#d1d5db",
-          borderWidth: 0.5,
-          nullColor: "#f3f4f6",
         },
-      },
-      series: [
-        {
-          type: "map",
-          name: "Movements",
-          data: chartData as any,
-          joinBy: ["hc-key", "hc-key"],
-          states: {
-            hover: {
-              brightness: 0.1,
-            },
-          },
-          tooltip: {
-            headerFormat: "",
-            pointFormat:
-              "<b>{point.name}</b><br/>Movements: <strong>{point.value}</strong>",
-          },
+        credits: {
+          enabled: false,
         },
-      ],
-      exporting: {
-        buttons: {
-          contextButton: {
-            menuItems: [
-              "downloadPNG",
-              "downloadJPEG",
-              "downloadPDF",
-              "downloadSVG",
-              "separator",
-              "viewFullscreen",
-            ],
-          },
-        },
-      },
-      credits: {
-        enabled: false,
-      },
-    };
+      };
 
-    // Create the map chart
-    if (Highcharts.mapChart && containerRef.current) {
+      // Create the map chart
       chartRef.current = Highcharts.mapChart(containerRef.current, options);
+      console.log("Chart created successfully");
+    } catch (error) {
+      console.error("Error creating map chart:", error);
     }
 
     return () => {
       if (chartRef.current) {
-        chartRef.current.destroy();
-        chartRef.current = null;
+        try {
+          chartRef.current.destroy();
+          chartRef.current = null;
+        } catch (e) {
+          console.error("Error destroying chart:", e);
+        }
       }
     };
   }, [mapData, regionMetrics, maxMetric]);
