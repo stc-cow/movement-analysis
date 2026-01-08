@@ -4,17 +4,35 @@ import HighchartsReact from "highcharts-react-official";
 import { getIntensityColor } from "@/lib/saudiGeoData";
 import { normalizeRegionName } from "@/lib/saudiRegionMapping";
 
+// Dynamically load highmaps module
+let highchartsMapLoaded = false;
+
+const loadHighchartsMaps = () => {
+  return new Promise((resolve) => {
+    if (highchartsMapLoaded) {
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://code.highcharts.com/maps/highmaps.js";
+    script.onload = () => {
+      highchartsMapLoaded = true;
+      // Load Saudi Arabia map data
+      const mapScript = document.createElement("script");
+      mapScript.src =
+        "https://code.highcharts.com/mapdata/countries/sa/sa-all.js";
+      mapScript.onload = () => resolve(true);
+      document.head.appendChild(mapScript);
+    };
+    document.head.appendChild(script);
+  });
+};
+
 interface SaudiHighchartsMapProps {
   regionMetrics: Record<string, number>;
   maxMetric: number;
   title?: string;
-}
-
-// Register map module if available
-declare global {
-  interface Window {
-    Highcharts: any;
-  }
 }
 
 export function SaudiHighchartsMap({
@@ -23,19 +41,15 @@ export function SaudiHighchartsMap({
   title = "Movements by Region",
 }: SaudiHighchartsMapProps) {
   const chartRef = useRef<HighchartsReact.RefObject>(null);
+  const [mapsLoaded, setMapsLoaded] = useRef(false);
 
-  // Load map data dynamically
+  // Load maps module on component mount
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://code.highcharts.com/mapdata/countries/sa/sa-all.js";
-    script.async = true;
-    document.head.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
+    if (!mapsLoaded.current) {
+      loadHighchartsMaps().then(() => {
+        mapsLoaded.current = true;
+      });
+    }
   }, []);
 
   // Prepare data for map chart using region hc-keys
@@ -63,6 +77,7 @@ export function SaudiHighchartsMap({
       spacingRight: 0,
       borderWidth: 0,
       backgroundColor: "transparent",
+      map: "countries/sa/sa-all",
     },
     title: undefined,
     subtitle: undefined,
@@ -86,12 +101,15 @@ export function SaudiHighchartsMap({
         "</div>",
       backgroundColor: "transparent",
       borderColor: "transparent",
+      enabled: true,
     },
     plotOptions: {
       map: {
         states: {
           hover: {
             color: "#a855f7",
+            enabled: true,
+            brightness: 0.1,
           },
         },
         dataLabels: {
@@ -103,6 +121,7 @@ export function SaudiHighchartsMap({
             color: "#1f2937",
             textShadow: "1px 1px 2px rgba(255,255,255,0.9)",
           },
+          allowOverlap: true,
         },
       },
     },
