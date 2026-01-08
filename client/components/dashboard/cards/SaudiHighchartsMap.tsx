@@ -1,7 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Highcharts from "@/lib/highcharts";
 import HighchartsReact from "highcharts-react-official";
-import saudiGeo from "@highcharts/map-collection/countries/sa/sa-all.geo.json";
 import { regionToHcKey } from "@/lib/saudiRegionMapping";
 
 interface SaudiHighchartsMapProps {
@@ -17,6 +16,29 @@ export function SaudiHighchartsMap({
   title = "Movements by Region",
   totalMovements = 0,
 }: SaudiHighchartsMapProps) {
+  const [saudiGeo, setSaudiGeo] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Load Saudi geo data from Highcharts CDN
+  useEffect(() => {
+    const loadGeoData = async () => {
+      try {
+        const response = await fetch(
+          "https://code.highcharts.com/mapdata/countries/sa/sa-all.geo.json"
+        );
+        if (!response.ok) throw new Error("Failed to fetch geo data");
+        const data = await response.json();
+        setSaudiGeo(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to load Saudi geo data:", error);
+        setLoading(false);
+      }
+    };
+
+    loadGeoData();
+  }, []);
+
   // Transform region metrics to Highcharts data format: [["sa-ri", 320], ["sa-mk", 180], ...]
   const chartData = useMemo(() => {
     return Object.entries(regionMetrics)
@@ -144,6 +166,19 @@ export function SaudiHighchartsMap({
       enabled: false,
     },
   };
+
+  if (loading || !saudiGeo) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 rounded-lg">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Loading map...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
