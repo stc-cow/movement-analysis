@@ -1,14 +1,6 @@
 import { useRef, useMemo, useEffect, useState } from "react";
 import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
 import { normalizeRegionName } from "@/lib/saudiRegionMapping";
-
-// Register Highcharts Maps
-declare global {
-  interface Window {
-    Highcharts?: typeof Highcharts;
-  }
-}
 
 interface SaudiHighchartsMapProps {
   regionMetrics: Record<string, number>;
@@ -18,35 +10,41 @@ interface SaudiHighchartsMapProps {
 }
 
 // Load Highcharts Maps and map data
-const loadHighchartsMaps = (): Promise<void> => {
+const loadHighchartsMaps = (): Promise<boolean> => {
   return new Promise((resolve) => {
     // Check if maps module already loaded
-    if ((window as any).Highcharts?.maps) {
-      resolve();
+    if ((window as any).Highcharts?.maps?.["countries/sa/sa-all"]) {
+      resolve(true);
       return;
     }
+
+    let loadedCount = 0;
+    const checkBothLoaded = () => {
+      loadedCount++;
+      if (loadedCount === 2) {
+        resolve(true);
+      }
+    };
 
     // Load maps module
     const mapsScript = document.createElement("script");
     mapsScript.src = "https://code.highcharts.com/maps/highmaps.js";
-    mapsScript.onload = () => {
-      // Load Saudi Arabia map data
-      const saScript = document.createElement("script");
-      saScript.src = "https://code.highcharts.com/mapdata/countries/sa/sa-all.js";
-      saScript.onload = () => {
-        resolve();
-      };
-      saScript.onerror = () => {
-        console.warn("Failed to load SA map data");
-        resolve();
-      };
-      document.head.appendChild(saScript);
-    };
+    mapsScript.onload = checkBothLoaded;
     mapsScript.onerror = () => {
       console.warn("Failed to load highmaps");
-      resolve();
+      checkBothLoaded();
     };
     document.head.appendChild(mapsScript);
+
+    // Load Saudi Arabia map data
+    const saScript = document.createElement("script");
+    saScript.src = "https://code.highcharts.com/mapdata/countries/sa/sa-all.js";
+    saScript.onload = checkBothLoaded;
+    saScript.onerror = () => {
+      console.warn("Failed to load SA map data");
+      checkBothLoaded();
+    };
+    document.head.appendChild(saScript);
   });
 };
 
@@ -56,7 +54,8 @@ export function SaudiHighchartsMap({
   title = "Movements by Region",
   totalMovements = 0,
 }: SaudiHighchartsMapProps) {
-  const chartRef = useRef<HighchartsReact.RefObject>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<any>(null);
   const [mapsReady, setMapsReady] = useState(false);
 
   // Load maps module on mount
@@ -77,96 +76,117 @@ export function SaudiHighchartsMap({
     });
   }, [regionMetrics]);
 
-  const options: Highcharts.Options = {
-    chart: {
-      map: "countries/sa/sa-all",
-      borderWidth: 0,
-      spacingTop: 0,
-      spacingBottom: 0,
-      spacingLeft: 0,
-      spacingRight: 0,
-      backgroundColor: "transparent",
-    },
-    title: {
-      text: title,
-      style: {
-        fontWeight: "700",
-        fontSize: "14px",
-      },
-    },
-    subtitle: undefined,
-    colorAxis: {
-      min: 0,
-      max: maxMetric || 1,
-      minColor: "#efe6f6",
-      maxColor: "#6a1b9a",
-      type: "linear",
-      tickInterval: Math.ceil((maxMetric || 1) / 5),
-    },
-    legend: {
-      layout: "horizontal",
-      align: "center",
-      verticalAlign: "bottom",
-      y: 10,
-      floating: false,
-      enabled: true,
-    },
-    tooltip: {
-      useHTML: true,
-      headerFormat: "",
-      pointFormat:
-        '<div style="background: rgba(255,255,255,0.95); padding: 8px; border-radius: 4px; border: 1px solid #999;">' +
-        "<b>{point.name}</b><br/>Movements: {point.value}" +
-        "</div>",
-      backgroundColor: "transparent",
-      borderColor: "transparent",
-    },
-    plotOptions: {
-      map: {
-        borderColor: "#ffffff",
-        borderWidth: 1,
-        states: {
-          hover: {
+  // Create map chart when ready
+  useEffect(() => {
+    if (!mapsReady || !containerRef.current || !chartData.length) return;
+
+    try {
+      // Destroy previous chart
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+
+      // Create choropleth map using Highcharts.mapChart()
+      chartRef.current = (window as any).Highcharts.mapChart(
+        containerRef.current,
+        {
+          chart: {
+            borderWidth: 0,
+            spacingTop: 0,
+            spacingBottom: 0,
+            spacingLeft: 0,
+            spacingRight: 0,
+            backgroundColor: "transparent",
+            height: "100%",
+          },
+          title: {
+            text: title,
+            style: {
+              fontWeight: "700",
+              fontSize: "14px",
+            },
+          },
+          colorAxis: {
+            min: 0,
+            max: maxMetric || 1,
+            minColor: "#efe6f6",
+            maxColor: "#6a1b9a",
+            type: "linear",
+            tickInterval: Math.ceil((maxMetric || 1) / 5),
+          },
+          legend: {
+            layout: "horizontal",
+            align: "center",
+            verticalAlign: "bottom",
+            y: 10,
+            floating: false,
             enabled: true,
-            color: "#9c27b0",
-            brightness: 0.1,
           },
-        },
-        dataLabels: {
-          enabled: true,
-          format: "{point.name}",
-          style: {
-            fontSize: "11px",
-            fontWeight: "600",
-            color: "#000",
-            textOutline: "none",
+          tooltip: {
+            useHTML: true,
+            headerFormat: "",
+            pointFormat:
+              '<div style="background: rgba(255,255,255,0.95); padding: 8px; border-radius: 4px; border: 1px solid #999;">' +
+              "<b>{point.name}</b><br/>Movements: {point.value}" +
+              "</div>",
+            backgroundColor: "transparent",
+            borderColor: "transparent",
           },
-          allowOverlap: true,
-        },
-      },
-    },
-    mapNavigation: {
-      enabled: false,
-    },
-    series: [
-      {
-        type: "map",
-        data: chartData,
-        name: "Movements",
-      } as any,
-    ],
-    credits: {
-      enabled: false,
-    },
-    exporting: {
-      enabled: true,
-      buttons: {
-        contextButton: {
-          menuItems: ["downloadPNG", "downloadSVG", "downloadPDF", "printChart"],
-        },
-      },
-    },
-  };
+          plotOptions: {
+            map: {
+              borderColor: "#ffffff",
+              borderWidth: 1,
+              states: {
+                hover: {
+                  color: "#9c27b0",
+                  enabled: true,
+                  brightness: 0.1,
+                },
+              },
+              dataLabels: {
+                enabled: true,
+                format: "{point.name}",
+                style: {
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  color: "#000",
+                  textOutline: "none",
+                },
+                allowOverlap: true,
+              },
+            },
+          },
+          mapNavigation: {
+            enabled: false,
+          },
+          series: [
+            {
+              type: "map",
+              data: chartData,
+              name: "Movements",
+            },
+          ],
+          credits: {
+            enabled: false,
+          },
+          exporting: {
+            enabled: true,
+            buttons: {
+              contextButton: {
+                menuItems: ["downloadPNG", "downloadSVG", "downloadPDF", "printChart"],
+              },
+            },
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error creating choropleth map:", error);
+    }
+
+    return () => {
+      // Don't destroy on unmount to prevent flashing
+    };
+  }, [mapsReady, chartData, maxMetric, title]);
 
   if (!mapsReady) {
     return (
@@ -181,12 +201,14 @@ export function SaudiHighchartsMap({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex-1 flex items-center justify-center min-h-0">
-        <HighchartsReact
-          ref={chartRef}
-          highcharts={Highcharts}
-          options={options}
-          containerProps={{ style: { width: "100%", height: "100%" } }}
+      <div className="flex-1 flex items-center justify-center min-h-0 overflow-hidden">
+        <div
+          ref={containerRef}
+          style={{
+            width: "100%",
+            height: "100%",
+            minHeight: "350px",
+          }}
         />
       </div>
 
