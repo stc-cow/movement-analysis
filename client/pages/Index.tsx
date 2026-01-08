@@ -26,41 +26,23 @@ export default function Dashboard() {
   // Load real data from Google Sheets API (with fallback to mock)
   const { data, loading, error } = useDashboardData();
 
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-white font-medium">Loading dashboard data...</p>
-          <p className="text-sm text-gray-400">Fetching from Google Sheets</p>
-        </div>
-      </div>
-    );
-  }
+  // Dashboard filters state - MUST be before any conditional returns
+  const [filters, setFilters] = useState<DashboardFiltersType>({});
+  const [activeCard, setActiveCard] = useState("executive");
 
-  if (!data) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
-        <div className="flex flex-col items-center gap-4">
-          <Database className="w-12 h-12 text-red-500" />
-          <p className="text-white font-medium">Failed to load data</p>
-          <p className="text-sm text-gray-400">{error || "Unknown error"}</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { cows, locations, events, movements: rawMovements } = data;
+  // Initialize with empty data and update when data loads
+  const { cows, locations, events, movements: rawMovements } = data || {
+    cows: [],
+    locations: [],
+    events: [],
+    movements: [],
+  };
 
   // Enrich movements with classification
   const enrichedMovements = useMemo(
     () => enrichMovements(rawMovements, locations),
     [rawMovements, locations]
   );
-
-  // Dashboard filters state
-  const [filters, setFilters] = useState<DashboardFiltersType>({});
-  const [activeCard, setActiveCard] = useState("executive");
 
   // Calculate metrics
   const filteredMovements = useMemo(
@@ -92,13 +74,46 @@ export default function Dashboard() {
   );
 
   // Get unique years and vendors
-  const years = Array.from(
-    new Set(
-      enrichedMovements.map((m) => new Date(m.Moved_DateTime).getFullYear())
-    )
-  ).sort((a, b) => b - a);
+  const years = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          enrichedMovements.map((m) => new Date(m.Moved_DateTime).getFullYear())
+        )
+      ).sort((a, b) => b - a),
+    [enrichedMovements]
+  );
 
-  const vendors = Array.from(new Set(cows.map((c) => c.Vendor))).sort();
+  const vendors = useMemo(
+    () => Array.from(new Set(cows.map((c) => c.Vendor))).sort(),
+    [cows]
+  );
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-white font-medium">Loading dashboard data...</p>
+          <p className="text-sm text-gray-400">Fetching from Google Sheets</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (!data) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="flex flex-col items-center gap-4">
+          <Database className="w-12 h-12 text-red-500" />
+          <p className="text-white font-medium">Failed to load data</p>
+          <p className="text-sm text-gray-400">{error || "Unknown error"}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-50 dark:bg-slate-950 overflow-hidden">
