@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { DimCow, DimLocation, DimEvent, CowMovementsFact } from "@shared/models";
-import { generateMockDatabase } from "@/lib/mockData";
 
 interface DashboardDataResponse {
   movements: CowMovementsFact[];
@@ -16,8 +15,8 @@ interface UseDashboardDataResult {
 }
 
 /**
- * Hook to load dashboard data from API
- * Falls back to mock data if API fails
+ * Hook to load dashboard data from Google Sheets API
+ * NO fallback to mock data - uses real data only
  */
 export function useDashboardData(): UseDashboardDataResult {
   const [data, setData] = useState<DashboardDataResponse | null>(null);
@@ -30,7 +29,9 @@ export function useDashboardData(): UseDashboardDataResult {
         setLoading(true);
         setError(null);
 
-        // Try to load real data from Google Sheets API
+        console.log("Loading dashboard data from Google Sheets...");
+
+        // Load real data from Google Sheets API
         const response = await fetch("/api/data/processed-data", {
           method: "GET",
           headers: {
@@ -39,25 +40,33 @@ export function useDashboardData(): UseDashboardDataResult {
         });
 
         if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.details || `API returned ${response.status}`
+          );
         }
 
         const realData = (await response.json()) as DashboardDataResponse;
 
         // Verify we have meaningful data
-        if (realData.movements.length === 0 || realData.cows.length === 0) {
-          throw new Error("No data found in Google Sheet");
+        if (realData.movements.length === 0) {
+          throw new Error("No movement data found in Google Sheet");
         }
 
-        console.log(`Loaded real data: ${realData.movements.length} movements, ${realData.cows.length} cows`);
+        if (realData.cows.length === 0) {
+          throw new Error("No COW data found in Google Sheet");
+        }
+
+        console.log(
+          `✓ Loaded real data: ${realData.movements.length} movements, ${realData.cows.length} cows, ${realData.locations.length} locations`
+        );
         setData(realData);
       } catch (err) {
-        console.warn("Failed to load real data, falling back to mock data:", err);
-        
-        // Fall back to mock data
-        const mockData = generateMockDatabase();
-        setData(mockData);
-        setError(null); // Don't show error if we have fallback
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        console.error("Failed to load data from Google Sheets:", errorMessage);
+        setError(errorMessage);
+        setData(null);
       } finally {
         setLoading(false);
       }
