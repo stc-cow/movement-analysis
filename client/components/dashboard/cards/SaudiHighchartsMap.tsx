@@ -175,13 +175,13 @@ export function SaudiHighchartsMap({
     },
   };
 
-  if (loading || !saudiGeo) {
+  if (loading || !saudiGeo || !modulesReady) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 rounded-lg">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Loading map...
+            {!modulesReady ? "Loading Highcharts..." : "Loading map..."}
           </p>
         </div>
       </div>
