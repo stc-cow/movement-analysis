@@ -105,11 +105,28 @@ export default function Dashboard() {
   // Show error state
   if (!data) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
-        <div className="flex flex-col items-center gap-4">
-          <Database className="w-12 h-12 text-red-500" />
-          <p className="text-white font-medium">Failed to load data</p>
-          <p className="text-sm text-gray-400">{error || "Unknown error"}</p>
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-6">
+        <div className="flex flex-col items-center gap-6 max-w-md">
+          <Database className="w-16 h-16 text-red-500" />
+          <div className="text-center space-y-3">
+            <p className="text-white font-bold text-xl">
+              Unable to Load Dashboard Data
+            </p>
+            <p className="text-sm text-gray-300">{error || "Unknown error"}</p>
+          </div>
+          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-left w-full">
+            <p className="text-sm font-semibold text-red-200 mb-2">
+              How to fix:
+            </p>
+            <ol className="text-xs text-red-100 space-y-1 list-decimal list-inside">
+              <li>Open your Google Sheet</li>
+              <li>Go to File → Share → Publish to web</li>
+              <li>Select the correct sheet tab</li>
+              <li>Choose "Comma-separated values (.csv)"</li>
+              <li>Copy the published link</li>
+              <li>Update the sheet ID in the server configuration</li>
+            </ol>
+          </div>
         </div>
       </div>
     );
