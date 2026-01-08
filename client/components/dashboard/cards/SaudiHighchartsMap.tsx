@@ -131,11 +131,11 @@ export function SaudiHighchartsMap({
         type: "map",
         name: "Movements",
         data: chartData,
-        joinBy: ["properties.name", 0],
+        joinBy: ["hc-key", 0],
         tooltip: {
           headerFormat: "",
           pointFormat:
-            "<b>{point.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+            "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
         },
         states: {
           hover: {
