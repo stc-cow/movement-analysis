@@ -20,6 +20,12 @@ const REGIONS = ["WEST", "EAST", "CENTRAL", "SOUTH", "NORTH"];
 const MOVEMENT_TYPES = ["Full", "Half", "Zero"];
 const EVENT_TYPES = ["Hajj", "Umrah", "Royal", "National Event", "Seasonal", "Normal Coverage"];
 
+const YEAR_PLACEHOLDER = "year_all";
+const REGION_PLACEHOLDER = "region_all";
+const VENDOR_PLACEHOLDER = "vendor_all";
+const MOVEMENT_PLACEHOLDER = "movement_all";
+const EVENT_PLACEHOLDER = "event_all";
+
 export function DashboardFiltersComponent({
   filters,
   onFiltersChange,
@@ -31,6 +37,12 @@ export function DashboardFiltersComponent({
   };
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== undefined);
+
+  const yearValue = filters.year ? `year_${filters.year}` : YEAR_PLACEHOLDER;
+  const regionValue = filters.region ? `region_${filters.region}` : REGION_PLACEHOLDER;
+  const vendorValue = filters.vendor ? `vendor_${filters.vendor}` : VENDOR_PLACEHOLDER;
+  const movementValue = filters.movementType ? `movement_${filters.movementType}` : MOVEMENT_PLACEHOLDER;
+  const eventValue = filters.eventType ? `event_${filters.eventType}` : EVENT_PLACEHOLDER;
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
@@ -46,21 +58,23 @@ export function DashboardFiltersComponent({
             Year
           </label>
           <Select
-            value={filters.year?.toString() || "__all__"}
-            onValueChange={(value) =>
-              onFiltersChange({
-                ...filters,
-                year: value === "__all__" ? undefined : parseInt(value),
-              })
-            }
+            value={yearValue}
+            onValueChange={(value) => {
+              if (value === YEAR_PLACEHOLDER) {
+                onFiltersChange({ ...filters, year: undefined });
+              } else {
+                const year = parseInt(value.replace("year_", ""));
+                onFiltersChange({ ...filters, year });
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Years" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">All Years</SelectItem>
-              {years.map((year) => (
-                <SelectItem key={year} value={year.toString()}>
+              <SelectItem value={YEAR_PLACEHOLDER}>All Years</SelectItem>
+              {years.length > 0 && years.map((year) => (
+                <SelectItem key={`year_${year}`} value={`year_${year}`}>
                   {year}
                 </SelectItem>
               ))}
@@ -74,21 +88,23 @@ export function DashboardFiltersComponent({
             Region
           </label>
           <Select
-            value={filters.region || "__all__"}
-            onValueChange={(value) =>
-              onFiltersChange({
-                ...filters,
-                region: value === "__all__" ? undefined : value,
-              })
-            }
+            value={regionValue}
+            onValueChange={(value) => {
+              if (value === REGION_PLACEHOLDER) {
+                onFiltersChange({ ...filters, region: undefined });
+              } else {
+                const region = value.replace("region_", "");
+                onFiltersChange({ ...filters, region });
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Regions" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">All Regions</SelectItem>
+              <SelectItem value={REGION_PLACEHOLDER}>All Regions</SelectItem>
               {REGIONS.map((region) => (
-                <SelectItem key={region} value={region}>
+                <SelectItem key={`region_${region}`} value={`region_${region}`}>
                   {region}
                 </SelectItem>
               ))}
@@ -102,21 +118,23 @@ export function DashboardFiltersComponent({
             Vendor
           </label>
           <Select
-            value={filters.vendor || "__all__"}
-            onValueChange={(value) =>
-              onFiltersChange({
-                ...filters,
-                vendor: value === "__all__" ? undefined : value,
-              })
-            }
+            value={vendorValue}
+            onValueChange={(value) => {
+              if (value === VENDOR_PLACEHOLDER) {
+                onFiltersChange({ ...filters, vendor: undefined });
+              } else {
+                const vendor = value.replace("vendor_", "");
+                onFiltersChange({ ...filters, vendor });
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Vendors" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">All Vendors</SelectItem>
-              {vendors.map((vendor) => (
-                <SelectItem key={vendor} value={vendor}>
+              <SelectItem value={VENDOR_PLACEHOLDER}>All Vendors</SelectItem>
+              {vendors.length > 0 && vendors.map((vendor) => (
+                <SelectItem key={`vendor_${vendor}`} value={`vendor_${vendor}`}>
                   {vendor}
                 </SelectItem>
               ))}
@@ -130,21 +148,23 @@ export function DashboardFiltersComponent({
             Movement Type
           </label>
           <Select
-            value={filters.movementType || "__all__"}
-            onValueChange={(value) =>
-              onFiltersChange({
-                ...filters,
-                movementType: value === "__all__" ? undefined : (value as any),
-              })
-            }
+            value={movementValue}
+            onValueChange={(value) => {
+              if (value === MOVEMENT_PLACEHOLDER) {
+                onFiltersChange({ ...filters, movementType: undefined });
+              } else {
+                const type = value.replace("movement_", "") as any;
+                onFiltersChange({ ...filters, movementType: type });
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">All Types</SelectItem>
+              <SelectItem value={MOVEMENT_PLACEHOLDER}>All Types</SelectItem>
               {MOVEMENT_TYPES.map((type) => (
-                <SelectItem key={type} value={type}>
+                <SelectItem key={`movement_${type}`} value={`movement_${type}`}>
                   {type}
                 </SelectItem>
               ))}
@@ -158,21 +178,23 @@ export function DashboardFiltersComponent({
             Event Type
           </label>
           <Select
-            value={filters.eventType || "__all__"}
-            onValueChange={(value) =>
-              onFiltersChange({
-                ...filters,
-                eventType: value === "__all__" ? undefined : (value as any),
-              })
-            }
+            value={eventValue}
+            onValueChange={(value) => {
+              if (value === EVENT_PLACEHOLDER) {
+                onFiltersChange({ ...filters, eventType: undefined });
+              } else {
+                const type = value.replace("event_", "") as any;
+                onFiltersChange({ ...filters, eventType: type });
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="All Events" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">All Events</SelectItem>
+              <SelectItem value={EVENT_PLACEHOLDER}>All Events</SelectItem>
               {EVENT_TYPES.map((type) => (
-                <SelectItem key={type} value={type}>
+                <SelectItem key={`event_${type}`} value={`event_${type}`}>
                   {type}
                 </SelectItem>
               ))}
