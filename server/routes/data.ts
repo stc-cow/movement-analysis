@@ -4,9 +4,16 @@ import { RequestHandler } from "express";
 const router = Router();
 
 // Google Sheet Configuration
-const SHEET_ID = "2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz";
+// Note: The PACX format is a shared link ID, not a standard sheet ID
+// For proper CSV export, the sheet should be published to the web
+const SHEET_LINK_ID = "2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz";
 const GID = "1539310010";
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+const CSV_URLS = [
+  // Try different URL formats
+  `https://docs.google.com/spreadsheets/d/${SHEET_LINK_ID}/export?format=csv&gid=${GID}`,
+  // Alternative format for shared links
+  `https://docs.google.com/spreadsheets/d/e/${SHEET_LINK_ID}/export?format=csv&gid=${GID}`,
+];
 
 /**
  * Helper function to parse CSV from Google Sheets
