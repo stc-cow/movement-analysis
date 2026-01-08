@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Play, Pause, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import {
   BarChart,
@@ -11,8 +11,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  ScatterChart,
-  Scatter,
 } from "recharts";
 import { CowMovementsFact, DimCow, DimLocation } from "@shared/models";
 import {
