@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Play, Pause, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -24,6 +24,22 @@ interface SaudiMapCardProps {
   locations: DimLocation[];
 }
 
+// Saudi Arabia region data with SVG paths and coordinates
+const SAUDI_REGIONS = {
+  "Al Jaof": { color: "#e9d5ff", path: "M340,40 L360,35 L375,50 L365,65 L340,55 Z" },
+  Tabuk: { color: "#d8b4fe", path: "M320,70 L345,65 L360,90 L335,105 L315,95 Z" },
+  "Ha'il": { color: "#c084fc", path: "M345,110 L380,100 L395,130 L370,145 L340,135 Z" },
+  "Al Qassim": { color: "#a855f7", path: "M380,140 L420,130 L435,165 L405,180 L375,170 Z" },
+  Medina: { color: "#9333ea", path: "M300,140 L330,135 L340,165 L310,170 Z" },
+  Riyadh: { color: "#7e22ce", path: "M410,180 L450,170 L465,210 L425,220 Z" },
+  "Eastern Province": { color: "#6b21a8", path: "M460,200 L500,190 L510,240 L470,250 Z" },
+  Makkah: { color: "#805ad5", path: "M280,180 L310,175 L315,210 L285,215 Z" },
+  Asir: { color: "#9f7aea", path: "M310,240 L350,230 L360,280 L320,290 Z" },
+  Jizan: { color: "#d6bcfa", path: "M300,290 L340,285 L345,330 L305,335 Z" },
+  Najran: { color: "#e9d5ff", path: "L350,310 L390,300 L400,350 L360,355 Z" },
+  "Ash Sharqiyah": { color: "#ddd6fe", path: "M470,260 L510,250 L515,290 L475,300 Z" },
+};
+
 export function SaudiMapCard({
   movements,
   cows,
@@ -43,62 +59,61 @@ export function SaudiMapCard({
   // Auto-play timeline
   useEffect(() => {
     if (!isPlaying || timelineMonths.length === 0) return;
-
     const interval = setInterval(() => {
       setCurrentMonthIndex((prev) => (prev + 1) % timelineMonths.length);
-    }, 1500); // 1.5 seconds per month
-
+    }, 2000);
     return () => clearInterval(interval);
   }, [isPlaying, timelineMonths.length]);
 
   const currentMonth = timelineMonths[currentMonthIndex];
-  const currentMovements = currentMonth?.movements || [];
 
-  // Prepare data for visualization
-  const warehousePoints = useMemo(() => {
-    return locations
-      .filter((l) => l.Location_Type === "Warehouse")
-      .map((l) => ({
-        lon: l.Longitude,
-        lat: l.Latitude,
-        name: l.Location_Name.split(" ")[0],
-        type: "warehouse",
-      }));
-  }, [locations]);
+  // Calculate region metrics from movements
+  const regionMetrics = useMemo(() => {
+    if (!currentMonth) return {};
+    const metrics: Record<string, number> = {};
+    const regionMap: Record<string, string> = {
+      WEST: "Makkah",
+      EAST: "Eastern Province",
+      CENTRAL: "Riyadh",
+      SOUTH: "Asir",
+      NORTH: "Ha'il",
+    };
 
-  const sitePoints = useMemo(() => {
-    return locations
-      .filter((l) => l.Location_Type === "Site")
-      .map((l) => ({
-        lon: l.Longitude,
-        lat: l.Latitude,
-        name: l.Location_Name.split(" ")[0],
-        type: "site",
-      }));
-  }, [locations]);
+    currentMonth.movements.forEach((mov) => {
+      const toLoc = locations.find((l) => l.Location_ID === mov.cowId.split("-")[0]);
+      if (toLoc) {
+        const regionName = regionMap[toLoc.Region] || toLoc.Region;
+        metrics[regionName] = (metrics[regionName] || 0) + 1;
+      }
+    });
 
-  // Movement flow data for scatter
-  const movementFlows = useMemo(() => {
-    return currentMovements.map((mov) => ({
-      x: mov.from[0],
-      y: mov.from[1],
-      xEnd: mov.to[0],
-      yEnd: mov.to[1],
-      cowId: mov.cowId,
-      distance: mov.distance,
-      type: mov.movementType,
-      vendor: mov.vendor,
-      date: mov.date,
-    }));
-  }, [currentMovements]);
+    return metrics;
+  }, [currentMonth, locations]);
+
+  // Get max metric for color scaling
+  const maxRegionMetric = useMemo(() => {
+    return Math.max(...Object.values(regionMetrics), 1) as number;
+  }, [regionMetrics]);
 
   // Category chart data
   const categoryChartData = useMemo(() => {
     if (!currentMonth) return [];
     return [
-      { name: "Full", value: currentMonth.movementCounts.Full, fill: "#3b82f6" },
-      { name: "Half", value: currentMonth.movementCounts.Half, fill: "#a855f7" },
-      { name: "Zero", value: currentMonth.movementCounts.Zero, fill: "#6b7280" },
+      {
+        name: "Full",
+        value: currentMonth.movementCounts.Full,
+        fill: "#3b82f6",
+      },
+      {
+        name: "Half",
+        value: currentMonth.movementCounts.Half,
+        fill: "#a855f7",
+      },
+      {
+        name: "Zero",
+        value: currentMonth.movementCounts.Zero,
+        fill: "#6b7280",
+      },
     ].filter((item) => item.value > 0);
   }, [currentMonth]);
 
@@ -114,134 +129,86 @@ export function SaudiMapCard({
       .slice(0, 5);
   }, [currentMonth]);
 
-  // Saudi Arabia bounds for map
-  const saudiMapData = useMemo(() => {
-    const allLons = [...warehousePoints, ...sitePoints].map((p) => p.lon);
-    const allLats = [...warehousePoints, ...sitePoints].map((p) => p.lat);
-    return {
-      minLon: Math.min(...allLons) - 1,
-      maxLon: Math.max(...allLons) + 1,
-      minLat: Math.min(...allLats) - 1,
-      maxLat: Math.max(...allLats) + 1,
-    };
-  }, [warehousePoints, sitePoints]);
-
   const COLORS = ["#3b82f6", "#a855f7", "#6b7280", "#10b981", "#f59e0b"];
 
   return (
-    <div className="h-[calc(100vh-200px)] overflow-hidden flex flex-col gap-0">
-      {/* Main Layout: Map + Right Panel */}
-      <div className="flex-1 flex gap-0 min-h-0 overflow-hidden">
-        {/* Left: Map and Category Chart */}
-        <div className="flex-1 flex flex-col gap-0 overflow-hidden">
-          {/* Interactive Map */}
-          <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden relative border border-gray-200">
-            <svg
-              viewBox={`${saudiMapData.minLon} ${saudiMapData.minLat} ${saudiMapData.maxLon - saudiMapData.minLon} ${saudiMapData.maxLat - saudiMapData.minLat}`}
-              className="w-full h-full"
-            >
-              {/* Movement flows */}
-              {movementFlows.map((flow, idx) => (
-                <g key={`flow-${idx}`}>
-                  <line
-                    x1={flow.x}
-                    y1={flow.y}
-                    x2={flow.xEnd}
-                    y2={flow.yEnd}
-                    stroke={
-                      flow.type === "Full"
-                        ? "#3b82f6"
-                        : flow.type === "Half"
-                          ? "#a855f7"
-                          : "#6b7280"
-                    }
-                    strokeWidth="0.15"
-                    opacity="0.6"
-                    strokeLinecap="round"
-                  />
-                  {/* Arrow head */}
-                  <circle
-                    cx={flow.xEnd}
-                    cy={flow.yEnd}
-                    r="0.1"
-                    fill={
-                      flow.type === "Full"
-                        ? "#3b82f6"
-                        : flow.type === "Half"
-                          ? "#a855f7"
-                          : "#6b7280"
-                    }
-                  />
-                </g>
-              ))}
-
-              {/* Warehouse markers */}
-              {warehousePoints.map((wh, idx) => (
-                <g key={`wh-${idx}`}>
-                  <rect
-                    x={wh.lon - 0.2}
-                    y={wh.lat - 0.2}
-                    width="0.4"
-                    height="0.4"
-                    fill="#8b7355"
-                    opacity="0.8"
-                    rx="0.05"
-                  />
-                  <title>{wh.name}</title>
-                </g>
-              ))}
-
-              {/* Site markers */}
-              {sitePoints.map((site, idx) => (
-                <g key={`site-${idx}`}>
-                  <circle
-                    cx={site.lon}
-                    cy={site.lat}
-                    r="0.12"
-                    fill="#06b6d4"
-                    opacity="0.8"
-                  />
-                  <title>{site.name}</title>
-                </g>
-              ))}
-            </svg>
-
-            {/* Fixed Logos Overlay */}
-            <div className="absolute top-3 left-3 flex items-center gap-2 bg-white/90 backdrop-blur px-3 py-2 rounded-lg shadow-sm z-50">
-              <MapPin className="w-4 h-4 text-blue-600" />
-              <span className="text-xs font-semibold text-gray-900">STC</span>
+    <div className="h-[calc(100vh-200px)] w-full overflow-hidden flex flex-col bg-white dark:bg-slate-800">
+      {/* Header with Controls */}
+      <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-slate-800">
+        <div className="flex items-center gap-4">
+          {/* STC Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center text-white text-xs font-bold">
+              STC
             </div>
-            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-2 rounded-lg shadow-sm z-50">
-              <span className="text-xs font-semibold text-purple-600">ACES</span>
-            </div>
-
-            {/* Month Label Overlay */}
-            {currentMonth && (
-              <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur px-4 py-3 rounded-lg shadow-md z-50 border border-blue-200">
-                <p className="text-sm font-bold text-gray-900">
-                  {currentMonth.month} {currentMonth.year}
-                </p>
-                <p className="text-xs text-gray-700">
-                  {currentMonth.movements.length} movements • {currentMonth.totalDistance.toLocaleString()} KM
-                </p>
-              </div>
-            )}
           </div>
+        </div>
 
-          {/* Movement Category Chart Below Map */}
-          <div className="h-32 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 p-3">
-            <h3 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
-              Movement Classification
-            </h3>
-            {categoryChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+        {/* Timeline Selector */}
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Select Month:
+          </label>
+          <select
+            value={currentMonthIndex}
+            onChange={(e) => {
+              setCurrentMonthIndex(parseInt(e.target.value));
+              setIsPlaying(false);
+            }}
+            className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-slate-700 dark:text-white"
+          >
+            <option value={-1}>All Months</option>
+            {timelineMonths.map((month, idx) => (
+              <option key={idx} value={idx}>
+                {month.month} {month.year}
+              </option>
+            ))}
+          </select>
+
+          {/* Play Button */}
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded transition-colors"
+          >
+            {isPlaying ? (
+              <>
+                <Pause className="w-4 h-4" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" />
+                Play
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* ACES Logo */}
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">
+            ACES
+          </div>
+        </div>
+      </div>
+
+      {/* Three-Column Layout */}
+      <div className="flex-1 flex gap-0 overflow-hidden">
+        {/* Left Panel: Movement Classification */}
+        <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 p-6 overflow-auto flex flex-col">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <span>≡</span> Movements by Category
+          </h3>
+          {categoryChartData.length > 0 ? (
+            <div className="flex-1 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
                     data={categoryChartData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={20}
-                    outerRadius={45}
+                    innerRadius={45}
+                    outerRadius={90}
                     paddingAngle={2}
                     dataKey="value"
                   >
@@ -252,114 +219,259 @@ export function SaudiMapCard({
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-            ) : (
-              <p className="text-xs text-gray-500 h-full flex items-center">
-                No movements this month
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Right Panel: Vendor Chart + Timeline Controls */}
-        <div className="w-64 border-l border-gray-200 dark:border-gray-700 flex flex-col bg-white dark:bg-slate-800 overflow-hidden">
-          {/* Vendor Chart */}
-          <div className="flex-1 border-b border-gray-200 dark:border-gray-700 p-3 overflow-hidden">
-            <h3 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
-              Active Vendors
-            </h3>
-            {vendorChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={vendorChartData} layout="vertical" margin={{ left: 60 }}>
-                  <XAxis type="number" tick={{ fontSize: 10 }} />
-                  <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-xs text-gray-500">No vendors active</p>
-            )}
-          </div>
-
-          {/* Timeline Controls */}
-          <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
-            {/* Play/Pause */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="w-4 h-4" />
-                    Pause
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4" />
-                    Play
-                  </>
-                )}
-              </button>
             </div>
-
-            {/* Timeline Slider */}
-            <div className="space-y-2">
-              <input
-                type="range"
-                min="0"
-                max={Math.max(0, timelineMonths.length - 1)}
-                value={currentMonthIndex}
-                onChange={(e) => {
-                  setCurrentMonthIndex(parseInt(e.target.value));
-                  setIsPlaying(false);
-                }}
-                className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
-              />
-              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
-                <span>{timelineMonths[0]?.month} {timelineMonths[0]?.year}</span>
-                <span>
-                  {currentMonth?.month} {currentMonth?.year}
-                </span>
-                <span>
-                  {timelineMonths[timelineMonths.length - 1]?.month}{" "}
-                  {timelineMonths[timelineMonths.length - 1]?.year}
-                </span>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              No movements this month
+            </div>
+          )}
+          {currentMonth && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="space-y-2 text-sm">
+                {categoryChartData.map((item) => (
+                  <div key={item.name} className="flex justify-between">
+                    <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {item.value}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
+          )}
+        </div>
 
-            {/* Month Navigation */}
-            <div className="flex gap-2">
-              <button
-                onClick={() =>
-                  setCurrentMonthIndex(Math.max(0, currentMonthIndex - 1))
-                }
-                disabled={currentMonthIndex === 0}
-                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white py-2 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() =>
-                  setCurrentMonthIndex(
-                    Math.min(timelineMonths.length - 1, currentMonthIndex + 1)
-                  )
-                }
-                disabled={currentMonthIndex === timelineMonths.length - 1}
-                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white py-2 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Center Panel: Saudi Map */}
+        <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 p-6 overflow-auto flex flex-col">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <span>≡</span> Movements by Region
+          </h3>
 
-            {/* Month Info */}
-            <div className="bg-blue-50 dark:bg-blue-950 rounded p-2 text-xs border border-blue-200 dark:border-blue-800">
-              <p className="text-blue-900 dark:text-blue-200 font-semibold">
-                {currentMonthIndex + 1} / {timelineMonths.length}
-              </p>
-              <p className="text-blue-800 dark:text-blue-300 text-xs">
-                {currentMonth?.movements.length || 0} movements
-              </p>
-            </div>
+          {/* SVG Map */}
+          <div className="flex-1 flex items-center justify-center min-h-0">
+            <svg
+              viewBox="0 0 550 380"
+              className="w-full h-full max-w-xs"
+              style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }}
+            >
+              {/* Saudi Arabia Regions */}
+              <g>
+                {/* Tabuk */}
+                <path
+                  d="M 85 60 L 140 50 L 160 95 L 110 110 Z"
+                  fill="#d8b4fe"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="110" y="85" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Tabuk
+                </text>
+
+                {/* Al Jaof */}
+                <path
+                  d="M 140 30 L 190 25 L 210 60 L 180 70 Z"
+                  fill="#e9d5ff"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="165" y="50" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Al Jaof
+                </text>
+
+                {/* Ha'il */}
+                <path
+                  d="M 140 110 L 200 95 L 220 150 L 170 165 Z"
+                  fill="#c084fc"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="170" y="135" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Ha'il
+                </text>
+
+                {/* Medina */}
+                <path
+                  d="M 75 130 L 120 120 L 130 170 L 85 180 Z"
+                  fill="#9333ea"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="100" y="155" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Medina
+                </text>
+
+                {/* Al Qassim */}
+                <path
+                  d="M 200 165 L 270 150 L 290 210 L 230 225 Z"
+                  fill="#a855f7"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="245" y="190" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Al Qassim
+                </text>
+
+                {/* Riyadh */}
+                <path
+                  d="M 270 225 L 340 210 L 360 270 L 295 285 Z"
+                  fill="#7e22ce"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="305" y="255" fontSize="11" fontWeight="bold" textAnchor="middle">
+                  Riyadh
+                </text>
+
+                {/* Eastern Province */}
+                <path
+                  d="M 340 230 L 420 210 L 440 280 L 360 290 Z"
+                  fill="#6b21a8"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="380" y="255" fontSize="9" fontWeight="bold" textAnchor="middle">
+                  Eastern
+                </text>
+
+                {/* Makkah */}
+                <path
+                  d="M 65 180 L 115 170 L 125 230 L 75 240 Z"
+                  fill="#805ad5"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="95" y="210" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Makkah
+                </text>
+
+                {/* Asir */}
+                <path
+                  d="M 90 240 L 160 225 L 180 310 L 110 325 Z"
+                  fill="#9f7aea"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="130" y="280" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Asir
+                </text>
+
+                {/* Jizan */}
+                <path
+                  d="M 75 325 L 145 310 L 155 365 L 85 370 Z"
+                  fill="#d6bcfa"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="110" y="345" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Jizan
+                </text>
+
+                {/* Najran */}
+                <path
+                  d="M 160 310 L 240 290 L 255 350 L 180 365 Z"
+                  fill="#e9d5ff"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="205" y="335" fontSize="10" fontWeight="bold" textAnchor="middle">
+                  Najran
+                </text>
+
+                {/* Ash Sharqiyah */}
+                <path
+                  d="M 360 290 L 440 270 L 450 330 L 370 340 Z"
+                  fill="#ddd6fe"
+                  stroke="#999"
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
+                <text x="405" y="310" fontSize="9" fontWeight="bold" textAnchor="middle">
+                  Sharqiyah
+                </text>
+              </g>
+
+              {/* Map Legend/Gradient Indicator */}
+              <g transform="translate(20, 320)">
+                <text x="0" y="0" fontSize="9" fill="#666">
+                  0
+                </text>
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <rect
+                    key={i}
+                    x={20 + i * 20}
+                    y="-10"
+                    width="18"
+                    height="12"
+                    fill={`rgba(168, 85, 247, ${0.2 + i * 0.16})`}
+                  />
+                ))}
+                <text x="120" y="0" fontSize="9" fill="#666">
+                  400+
+                </text>
+              </g>
+            </svg>
           </div>
+
+          {currentMonth && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                Total Movements: {currentMonth.movements.length}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                {currentMonth.totalDistance.toLocaleString()} KM
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Right Panel: Vendor Chart */}
+        <div className="w-1/3 p-6 overflow-auto flex flex-col">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <span>≡</span> Movements by Vendor
+          </h3>
+          {vendorChartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={vendorChartData} margin={{ left: 60, right: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 9 }} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              No vendors active
+            </div>
+          )}
+
+          {currentMonth && vendorChartData.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="space-y-2 text-sm">
+                {vendorChartData.map((item) => (
+                  <div key={item.name} className="flex justify-between">
+                    <span className="text-gray-700 dark:text-gray-300 truncate">
+                      {item.name}
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
