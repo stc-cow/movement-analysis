@@ -224,20 +224,12 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Vendor Logos */}
-          <div className="flex items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-slate-800 rounded-lg">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F9714b8edf4b54584a6f670699d58193d?format=webp&width=800"
-              alt="STC Logo"
-              className="h-6 object-contain"
-            />
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F525a16fc442c434e8185ef0bbfd606f5?format=webp&width=800"
-              alt="ACES Logo"
-              className="h-6 object-contain"
-            />
-          </div>
+          {/* ACES Logo */}
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F525a16fc442c434e8185ef0bbfd606f5?format=webp&width=800"
+            alt="ACES Logo"
+            className="h-6 object-contain"
+          />
         </div>
       </header>
 
