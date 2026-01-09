@@ -242,15 +242,17 @@ export function SaudiMapCard({
             📊 Vendor Distribution
           </h3>
           {vendorChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={150}>
-              <BarChart data={vendorChartData} margin={{ left: 30, right: 5, top: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="2 2" stroke="#e5e7eb" />
-                <XAxis dataKey="name" tick={{ fontSize: 8 }} />
-                <YAxis tick={{ fontSize: 8 }} />
-                <Tooltip cursor={{ fill: "rgba(139, 92, 246, 0.1)" }} />
-                <Bar dataKey="value" fill="#8b5cf6" radius={[2, 2, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="bg-gradient-to-br from-white/60 to-white/40 dark:from-slate-700/40 dark:to-slate-600/30 rounded-lg p-3 border border-purple-200/30 dark:border-purple-800/20 backdrop-blur-sm">
+              <ResponsiveContainer width="100%" height={150}>
+                <BarChart data={vendorChartData} margin={{ left: 30, right: 5, top: 5, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="2 2" stroke="#d1d5db" opacity={0.5} />
+                  <XAxis dataKey="name" tick={{ fontSize: 8 }} />
+                  <YAxis tick={{ fontSize: 8 }} />
+                  <Tooltip cursor={{ fill: "rgba(139, 92, 246, 0.15)" }} />
+                  <Bar dataKey="value" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <div className="flex-1 flex items-center justify-center text-gray-400 text-xs">
               No vendors
@@ -258,7 +260,7 @@ export function SaudiMapCard({
           )}
 
           {vendorChartData.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs space-y-1">
+            <div className="mt-4 pt-4 border-t border-gray-200/40 dark:border-gray-700/40 text-xs space-y-2">
               {vendorChartData.map((item) => (
                 <div key={item.name} className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400 truncate">
