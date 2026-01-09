@@ -74,14 +74,13 @@ export function CardTabs({ tabs, activeTab, onTabChange }: CardTabsProps) {
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap text-sm font-medium",
+              "px-4 py-2 rounded-lg transition-all whitespace-nowrap text-sm font-medium",
               activeTab === tab.id
                 ? "bg-blue-500 text-white shadow-lg"
                 : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700",
             )}
           >
-            {tab.icon}
-            <span>{tab.label}</span>
+            {tab.label}
           </button>
         ))}
       </div>
