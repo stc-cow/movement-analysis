@@ -137,8 +137,8 @@ export function ExecutiveOverviewCard({
 
       {/* Movement Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-shrink-0 mb-6">
-        <div className="card-modern hover-lift">
-          <h3 className="card-header">Movement Classification</h3>
+        <div className="card-modern hover-lift bg-gradient-to-br from-white/70 to-white/50 dark:from-slate-800/70 dark:to-slate-700/50 border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm hover:border-blue-300/50 dark:hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5">
+          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-4">Movement Classification</h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">
