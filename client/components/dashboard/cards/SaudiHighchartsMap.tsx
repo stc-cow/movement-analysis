@@ -208,18 +208,6 @@ export function SaudiHighchartsMap({
           immutable={false}
         />
       </div>
-
-      {/* KPI Display */}
-      {totalMovements > 0 && (
-        <div className="text-center py-3 mt-4 px-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white">
-            Total Movements:{" "}
-            <span className="text-purple-600 dark:text-purple-400">
-              {totalMovements}
-            </span>
-          </p>
-        </div>
-      )}
     </div>
   );
 }
