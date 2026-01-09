@@ -229,6 +229,7 @@ export function SaudiHighchartsMap({
       {/* Map Container */}
       <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700">
         <HighchartsReact
+          key="saudi-map"
           highcharts={Highcharts}
           constructorType="mapChart"
           options={options}
