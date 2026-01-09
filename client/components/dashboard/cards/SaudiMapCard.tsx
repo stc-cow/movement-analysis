@@ -87,19 +87,14 @@ export function SaudiMapCard({
       SOUTH: "Asir",
     };
 
-    // Aggregate movements by destination region
-    currentMonth.movements.forEach((mov) => {
-      const toLoc = locations.find(
-        (l) => l.Location_ID === mov.To_Location_ID,
-      );
-      if (toLoc) {
-        const regionName = regionMap[toLoc.Region] || toLoc.Region;
-        metrics[regionName] = (metrics[regionName] || 0) + 1;
-      }
+    // Aggregate movements by destination region from mapLine data
+    currentMonth.movements.forEach((mapLine) => {
+      const regionName = regionMap[mapLine.toRegion] || mapLine.toRegion;
+      metrics[regionName] = (metrics[regionName] || 0) + 1;
     });
 
     return metrics;
-  }, [currentMonth, locations]);
+  }, [currentMonth]);
 
   // Get max metric for color scaling
   const maxRegionMetric = useMemo(() => {
