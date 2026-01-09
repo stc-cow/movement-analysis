@@ -1,21 +1,8 @@
-import {
-  MapPin,
-  BarChart3,
-  PieChart,
-  Grid3x3,
-  Warehouse,
-  TrendingUp,
-  Calendar,
-  Crown,
-  Zap,
-  Brain,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CardTab {
   id: string;
   label: string;
-  icon: React.ReactNode;
   description: string;
 }
 
