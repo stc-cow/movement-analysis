@@ -16,61 +16,51 @@ export const DASHBOARD_CARDS: CardTab[] = [
   {
     id: "executive",
     label: "Executive Overview",
-    icon: <BarChart3 className="w-5 h-5" />,
     description: "KPIs & Summary",
   },
   {
     id: "map",
     label: "Saudi Map",
-    icon: <MapPin className="w-5 h-5" />,
     description: "Movement Flows",
   },
   {
     id: "movements",
     label: "Movement Types",
-    icon: <PieChart className="w-5 h-5" />,
     description: "Full / Half / Zero",
   },
   {
     id: "regions",
     label: "Region Analysis",
-    icon: <Grid3x3 className="w-5 h-5" />,
     description: "Cross-Region Matrix",
   },
   {
     id: "warehouse",
     label: "Warehouse Intel",
-    icon: <Warehouse className="w-5 h-5" />,
     description: "Dispatch & Receive",
   },
   {
     id: "utilization",
     label: "COW Utilization",
-    icon: <TrendingUp className="w-5 h-5" />,
     description: "Usage Metrics",
   },
   {
     id: "events",
     label: "Events Analysis",
-    icon: <Calendar className="w-5 h-5" />,
     description: "Event Demand",
   },
   {
     id: "royal",
     label: "Royal / EBU",
-    icon: <Crown className="w-5 h-5" />,
     description: "VIP Deployments",
   },
   {
     id: "distance",
     label: "Distance & Cost",
-    icon: <Zap className="w-5 h-5" />,
     description: "KM & Analytics",
   },
   {
     id: "ai",
     label: "AI Readiness",
-    icon: <Brain className="w-5 h-5" />,
     description: "Future Planning",
   },
 ];
