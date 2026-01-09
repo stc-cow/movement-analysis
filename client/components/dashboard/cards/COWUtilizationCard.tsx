@@ -111,8 +111,7 @@ export function COWUtilizationCard({ cowMetrics }: COWUtilizationCardProps) {
 
         {/* Least utilized */}
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 flex-shrink-0">
-            <TrendingDown className="w-5 h-5 text-orange-600" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex-shrink-0">
             Least Utilized
           </h3>
           <div className="overflow-y-auto flex-1">
