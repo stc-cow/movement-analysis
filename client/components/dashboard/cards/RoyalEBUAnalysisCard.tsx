@@ -11,7 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { CowMovementsFact } from "@shared/models";
-import { Crown, Zap } from "lucide-react";
 
 interface RoyalEBUAnalysisCardProps {
   movements: CowMovementsFact[];
