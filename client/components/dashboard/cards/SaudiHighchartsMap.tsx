@@ -252,10 +252,13 @@ export function SaudiHighchartsMap({
           highcharts={Highcharts}
           constructorType="mapChart"
           options={options}
+          onLoad={(chart) => {
+            chartRef.current = chart;
+          }}
           containerProps={{
             style: { width: "100%", height: "100%" },
           }}
-          immutable={false}
+          immutable={true}
         />
       </div>
     </div>
