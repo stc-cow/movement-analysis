@@ -79,11 +79,11 @@ export function RegionAnalysisCard({
       {/* Two-Column Layout with Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-0">
         {/* Left Chart: Top Region Transitions */}
-        <div className="bg-gradient-to-br from-white/80 via-white/60 to-white/40 dark:from-slate-800/80 dark:via-slate-800/60 dark:to-slate-700/40 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 p-8 overflow-hidden flex flex-col backdrop-blur-sm hover:border-blue-300/50 dark:hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5">
+        <div className="bg-gradient-to-br from-white/80 via-white/60 to-white/40 dark:from-slate-800/80 dark:via-slate-800/60 dark:to-slate-700/40 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 p-8 overflow-hidden flex flex-col backdrop-blur-sm hover:border-blue-300/50 dark:hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5 min-h-0">
           <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-400 dark:to-purple-300 bg-clip-text text-transparent mb-6 flex-shrink-0 uppercase tracking-wide">
             🔄 Region Transitions
           </h3>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" className="flex-1">
             <BarChart
               data={heatmapData}
               margin={{ top: 20, right: 30, bottom: 120, left: 60 }}
