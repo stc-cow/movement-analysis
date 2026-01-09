@@ -149,30 +149,37 @@ export function SaudiMapCard({
         </div>
 
         {/* Timeline Selector */}
-        <div className="flex items-center gap-3">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Select Month:
+        <div className="flex items-center gap-3 flex-1">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            Timeline:
           </label>
-          <select
+
+          {/* Timeline Slider */}
+          <input
+            type="range"
+            min="-1"
+            max={timelineMonths.length - 1}
             value={currentMonthIndex}
             onChange={(e) => {
               setCurrentMonthIndex(parseInt(e.target.value));
               setIsPlaying(false);
             }}
-            className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-sm dark:bg-slate-700 dark:text-white bg-white hover:border-gray-300 dark:hover:border-gray-500 transition-colors"
-          >
-            <option value={-1}>All Months</option>
-            {timelineMonths.map((month, idx) => (
-              <option key={idx} value={idx}>
-                {month.month} {month.year}
-              </option>
-            ))}
-          </select>
+            className="flex-1 px-3 py-1.5"
+          />
+
+          {/* Month Label */}
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[100px]">
+            {currentMonthIndex === -1
+              ? "All Months"
+              : timelineMonths[currentMonthIndex]
+              ? `${timelineMonths[currentMonthIndex].month} ${timelineMonths[currentMonthIndex].year}`
+              : "Select"}
+          </span>
 
           {/* Play Button */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-300 font-medium text-sm"
+            className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-300 font-medium text-sm whitespace-nowrap"
           >
             {isPlaying ? "Pause" : "Play"}
           </button>
