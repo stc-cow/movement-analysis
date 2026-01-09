@@ -90,119 +90,122 @@ export function SaudiHighchartsMap({
       .filter((item) => item !== null) as [string, number][];
   }, [regionMetrics]);
 
-  const options: Highcharts.Options = {
-    chart: {
-      map: saudiGeo,
-      backgroundColor: "transparent",
-      borderWidth: 0,
-      spacingTop: 0,
-      spacingBottom: 0,
-      spacingLeft: 0,
-      spacingRight: 0,
-    },
-    title: {
-      text: null,
-    },
-    subtitle: {
-      text: null,
-    },
-    mapNavigation: {
-      enabled: false,
-    },
-    colorAxis: {
-      min: 0,
-      max: maxMetric > 0 ? maxMetric : 1,
-      type: "linear",
-      minColor: "#efe6f6",
-      maxColor: "#6a1b9a",
-      stops: [
-        [0, "#efe6f6"],
-        [0.25, "#d8b4fe"],
-        [0.5, "#b39ddb"],
-        [0.75, "#9c27b0"],
-        [1, "#6a1b9a"],
+  const options: Highcharts.Options = useMemo(
+    () => ({
+      chart: {
+        map: saudiGeo,
+        backgroundColor: "transparent",
+        borderWidth: 0,
+        spacingTop: 0,
+        spacingBottom: 0,
+        spacingLeft: 0,
+        spacingRight: 0,
+      },
+      title: {
+        text: null,
+      },
+      subtitle: {
+        text: null,
+      },
+      mapNavigation: {
+        enabled: false,
+      },
+      colorAxis: {
+        min: 0,
+        max: maxMetric > 0 ? maxMetric : 1,
+        type: "linear",
+        minColor: "#efe6f6",
+        maxColor: "#6a1b9a",
+        stops: [
+          [0, "#efe6f6"],
+          [0.25, "#d8b4fe"],
+          [0.5, "#b39ddb"],
+          [0.75, "#9c27b0"],
+          [1, "#6a1b9a"],
+        ],
+        labels: {
+          format: "{value}",
+        },
+      },
+      legend: {
+        layout: "horizontal",
+        align: "center",
+        verticalAlign: "bottom",
+        enabled: true,
+        margin: 10,
+        symbolWidth: 12,
+      },
+      plotOptions: {
+        map: {
+          dataLabels: {
+            enabled: true,
+            format: "{point.properties.name}",
+            style: {
+              fontSize: "11px",
+              fontWeight: "600",
+              color: "#1f2937",
+              textOutline: "1px 1px white",
+              textShadow: "none",
+            },
+          },
+          states: {
+            hover: {
+              brightness: 0.1,
+              borderColor: "#ffffff",
+              borderWidth: 2,
+              shadow: true,
+            },
+          },
+          borderColor: "#e5e7eb",
+          borderWidth: 1,
+          nullColor: "#f3f4f6",
+          animation: {
+            duration: 300,
+          },
+        },
+      },
+      series: [
+        {
+          type: "map",
+          name: "Movements",
+          data: chartData,
+          joinBy: ["hc-key", 0],
+          tooltip: {
+            headerFormat: "",
+            pointFormat:
+              "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+          },
+          states: {
+            hover: {
+              brightness: 0.1,
+            },
+          },
+        } as any,
       ],
-      labels: {
-        format: "{value}",
-      },
-    },
-    legend: {
-      layout: "horizontal",
-      align: "center",
-      verticalAlign: "bottom",
-      enabled: true,
-      margin: 10,
-      symbolWidth: 12,
-    },
-    plotOptions: {
-      map: {
-        dataLabels: {
-          enabled: true,
-          format: "{point.properties.name}",
-          style: {
-            fontSize: "11px",
-            fontWeight: "600",
-            color: "#1f2937",
-            textOutline: "1px 1px white",
-            textShadow: "none",
+      exporting: {
+        buttons: {
+          contextButton: {
+            menuItems: [
+              "downloadPNG",
+              "downloadJPEG",
+              "downloadPDF",
+              "downloadSVG",
+              "separator",
+              "viewFullscreen",
+            ],
+            symbolFill: "#6a1b9a",
           },
         },
-        states: {
-          hover: {
-            brightness: 0.1,
-            borderColor: "#ffffff",
-            borderWidth: 2,
-            shadow: true,
-          },
-        },
-        borderColor: "#e5e7eb",
-        borderWidth: 1,
-        nullColor: "#f3f4f6",
-        animation: {
-          duration: 300,
+        csv: {
+          dateFormat: "%Y-%m-%d",
         },
       },
-    },
-    series: [
-      {
-        type: "map",
-        name: "Movements",
-        data: chartData,
-        joinBy: ["hc-key", 0],
-        tooltip: {
-          headerFormat: "",
-          pointFormat:
-            "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
-        },
-        states: {
-          hover: {
-            brightness: 0.1,
-          },
-        },
-      } as any,
-    ],
-    exporting: {
-      buttons: {
-        contextButton: {
-          menuItems: [
-            "downloadPNG",
-            "downloadJPEG",
-            "downloadPDF",
-            "downloadSVG",
-            "separator",
-            "viewFullscreen",
-          ],
-          symbolFill: "#6a1b9a",
-        },
+      credits: {
+        enabled: false,
       },
-      csv: {
-        dateFormat: "%Y-%m-%d",
-      },
-    },
-    credits: {
-      enabled: false,
-    },
-  };
+    }),
+    [saudiGeo, maxMetric, chartData],
+  );
 
   if (loading || !saudiGeo || !modulesReady) {
     return (
