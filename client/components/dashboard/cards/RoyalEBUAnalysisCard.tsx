@@ -91,8 +91,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
 
         {/* EBU vs Non-EBU */}
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2 flex-shrink-0">
-            <Zap className="w-5 h-5 text-yellow-600" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex-shrink-0">
             EBU Classification
           </h3>
           <ResponsiveContainer width="100%" height="100%">
