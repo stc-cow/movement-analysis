@@ -40,15 +40,11 @@ export function ExecutiveOverviewCard({
     {
       label: "Total COWs",
       value: kpis.totalCOWs,
-      icon: BarChart3,
-      color: "from-blue-500 to-blue-600",
       bgColor: "bg-blue-50 dark:bg-blue-950",
     },
     {
       label: "Total Movements",
       value: kpis.totalMovements,
-      icon: Route,
-      color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-50 dark:bg-purple-950",
     },
     {
@@ -56,29 +52,21 @@ export function ExecutiveOverviewCard({
       value: kpis.totalDistanceKM.toLocaleString("en-US", {
         maximumFractionDigits: 0,
       }),
-      icon: TrendingUp,
-      color: "from-green-500 to-green-600",
       bgColor: "bg-green-50 dark:bg-green-950",
     },
     {
       label: "Active COWs",
       value: kpis.activeCOWs,
-      icon: Activity,
-      color: "from-orange-500 to-orange-600",
       bgColor: "bg-orange-50 dark:bg-orange-950",
     },
     {
       label: "Static COWs",
       value: kpis.staticCOWs,
-      icon: Lock,
-      color: "from-red-500 to-red-600",
       bgColor: "bg-red-50 dark:bg-red-950",
     },
     {
       label: "Avg Moves/COW",
       value: kpis.avgMovesPerCOW.toFixed(1),
-      icon: Zap,
-      color: "from-yellow-500 to-yellow-600",
       bgColor: "bg-yellow-50 dark:bg-yellow-950",
     },
   ];
