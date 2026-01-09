@@ -83,8 +83,7 @@ export function COWUtilizationCard({ cowMetrics }: COWUtilizationCardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         {/* Most utilized */}
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 flex-shrink-0">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex-shrink-0">
             Most Utilized
           </h3>
           <div className="overflow-y-auto flex-1">
