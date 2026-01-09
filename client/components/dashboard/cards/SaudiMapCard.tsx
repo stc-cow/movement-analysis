@@ -49,24 +49,19 @@ export function SaudiMapCard({
   useEffect(() => {
     if (!isPlaying || timelineMonths.length === 0) return;
 
-    // Initialize ref to current index
     playIndexRef.current = currentMonthIndex === -1 ? 0 : currentMonthIndex;
 
     const interval = setInterval(() => {
       playIndexRef.current++;
       if (playIndexRef.current >= timelineMonths.length) {
-        // Stop playing at the end
         setIsPlaying(false);
         return;
       }
-      // Only update state once per interval to minimize re-renders
       setCurrentMonthIndex(playIndexRef.current);
     }, 1500);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isPlaying, timelineMonths.length, currentMonthIndex]);
+    return () => clearInterval(interval);
+  }, [isPlaying, timelineMonths.length]);
 
   // Get current month or aggregate all months
   const currentMonth = useMemo(() => {
