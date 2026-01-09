@@ -1,12 +1,3 @@
-import {
-  BarChart3,
-  Zap,
-  Route,
-  TrendingUp,
-  Lock,
-  Activity,
-} from "lucide-react";
-
 interface KpiStripProps {
   totalCOWs: number;
   totalMovements: number;
