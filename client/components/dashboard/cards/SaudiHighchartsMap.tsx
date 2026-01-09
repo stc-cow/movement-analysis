@@ -98,7 +98,11 @@ export function SaudiHighchartsMap({
 
   // Update chart data when it changes (without regenerating entire options)
   useEffect(() => {
-    if (chartRef.current && chartRef.current.series && chartRef.current.series.length > 0) {
+    if (
+      chartRef.current &&
+      chartRef.current.series &&
+      chartRef.current.series.length > 0
+    ) {
       // Directly update the series data to avoid full re-render
       const chart = chartRef.current;
       try {
@@ -112,7 +116,11 @@ export function SaudiHighchartsMap({
 
   // Update color axis max when maxMetric changes
   useEffect(() => {
-    if (chartRef.current && chartRef.current.colorAxis && chartRef.current.colorAxis.length > 0) {
+    if (
+      chartRef.current &&
+      chartRef.current.colorAxis &&
+      chartRef.current.colorAxis.length > 0
+    ) {
       const chart = chartRef.current;
       try {
         chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, false);

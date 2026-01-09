@@ -85,37 +85,46 @@ export function RegionAnalysisCard({
           </h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={heatmapData}
-              margin={{ top: 20, right: 30, bottom: 120, left: 60 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" opacity={0.3} />
-              <XAxis
-                dataKey="route"
-                type="category"
-                angle={-45}
-                textAnchor="end"
-                height={100}
-                tick={{ fontSize: 11, fill: "#6b7280", fontWeight: 600 }}
-              />
-              <YAxis
-                type="number"
-                tick={{ fontSize: 12, fill: "#6b7280" }}
-                label={{ value: "Count", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "rgba(255, 255, 255, 0.95)",
-                  border: "2px solid #a855f7",
-                  borderRadius: "12px",
-                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-                  padding: "12px 16px",
-                }}
-                cursor={{ fill: "rgba(168, 85, 247, 0.15)" }}
-                formatter={(value) => [`${value} transitions`, "Count"]}
-              />
-              <Bar dataKey="count" fill="#a855f7" radius={[8, 8, 0, 0]} animationDuration={600} />
-            </BarChart>
+              <BarChart
+                data={heatmapData}
+                margin={{ top: 20, right: 30, bottom: 120, left: 60 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#d1d5db"
+                  opacity={0.3}
+                />
+                <XAxis
+                  dataKey="route"
+                  type="category"
+                  angle={-45}
+                  textAnchor="end"
+                  height={100}
+                  tick={{ fontSize: 11, fill: "#6b7280", fontWeight: 600 }}
+                />
+                <YAxis
+                  type="number"
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  label={{ value: "Count", angle: -90, position: "insideLeft" }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgba(255, 255, 255, 0.95)",
+                    border: "2px solid #a855f7",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+                    padding: "12px 16px",
+                  }}
+                  cursor={{ fill: "rgba(168, 85, 247, 0.15)" }}
+                  formatter={(value) => [`${value} transitions`, "Count"]}
+                />
+                <Bar
+                  dataKey="count"
+                  fill="#a855f7"
+                  radius={[8, 8, 0, 0]}
+                  animationDuration={600}
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -127,34 +136,47 @@ export function RegionAnalysisCard({
           </h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={crossRegionChartData}
-              margin={{ top: 20, right: 30, bottom: 60, left: 60 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" opacity={0.3} />
-              <XAxis
-                dataKey="region"
-                type="category"
-                tick={{ fontSize: 12, fill: "#6b7280", fontWeight: 600 }}
-              />
-              <YAxis
-                type="number"
-                tick={{ fontSize: 12, fill: "#6b7280" }}
-                label={{ value: "Movements", angle: -90, position: "insideLeft" }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "rgba(255, 255, 255, 0.95)",
-                  border: "2px solid #f59e0b",
-                  borderRadius: "12px",
-                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-                  padding: "12px 16px",
-                }}
-                cursor={{ fill: "rgba(245, 158, 11, 0.15)" }}
-                formatter={(value) => [`${value} movements`, "Count"]}
-              />
-              <Bar dataKey="movements" fill="#f59e0b" radius={[8, 8, 0, 0]} animationDuration={600} />
-            </BarChart>
+              <BarChart
+                data={crossRegionChartData}
+                margin={{ top: 20, right: 30, bottom: 60, left: 60 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#d1d5db"
+                  opacity={0.3}
+                />
+                <XAxis
+                  dataKey="region"
+                  type="category"
+                  tick={{ fontSize: 12, fill: "#6b7280", fontWeight: 600 }}
+                />
+                <YAxis
+                  type="number"
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  label={{
+                    value: "Movements",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgba(255, 255, 255, 0.95)",
+                    border: "2px solid #f59e0b",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+                    padding: "12px 16px",
+                  }}
+                  cursor={{ fill: "rgba(245, 158, 11, 0.15)" }}
+                  formatter={(value) => [`${value} movements`, "Count"]}
+                />
+                <Bar
+                  dataKey="movements"
+                  fill="#f59e0b"
+                  radius={[8, 8, 0, 0]}
+                  animationDuration={600}
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
