@@ -209,46 +209,53 @@ export function SaudiHighchartsMap({
     } as Highcharts.Options;
   }, [saudiGeo]);
 
-  // Update individual points when data changes - no redraw, just point updates
+  const isInitializedRef = useRef(false);
+
+  // Initialize chart with data on first load, then update smoothly
   useEffect(() => {
-    if (!chartRef.current || !saudiGeo) return;
+    if (!chartRef.current || !saudiGeo || chartData.length === 0) return;
 
     const chart = chartRef.current;
     if (!chart || !chart.series || chart.series.length === 0) return;
 
     const series = chart.series[0];
-    if (!series || !series.points) return;
+    if (!series) return;
 
-    // Create a map of hc-key to value for fast lookup
+    // First time: set all data
+    if (!isInitializedRef.current) {
+      series.setData(chartData, false);
+      isInitializedRef.current = true;
+
+      // Update colorAxis max
+      if (chart.colorAxis && chart.colorAxis.length > 0) {
+        chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, false);
+      }
+
+      chart.redraw();
+      return;
+    }
+
+    // Subsequent updates: update individual point values only
     const dataMap = new Map(chartData);
 
-    // Update each point's value based on new data
     series.points.forEach((point: any) => {
       const hcKey = point.hcKey;
       const newValue = dataMap.get(hcKey);
 
-      // Only update if value changed
       if (newValue !== undefined && newValue !== point.value) {
         point.update(
-          {
-            value: newValue,
-          },
-          false, // Don't redraw yet
-          false  // Don't animate each individual point
+          { value: newValue },
+          false // No redraw per point
         );
       }
     });
 
-    // Update colorAxis max without animation
+    // Update colorAxis range
     if (chart.colorAxis && chart.colorAxis.length > 0) {
-      chart.colorAxis[0].setExtremes(
-        0,
-        maxMetric > 0 ? maxMetric : 1,
-        false // Don't animate the axis
-      );
+      chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, false);
     }
 
-    // Single redraw at the end
+    // Single redraw with no animation flag
     chart.redraw();
   }, [chartData, maxMetric, saudiGeo]);
 
