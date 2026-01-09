@@ -176,19 +176,9 @@ export function SaudiMapCard({
           {/* Play Button */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-300 font-medium text-sm"
+            className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-300 font-medium text-sm"
           >
-            {isPlaying ? (
-              <>
-                <Pause className="w-4 h-4" />
-                Pause
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4" />
-                Play
-              </>
-            )}
+            {isPlaying ? "Pause" : "Play"}
           </button>
         </div>
 
