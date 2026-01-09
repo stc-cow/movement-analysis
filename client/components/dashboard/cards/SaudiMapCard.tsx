@@ -86,7 +86,6 @@ export function SaudiMapCard({
       EAST: "Eastern Province",
       CENTRAL: "Riyadh",
       SOUTH: "Asir",
-      NORTH: "Ha'il",
     };
 
     currentMonth.movements.forEach((mov) => {
