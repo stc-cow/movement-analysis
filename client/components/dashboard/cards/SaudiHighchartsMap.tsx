@@ -91,26 +91,11 @@ export function SaudiHighchartsMap({
       .filter((item) => item !== null) as [string, number][];
   }, [regionMetrics]);
 
-  // Update only the series data when metrics change (smooth color transition)
-  useEffect(() => {
-    if (!chartRef.current || !saudiGeo) return;
+  // Static options object - created once when geo data loads
+  const options: Highcharts.Options = useMemo(() => {
+    if (!saudiGeo) return {};
 
-    const chart = chartRef.current;
-    if (chart && chart.series && chart.series.length > 0) {
-      // Update series data with smooth animation
-      chart.series[0].setData(chartData, true, {
-        duration: 500,
-      });
-
-      // Update colorAxis max value
-      if (chart.colorAxis && chart.colorAxis.length > 0) {
-        chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, true);
-      }
-    }
-  }, [chartData, maxMetric, saudiGeo]);
-
-  const options: Highcharts.Options = useMemo(
-    () => ({
+    return {
       chart: {
         map: saudiGeo,
         backgroundColor: "transparent",
@@ -119,6 +104,7 @@ export function SaudiHighchartsMap({
         spacingBottom: 0,
         spacingLeft: 0,
         spacingRight: 0,
+        animation: false,
       },
       title: {
         text: null,
@@ -131,7 +117,7 @@ export function SaudiHighchartsMap({
       },
       colorAxis: {
         min: 0,
-        max: maxMetric > 0 ? maxMetric : 1,
+        max: 100,
         type: "linear",
         minColor: "#efe6f6",
         maxColor: "#6a1b9a",
@@ -155,6 +141,12 @@ export function SaudiHighchartsMap({
         symbolWidth: 12,
       },
       plotOptions: {
+        series: {
+          animation: {
+            duration: 800,
+            easing: "easeInOutQuad",
+          },
+        },
         map: {
           dataLabels: {
             enabled: true,
@@ -178,16 +170,13 @@ export function SaudiHighchartsMap({
           borderColor: "#e5e7eb",
           borderWidth: 1,
           nullColor: "#f3f4f6",
-          animation: {
-            duration: 300,
-          },
         },
       },
       series: [
         {
           type: "map",
           name: "Movements",
-          data: chartData,
+          data: [],
           joinBy: ["hc-key", 0],
           tooltip: {
             headerFormat: "",
@@ -222,9 +211,34 @@ export function SaudiHighchartsMap({
       credits: {
         enabled: false,
       },
-    }),
-    [saudiGeo, maxMetric, chartData],
-  );
+    } as Highcharts.Options;
+  }, [saudiGeo]);
+
+  // Update only the series data when metrics change - smooth color transition
+  useEffect(() => {
+    if (!chartRef.current || !saudiGeo) return;
+
+    const chart = chartRef.current;
+    if (!chart || !chart.series || chart.series.length === 0) return;
+
+    // Update data with smooth animation
+    chart.series[0].update(
+      {
+        data: chartData,
+      },
+      false
+    );
+
+    // Update colorAxis range with animation
+    if (chart.colorAxis && chart.colorAxis.length > 0) {
+      chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, true, {
+        duration: 800,
+      });
+    }
+
+    // Redraw to apply changes with animation
+    chart.redraw(true);
+  }, [chartData, maxMetric, saudiGeo]);
 
   if (loading || !saudiGeo || !modulesReady) {
     return (
