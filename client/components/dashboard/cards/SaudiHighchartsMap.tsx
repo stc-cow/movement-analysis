@@ -91,7 +91,7 @@ export function SaudiHighchartsMap({
       .filter((item) => item !== null) as [string, number][];
   }, [regionMetrics]);
 
-  // Static options object - created once when geo data loads
+  // Static options object - created once when geo data loads with initial data
   const options: Highcharts.Options = useMemo(() => {
     if (!saudiGeo) return {};
 
@@ -117,7 +117,7 @@ export function SaudiHighchartsMap({
       },
       colorAxis: {
         min: 0,
-        max: 100,
+        max: maxMetric > 0 ? maxMetric : 1,
         type: "linear",
         minColor: "#efe6f6",
         maxColor: "#6a1b9a",
@@ -141,12 +141,6 @@ export function SaudiHighchartsMap({
         symbolWidth: 12,
       },
       plotOptions: {
-        series: {
-          animation: {
-            duration: 800,
-            easing: "easeInOutQuad",
-          },
-        },
         map: {
           dataLabels: {
             enabled: true,
@@ -176,7 +170,7 @@ export function SaudiHighchartsMap({
         {
           type: "map",
           name: "Movements",
-          data: [],
+          data: chartData,
           joinBy: ["hc-key", 0],
           tooltip: {
             headerFormat: "",
@@ -212,32 +206,49 @@ export function SaudiHighchartsMap({
         enabled: false,
       },
     } as Highcharts.Options;
-  }, [saudiGeo]);
+  }, [saudiGeo, chartData, maxMetric]);
 
-  // Update only the series data when metrics change - smooth color transition
+  // Update individual points when data changes - no redraw, just point updates
   useEffect(() => {
     if (!chartRef.current || !saudiGeo) return;
 
     const chart = chartRef.current;
     if (!chart || !chart.series || chart.series.length === 0) return;
 
-    // Update data with smooth animation
-    chart.series[0].update(
-      {
-        data: chartData,
-      },
-      false
-    );
+    const series = chart.series[0];
+    if (!series || !series.points) return;
 
-    // Update colorAxis range with animation
+    // Create a map of hc-key to value for fast lookup
+    const dataMap = new Map(chartData);
+
+    // Update each point's value based on new data
+    series.points.forEach((point: any) => {
+      const hcKey = point.hcKey;
+      const newValue = dataMap.get(hcKey);
+
+      // Only update if value changed
+      if (newValue !== undefined && newValue !== point.value) {
+        point.update(
+          {
+            value: newValue,
+          },
+          false, // Don't redraw yet
+          false  // Don't animate each individual point
+        );
+      }
+    });
+
+    // Update colorAxis max without animation
     if (chart.colorAxis && chart.colorAxis.length > 0) {
-      chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, true, {
-        duration: 800,
-      });
+      chart.colorAxis[0].setExtremes(
+        0,
+        maxMetric > 0 ? maxMetric : 1,
+        false // Don't animate the axis
+      );
     }
 
-    // Redraw to apply changes with animation
-    chart.redraw(true);
+    // Single redraw at the end
+    chart.redraw();
   }, [chartData, maxMetric, saudiGeo]);
 
   if (loading || !saudiGeo || !modulesReady) {
