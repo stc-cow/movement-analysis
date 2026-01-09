@@ -91,6 +91,24 @@ export function SaudiHighchartsMap({
       .filter((item) => item !== null) as [string, number][];
   }, [regionMetrics]);
 
+  // Update only the series data when metrics change (smooth color transition)
+  useEffect(() => {
+    if (!chartRef.current || !saudiGeo) return;
+
+    const chart = chartRef.current;
+    if (chart && chart.series && chart.series.length > 0) {
+      // Update series data with smooth animation
+      chart.series[0].setData(chartData, true, {
+        duration: 500,
+      });
+
+      // Update colorAxis max value
+      if (chart.colorAxis && chart.colorAxis.length > 0) {
+        chart.colorAxis[0].setExtremes(0, maxMetric > 0 ? maxMetric : 1, true);
+      }
+    }
+  }, [chartData, maxMetric, saudiGeo]);
+
   const options: Highcharts.Options = useMemo(
     () => ({
       chart: {
