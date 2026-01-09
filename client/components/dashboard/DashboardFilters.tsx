@@ -229,7 +229,6 @@ export function DashboardFiltersComponent({
             onClick={handleClearFilters}
             className="text-xs"
           >
-            <X className="w-4 h-4 mr-1" />
             Clear Filters
           </Button>
         </div>
