@@ -40,34 +40,46 @@ export function ExecutiveOverviewCard({
     {
       label: "Total COWs",
       value: kpis.totalCOWs,
-      bgColor: "bg-blue-50 dark:bg-blue-950",
+      bgColor: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30",
+      accentColor: "text-blue-600 dark:text-blue-400",
+      borderColor: "border-blue-200/50 dark:border-blue-800/50",
     },
     {
       label: "Total Movements",
       value: kpis.totalMovements,
-      bgColor: "bg-purple-50 dark:bg-purple-950",
+      bgColor: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30",
+      accentColor: "text-purple-600 dark:text-purple-400",
+      borderColor: "border-purple-200/50 dark:border-purple-800/50",
     },
     {
       label: "Total Distance (KM)",
       value: kpis.totalDistanceKM.toLocaleString("en-US", {
         maximumFractionDigits: 0,
       }),
-      bgColor: "bg-green-50 dark:bg-green-950",
+      bgColor: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/30",
+      accentColor: "text-green-600 dark:text-green-400",
+      borderColor: "border-green-200/50 dark:border-green-800/50",
     },
     {
       label: "Active COWs",
       value: kpis.activeCOWs,
-      bgColor: "bg-orange-50 dark:bg-orange-950",
+      bgColor: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30",
+      accentColor: "text-orange-600 dark:text-orange-400",
+      borderColor: "border-orange-200/50 dark:border-orange-800/50",
     },
     {
       label: "Static COWs",
       value: kpis.staticCOWs,
-      bgColor: "bg-red-50 dark:bg-red-950",
+      bgColor: "bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/30",
+      accentColor: "text-red-600 dark:text-red-400",
+      borderColor: "border-red-200/50 dark:border-red-800/50",
     },
     {
       label: "Avg Moves/COW",
       value: kpis.avgMovesPerCOW.toFixed(1),
-      bgColor: "bg-yellow-50 dark:bg-yellow-950",
+      bgColor: "bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/50 dark:to-yellow-900/30",
+      accentColor: "text-yellow-600 dark:text-yellow-400",
+      borderColor: "border-yellow-200/50 dark:border-yellow-800/50",
     },
   ];
 
