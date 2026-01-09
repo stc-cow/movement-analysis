@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { Play, Pause } from "lucide-react";
 import {
   BarChart,
   Bar,
