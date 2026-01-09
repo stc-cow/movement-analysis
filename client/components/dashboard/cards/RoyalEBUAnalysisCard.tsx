@@ -56,8 +56,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
         {/* Royal vs Non-Royal */}
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2 flex-shrink-0">
-            <Crown className="w-5 h-5 text-purple-600" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex-shrink-0">
             Royal Classification
           </h3>
           <ResponsiveContainer width="100%" height="100%">
