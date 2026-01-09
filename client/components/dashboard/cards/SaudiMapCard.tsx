@@ -213,20 +213,28 @@ export function SaudiMapCard({
         <div className="w-64 border-l border-gray-200 dark:border-gray-700 p-4 overflow-auto flex flex-col">
           {/* Top Vendor Logo */}
           {vendorChartData.length > 0 && (
-            <div className="mb-4 p-3 bg-gradient-to-br from-gray-50 to-white dark:from-slate-700 dark:to-slate-800 rounded-lg border border-gray-200 dark:border-gray-600">
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Top Vendor</p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-md">
-                  {vendorChartData[0].name.slice(0, 2).toUpperCase()}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {vendorChartData[0].name}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {vendorChartData[0].value} movements
-                  </p>
-                </div>
+            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-white dark:from-slate-700 dark:to-slate-800 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center gap-3">
+              <div className="w-16 h-16 flex-shrink-0 bg-white dark:bg-slate-600 rounded-lg flex items-center justify-center shadow-sm border border-gray-200 dark:border-gray-500 overflow-hidden">
+                {VENDOR_LOGOS[vendorChartData[0].name] ? (
+                  <img
+                    src={VENDOR_LOGOS[vendorChartData[0].name]}
+                    alt={vendorChartData[0].name}
+                    className="w-full h-full object-contain p-2"
+                  />
+                ) : (
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded flex items-center justify-center text-white font-bold text-sm">
+                    {vendorChartData[0].name.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Top Vendor</p>
+                <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                  {vendorChartData[0].name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {vendorChartData[0].value} movements
+                </p>
               </div>
             </div>
           )}
