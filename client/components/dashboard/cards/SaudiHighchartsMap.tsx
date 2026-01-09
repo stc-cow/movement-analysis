@@ -123,7 +123,7 @@ export function SaudiHighchartsMap({
     }
   }, [maxMetric]);
 
-  // Base options object - only regenerated when geo data changes (not on data updates)
+  // Base options object - includes data directly for proper color rendering
   const options: Highcharts.Options = useMemo(() => {
     if (!saudiGeo) return {};
 
@@ -149,7 +149,7 @@ export function SaudiHighchartsMap({
       },
       colorAxis: {
         min: 0,
-        max: 1,
+        max: maxMetric > 0 ? maxMetric : 1,
         type: "linear",
         minColor: "#efe6f6",
         maxColor: "#6a1b9a",
@@ -206,7 +206,7 @@ export function SaudiHighchartsMap({
         {
           type: "map",
           name: "Movements",
-          data: [],
+          data: chartData,
           joinBy: ["hc-key", 0],
           tooltip: {
             headerFormat: "",
@@ -242,7 +242,7 @@ export function SaudiHighchartsMap({
         enabled: false,
       },
     } as Highcharts.Options;
-  }, [saudiGeo]);
+  }, [saudiGeo, chartData, maxMetric]);
 
   if (loading || !saudiGeo || !modulesReady) {
     return (
