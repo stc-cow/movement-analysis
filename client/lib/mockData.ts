@@ -15,7 +15,7 @@ const VENDORS = [
   "Cisco",
   "Qualcomm",
 ];
-const REGIONS = ["WEST", "EAST", "CENTRAL", "SOUTH", "NORTH"] as const;
+const REGIONS = ["WEST", "EAST", "CENTRAL", "SOUTH"] as const;
 const EVENT_TYPES: EventType[] = [
   "Hajj",
   "Umrah",
