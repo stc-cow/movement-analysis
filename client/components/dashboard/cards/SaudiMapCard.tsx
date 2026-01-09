@@ -262,11 +262,11 @@ export function SaudiMapCard({
           {vendorChartData.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200/40 dark:border-gray-700/40 text-xs space-y-2">
               {vendorChartData.map((item) => (
-                <div key={item.name} className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400 truncate">
+                <div key={item.name} className="flex justify-between items-center p-2 hover:bg-white/40 dark:hover:bg-slate-700/40 rounded-lg transition-colors duration-200">
+                  <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
                     {item.name}
                   </span>
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="font-bold text-purple-600 dark:text-purple-400 bg-purple-100/50 dark:bg-purple-950/50 px-2 py-1 rounded-md text-xs">
                     {item.value}
                   </span>
                 </div>
