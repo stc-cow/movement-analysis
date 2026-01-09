@@ -52,29 +52,19 @@ export function KpiStrip({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      {kpis.map((kpi) => {
-        const Icon = kpi.icon;
-        return (
-          <div
-            key={kpi.label}
-            className={`${kpi.bgColor} rounded-lg p-4 border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                  {kpi.label}
-                </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-                  {kpi.value}
-                </p>
-              </div>
-              <div className={`bg-gradient-to-br ${kpi.color} p-3 rounded-lg`}>
-                <Icon className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
-        );
-      })}
+      {kpis.map((kpi) => (
+        <div
+          key={kpi.label}
+          className={`${kpi.bgColor} rounded-lg p-4 border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow`}
+        >
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+            {kpi.label}
+          </p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
+            {kpi.value}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }
