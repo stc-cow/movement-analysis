@@ -199,9 +199,11 @@ export default function Dashboard() {
         <div className="px-4 py-4 flex items-center justify-between">
           {/* Logo Section */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
-              <MapPin className="w-6 h-6 text-white" />
-            </div>
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F9714b8edf4b54584a6f670699d58193d?format=webp&width=800"
+              alt="STC Logo"
+              className="h-8 object-contain"
+            />
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 COW Analytics
