@@ -7,14 +7,12 @@ interface SaudiHighchartsMapProps {
   regionMetrics: Record<string, number>;
   maxMetric: number;
   title?: string;
-  totalMovements?: number;
 }
 
 export function SaudiHighchartsMap({
   regionMetrics,
   maxMetric,
   title = "Movements by Region",
-  totalMovements = 0,
 }: SaudiHighchartsMapProps) {
   const [saudiGeo, setSaudiGeo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
