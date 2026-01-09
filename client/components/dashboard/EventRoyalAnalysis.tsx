@@ -12,7 +12,6 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CowMovementsFact, DimEvent } from "@shared/models";
-import { Crown, Zap } from "lucide-react";
 
 interface EventRoyalAnalysisProps {
   movements: CowMovementsFact[];
