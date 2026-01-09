@@ -1,14 +1,4 @@
 import {
-  BarChart3,
-  Zap,
-  Route,
-  TrendingUp,
-  Lock,
-  Activity,
-  Users,
-  MapPin,
-} from "lucide-react";
-import {
   DimCow,
   DimLocation,
   CowMovementsFact,
