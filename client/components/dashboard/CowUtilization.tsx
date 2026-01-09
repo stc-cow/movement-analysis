@@ -94,10 +94,7 @@ export function CowUtilization({ cowMetrics }: CowUtilizationProps) {
         {/* Top 10 Most Moved */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              Top 10 Most Utilized COWs
-            </CardTitle>
+            <CardTitle>Top 10 Most Utilized COWs</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
