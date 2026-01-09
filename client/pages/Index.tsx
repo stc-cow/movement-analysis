@@ -116,7 +116,6 @@ export default function Dashboard() {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-6">
         <div className="flex flex-col items-center gap-6 max-w-2xl">
-          <Database className="w-16 h-16 text-red-500" />
           <div className="text-center space-y-3">
             <p className="text-white font-bold text-2xl">
               Unable to Load Dashboard Data
