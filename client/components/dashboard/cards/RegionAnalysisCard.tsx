@@ -99,8 +99,9 @@ export function RegionAnalysisCard({
                   type="category"
                   angle={-45}
                   textAnchor="end"
-                  height={100}
-                  tick={{ fontSize: 11, fill: "#6b7280", fontWeight: 600 }}
+                  height={80}
+                  tick={{ fontSize: 10, fill: "#6b7280", fontWeight: 600 }}
+                  interval={0}
                 />
                 <YAxis
                   type="number"
