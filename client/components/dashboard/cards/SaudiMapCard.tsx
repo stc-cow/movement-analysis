@@ -29,6 +29,7 @@ export function SaudiMapCard({
   const [timelineMonths, setTimelineMonths] = useState<TimelineMonth[]>([]);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const playIndexRef = useRef(0);
 
   // Generate timeline
   useEffect(() => {
@@ -41,16 +42,15 @@ export function SaudiMapCard({
   useEffect(() => {
     if (!isPlaying || timelineMonths.length === 0) return;
 
-    let i = currentMonthIndex === -1 ? 0 : currentMonthIndex;
-    const maxMonths = timelineMonths.length;
+    playIndexRef.current = currentMonthIndex === -1 ? 0 : currentMonthIndex;
 
     const interval = setInterval(() => {
-      i++;
-      if (i > maxMonths) {
+      playIndexRef.current++;
+      if (playIndexRef.current >= timelineMonths.length) {
         setIsPlaying(false);
         return;
       }
-      setCurrentMonthIndex(i === maxMonths ? -1 : i);
+      setCurrentMonthIndex(playIndexRef.current);
     }, 1500);
 
     return () => clearInterval(interval);
