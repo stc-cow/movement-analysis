@@ -289,24 +289,6 @@ export default function Dashboard() {
           <RoyalEBUAnalysisCard movements={filteredMovements} />
         )}
 
-        {/* Distance & Cost Proxy */}
-        {activeCard === "distance" && (
-          <DistanceCostProxyCard
-            movements={filteredMovements}
-            cows={cows}
-            locations={locations}
-          />
-        )}
-
-        {/* AI Readiness */}
-        {activeCard === "ai" && (
-          <AIReadinessCard
-            cowMetrics={cowMetrics}
-            movements={filteredMovements}
-            locations={locations}
-          />
-        )}
-
         {/* Saudi Map */}
         {activeCard === "map" && (
           <SaudiMapCard
