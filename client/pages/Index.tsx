@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { MapPin, Database } from "lucide-react";
+import { Database } from "lucide-react";
 import { CardTabs, DASHBOARD_CARDS } from "@/components/dashboard/CardTabs";
 import { HeaderFilters } from "@/components/dashboard/HeaderFilters";
 import { ExecutiveOverviewCard } from "@/components/dashboard/cards/ExecutiveOverviewCard";
