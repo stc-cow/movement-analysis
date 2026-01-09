@@ -60,12 +60,9 @@ export function DashboardFiltersComponent({
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
-      <div className="flex items-center gap-3 mb-4">
-        <Filter className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Filters
-        </h2>
-      </div>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        Filters
+      </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Year Filter */}
