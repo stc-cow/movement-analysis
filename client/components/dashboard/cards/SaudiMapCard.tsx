@@ -271,6 +271,20 @@ export function SaudiMapCard({
               ))}
             </div>
           )}
+
+          {/* Total Movements KPI - Pulled Down */}
+          {currentMonth && currentMonth.movements.length > 0 && (
+            <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3">
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  Total Movements
+                </p>
+                <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                  {currentMonth.movements.length}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
