@@ -91,7 +91,8 @@ export function SaudiHighchartsMap({
       .filter((item) => item !== null) as [string, number][];
   }, [regionMetrics]);
 
-  // Static options object - created once when geo data loads with initial data
+  // Static options object - created once when geo data loads
+  // Does NOT include data or dynamic values - those are updated separately
   const options: Highcharts.Options = useMemo(() => {
     if (!saudiGeo) return {};
 
@@ -117,7 +118,7 @@ export function SaudiHighchartsMap({
       },
       colorAxis: {
         min: 0,
-        max: maxMetric > 0 ? maxMetric : 1,
+        max: 1,
         type: "linear",
         minColor: "#efe6f6",
         maxColor: "#6a1b9a",
@@ -170,7 +171,7 @@ export function SaudiHighchartsMap({
         {
           type: "map",
           name: "Movements",
-          data: chartData,
+          data: [],
           joinBy: ["hc-key", 0],
           tooltip: {
             headerFormat: "",
@@ -206,7 +207,7 @@ export function SaudiHighchartsMap({
         enabled: false,
       },
     } as Highcharts.Options;
-  }, [saudiGeo, chartData, maxMetric]);
+  }, [saudiGeo]);
 
   // Update individual points when data changes - no redraw, just point updates
   useEffect(() => {
