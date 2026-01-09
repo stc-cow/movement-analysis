@@ -109,12 +109,12 @@ export function ExecutiveOverviewCard({
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            className={`kpi-card hover-lift ${metric.bgColor}`}
+            className={`${metric.bgColor} ${metric.borderColor} border rounded-xl p-4 hover-lift transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 group`}
           >
-            <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+            <p className={`text-xs font-semibold ${metric.accentColor} uppercase tracking-wider`}>
               {metric.label}
             </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2 group-hover:scale-105 transition-transform duration-300">
               {metric.value}
             </p>
           </div>
