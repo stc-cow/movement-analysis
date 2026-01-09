@@ -22,6 +22,7 @@ export function SaudiHighchartsMap({
   const [loading, setLoading] = useState(true);
   const [modulesReady, setModulesReady] = useState(false);
   const geoDataRef = useRef<any>(null);
+  const chartRef = useRef<any>(null);
 
   // Ensure Highcharts modules are initialized
   useEffect(() => {
