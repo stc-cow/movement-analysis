@@ -252,27 +252,27 @@ export function EventsAnalysisCard({
 
       {/* Detailed event breakdown */}
       {eventData.length > 0 && (
-        <div className="flex-shrink-0 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+        <div className="flex-shrink-0 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
             Event Type Breakdown
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
             {eventData.map(({ name, value }) => (
               <div
                 key={name}
-                className="p-3 rounded border-2 text-center"
+                className="p-3 sm:p-4 rounded border-2 text-center min-h-20 sm:min-h-24 flex flex-col justify-center"
                 style={{
                   backgroundColor: `${EVENT_COLORS[name] || "#6b7280"}15`,
                   borderColor: EVENT_COLORS[name] || "#6b7280",
                 }}
               >
                 <div
-                  className="text-sm font-bold"
+                  className="text-base sm:text-lg font-bold"
                   style={{ color: EVENT_COLORS[name] || "#6b7280" }}
                 >
                   {value}
                 </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   {name}
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
