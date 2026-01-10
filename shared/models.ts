@@ -51,7 +51,9 @@ export interface CowMovementsFact {
   SN: number; // Serial Number
   COW_ID: string;
   From_Location_ID: string;
+  From_Sub_Location?: string; // Column R - Origin sub-location detail
   To_Location_ID: string;
+  To_Sub_Location?: string; // Column V - Destination sub-location detail
   Moved_DateTime: string; // ISO datetime
   Reached_DateTime: string; // ISO datetime
   Movement_Type?: MovementType;
