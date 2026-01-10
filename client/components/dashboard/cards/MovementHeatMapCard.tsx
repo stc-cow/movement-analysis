@@ -336,7 +336,7 @@ export function MovementHeatMapCard({
       </div>
 
       <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg relative">
-        {regionHeatData.length > 0 ? (
+        {originDestinationData.origins.length > 0 || originDestinationData.destinations.length > 0 ? (
           <>
             <HighchartsReact
               highcharts={Highcharts}
