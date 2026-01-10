@@ -251,7 +251,7 @@ export function MovementHeatMapCard({
       lat: p.lat,
       value: p.count,
       name: p.locationName,
-      subLocations: Array.from(p.subLocations),
+      events: Array.from(p.events),
     }));
 
     // Convert destination points to Highcharts format
@@ -260,7 +260,7 @@ export function MovementHeatMapCard({
       lat: p.lat,
       value: p.count,
       name: p.locationName,
-      subLocations: Array.from(p.subLocations),
+      events: Array.from(p.events),
     }));
 
     console.log("Origin points:", originPoints.length);
