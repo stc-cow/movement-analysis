@@ -268,6 +268,7 @@ function processData(rows: any[]) {
           row.last_deploy_date || new Date().toISOString().split("T")[0],
         First_Deploy_Date:
           row.first_deploy_date || new Date().toISOString().split("T")[0],
+        Remarks: row.remarks || "",
       });
     }
 
