@@ -48,8 +48,8 @@ export default function Dashboard() {
 
   // Calculate metrics
   const filteredMovements = useMemo(
-    () => filterMovements(enrichedMovements, filters, locations),
-    [enrichedMovements, filters, locations],
+    () => filterMovements(enrichedMovements, filters, locations, cows),
+    [enrichedMovements, filters, locations, cows],
   );
 
   const cowMetrics = useMemo(
