@@ -37,6 +37,7 @@ jobs:
         run: |
           rm -rf docs
           cp -r dist/spa docs
+          touch docs/.nojekyll
 
       - name: Commit and push docs
         run: |
