@@ -24,6 +24,8 @@ export function MovementTypesCard({
   movements,
   locations,
 }: MovementTypesCardProps) {
+  const totalMovements = movements.length;
+
   // Movement type distribution
   const movementTypeData = [
     {
@@ -39,6 +41,11 @@ export function MovementTypesCard({
       count: movements.filter((m) => m.Movement_Type === "Zero").length,
     },
   ];
+
+  const movementTypeDataWithPercentages = movementTypeData.map((item) => ({
+    ...item,
+    displayName: `${item.type} (${((item.count / totalMovements) * 100).toFixed(1)}%)`,
+  }));
 
   // Timeline data
   const timelineMap = new Map<string, Record<string, number>>();
