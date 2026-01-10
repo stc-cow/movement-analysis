@@ -69,7 +69,7 @@ export function MovementTypesCard({
   return (
     <div className="h-full overflow-y-auto flex flex-col gap-4 p-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-shrink-0">
-        {/* Distribution Pie Chart */}
+        {/* Distribution Donut Chart */}
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Movement Type Distribution
@@ -77,16 +77,17 @@ export function MovementTypesCard({
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={movementTypeData}
+                data={movementTypeDataWithPercentages}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ type, count }) => `${type}: ${count}`}
+                label={({ displayName }) => displayName}
+                innerRadius={60}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="count"
               >
-                {movementTypeData.map((entry, index) => (
+                {movementTypeDataWithPercentages.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index]} />
                 ))}
               </Pie>
@@ -96,6 +97,9 @@ export function MovementTypesCard({
                   border: "1px solid #e5e7eb",
                   borderRadius: "8px",
                 }}
+                formatter={(value: number) =>
+                  `${value} movements (${((value / totalMovements) * 100).toFixed(1)}%)`
+                }
               />
             </PieChart>
           </ResponsiveContainer>
