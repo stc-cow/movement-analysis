@@ -125,7 +125,7 @@ export function ExecutiveOverviewCard({
   ];
 
   return (
-    <div className="h-[calc(100vh-200px)] overflow-hidden flex flex-col">
+    <div className="h-full overflow-y-auto flex flex-col p-4">
       {/* KPI Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 flex-shrink-0">
         {metrics.map((metric) => (
