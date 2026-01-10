@@ -19,41 +19,40 @@ interface RoyalEBUAnalysisCardProps {
 /**
  * RoyalEBUAnalysisCard
  *
- * Displays analysis of Royal and EBU movements
+ * Displays analysis of Royal, EBU, and Non-EBU movements
  * Data source: Column E (ebu_royal_flag) from Google Sheet
- * - Is_Royal: true if column E contains "Royal"
- * - Is_EBU: true if column E contains "EBU"
+ * Three mutually exclusive categories:
+ * - ROYAL: contains "Royal"
+ * - EBU: contains "EBU" (but NOT "Royal")
+ * - NON-EBU: contains neither
  */
 export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
   const totalMovements = movements.length;
-  const royalCount = movements.filter((m) => m.Is_Royal).length;
-  const nonRoyalCount = movements.length - royalCount;
-  const ebuCount = movements.filter((m) => m.Is_EBU).length;
-  const nonEbuCount = movements.length - ebuCount;
 
-  const vipData = [
+  // Count by three mutually exclusive categories
+  const royalCount = movements.filter(
+    (m) => m.EbuRoyalCategory === "ROYAL",
+  ).length;
+  const ebuCount = movements.filter((m) => m.EbuRoyalCategory === "EBU").length;
+  const nonEbuCount = movements.filter(
+    (m) => m.EbuRoyalCategory === "NON-EBU",
+  ).length;
+
+  const categoryData = [
     {
-      name: "Royal",
+      name: "ROYAL",
       value: royalCount,
-      displayName: `Royal (${((royalCount / totalMovements) * 100).toFixed(1)}%)`,
+      displayName: `ROYAL (${((royalCount / totalMovements) * 100).toFixed(1)}%)`,
     },
-    {
-      name: "Non-Royal",
-      value: nonRoyalCount,
-      displayName: `Non-Royal (${((nonRoyalCount / totalMovements) * 100).toFixed(1)}%)`,
-    },
-  ];
-
-  const ebuData = [
     {
       name: "EBU",
       value: ebuCount,
       displayName: `EBU (${((ebuCount / totalMovements) * 100).toFixed(1)}%)`,
     },
     {
-      name: "Non-EBU",
+      name: "NON-EBU",
       value: nonEbuCount,
-      displayName: `Non-EBU (${((nonEbuCount / totalMovements) * 100).toFixed(1)}%)`,
+      displayName: `NON-EBU (${((nonEbuCount / totalMovements) * 100).toFixed(1)}%)`,
     },
   ];
 
