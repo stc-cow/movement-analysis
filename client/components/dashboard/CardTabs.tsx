@@ -25,8 +25,8 @@ export const DASHBOARD_CARDS: CardTab[] = [
   },
   {
     id: "heatmap",
-    label: "Movement Heat Map",
-    description: "Origin-Destination Matrix",
+    label: "Static COWs",
+    description: "Deployment Locations & Status",
   },
   {
     id: "regions",
