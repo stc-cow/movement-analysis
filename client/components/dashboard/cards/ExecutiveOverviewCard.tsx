@@ -163,7 +163,7 @@ export function ExecutiveOverviewCard({
   ];
 
   return (
-    <div className="h-full overflow-y-auto flex flex-col">
+    <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col">
       {/* KPI Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 flex-shrink-0 px-6 pt-6">
         {metrics.map((metric) => (
