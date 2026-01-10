@@ -148,13 +148,20 @@ export function MovementHeatMapCard({
       destination.count += flow.count;
     });
 
+    // Filter to valid coordinates (no filtering by Saudi bounds - let Highcharts handle it)
+    const origins = Array.from(originMap.values()).filter((p) =>
+      typeof p.lat === 'number' && typeof p.lon === 'number' &&
+      !isNaN(p.lat) && !isNaN(p.lon) && p.lat !== 0 && p.lon !== 0
+    );
+
+    const destinations = Array.from(destinationMap.values()).filter((p) =>
+      typeof p.lat === 'number' && typeof p.lon === 'number' &&
+      !isNaN(p.lat) && !isNaN(p.lon) && p.lat !== 0 && p.lon !== 0
+    );
+
     return {
-      origins: Array.from(originMap.values()).filter((p) =>
-        isWithinSaudiBounds(p.lat, p.lon),
-      ),
-      destinations: Array.from(destinationMap.values()).filter((p) =>
-        isWithinSaudiBounds(p.lat, p.lon),
-      ),
+      origins,
+      destinations,
     };
   }, [flowData]);
 
