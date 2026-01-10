@@ -37,25 +37,51 @@ function parseCSVData(csvText: string) {
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
     const cells = parseCSVLine(lines[i]);
-    if (cells.length >= 29 && cells[0]?.trim()) {
+    // Require at least 31 cells (A-AE columns)
+    if (cells.length >= 31 && cells[0]?.trim()) {
       rows.push({
-        cowsId: cells[0]?.trim() || "",
-        fromLocation: cells[14]?.trim() || "",
-        toLocation: cells[18]?.trim() || "",
-        fromLatitude: cells[16]?.trim() || "0",
-        fromLongitude: cells[17]?.trim() || "0",
-        toLatitude: cells[20]?.trim() || "0",
-        toLongitude: cells[21]?.trim() || "0",
-        movedDateTime: cells[10]?.trim() || "",
-        reachedDateTime: cells[12]?.trim() || "",
-        distance: cells[22]?.trim() || "0",
-        movementType: cells[23]?.trim() || "Zero",
-        regionFrom: cells[24]?.trim() || "CENTRAL",
-        regionTo: cells[25]?.trim() || "CENTRAL",
-        vendor: cells[26]?.trim() || "Unknown",
-        ebuRoyal: cells[2]?.trim() || "",
-        towerType: cells[4]?.trim() || "Macro",
-        towerHeight: cells[6]?.trim() || "0",
+        // COW & Asset Info
+        cow_id: cells[0]?.trim() || "",
+        site_label: cells[1]?.trim() || "",
+        last_deploy_date: cells[2]?.trim() || "",
+        first_deploy_date: cells[3]?.trim() || "",
+        ebu_royal_flag: cells[4]?.trim() || "",
+        shelter_type: cells[5]?.trim() || "",
+        tower_type: cells[6]?.trim() || "Macro",
+        tower_system: cells[7]?.trim() || "",
+        tower_height: cells[8]?.trim() || "0",
+        network_technology: cells[9]?.trim() || "",
+        vehicle_make: cells[10]?.trim() || "",
+        vehicle_plate_number: cells[11]?.trim() || "",
+
+        // Movement Timing
+        moved_datetime: cells[12]?.trim() || "",
+        moved_month_year: cells[13]?.trim() || "",
+        reached_datetime: cells[14]?.trim() || "",
+        reached_month_year: cells[15]?.trim() || "",
+
+        // From Location
+        from_location: cells[16]?.trim() || "",
+        from_sub_location: cells[17]?.trim() || "",
+        from_latitude: cells[18]?.trim() || "0",
+        from_longitude: cells[19]?.trim() || "0",
+
+        // To Location
+        to_location: cells[20]?.trim() || "",
+        to_sub_location: cells[21]?.trim() || "",
+        to_latitude: cells[22]?.trim() || "0",
+        to_longitude: cells[23]?.trim() || "0",
+
+        // Movement Metrics
+        distance_km: cells[24]?.trim() || "0",
+        movement_type: cells[25]?.trim() || "Zero",
+        region_from: cells[26]?.trim() || "CENTRAL",
+        region_to: cells[27]?.trim() || "CENTRAL",
+
+        // Asset Info
+        vendor: cells[28]?.trim() || "Unknown",
+        installation_status: cells[29]?.trim() || "",
+        remarks: cells[30]?.trim() || "",
       });
     }
   }
