@@ -287,7 +287,7 @@ export function ExecutiveOverviewCard({
                 Last Update
               </span>
               <span className="font-bold text-gray-900 dark:text-white">
-                Live
+                Real-time
               </span>
             </div>
           </div>
