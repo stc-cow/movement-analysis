@@ -51,16 +51,16 @@ export interface CowMovementsFact {
   SN: number; // Serial Number
   COW_ID: string;
   From_Location_ID: string;
-  From_Sub_Location?: string; // Column R - Origin sub-location detail
+  From_Sub_Location?: string; // Column R - Origin event type (Royal, EBU, Event, Normal, etc.)
   To_Location_ID: string;
-  To_Sub_Location?: string; // Column V - Destination sub-location detail
+  To_Sub_Location?: string; // Column V - Destination event type (Royal, EBU, Event, Normal, etc.)
   Moved_DateTime: string; // ISO datetime
   Reached_DateTime: string; // ISO datetime
   Movement_Type?: MovementType;
   Event_ID?: string;
   Distance_KM?: number;
-  Is_Royal?: boolean;
-  Is_EBU?: boolean;
+  Is_Royal?: boolean; // Derived from Column E (ebu_royal_flag) - true if contains "Royal"
+  Is_EBU?: boolean; // Derived from Column E (ebu_royal_flag) - true if contains "EBU"
 }
 
 // Analytics: COW aggregated metrics
