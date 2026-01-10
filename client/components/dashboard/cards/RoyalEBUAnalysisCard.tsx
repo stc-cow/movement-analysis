@@ -19,12 +19,12 @@ interface RoyalEBUAnalysisCardProps {
 /**
  * RoyalEBUAnalysisCard
  *
- * Displays analysis of Royal, EBU, and Non-EBU movements
+ * Displays analysis of Royal, EBU, and NON EBU movements
  * Data source: Column E (ebu_royal_flag) from Google Sheet
  * Three mutually exclusive categories:
  * - ROYAL: contains "Royal"
  * - EBU: contains "EBU" (but NOT "Royal")
- * - NON-EBU: contains neither
+ * - NON EBU: contains neither
  */
 export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
   const totalMovements = movements.length;
@@ -35,7 +35,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
   ).length;
   const ebuCount = movements.filter((m) => m.EbuRoyalCategory === "EBU").length;
   const nonEbuCount = movements.filter(
-    (m) => m.EbuRoyalCategory === "NON-EBU",
+    (m) => m.EbuRoyalCategory === "NON EBU",
   ).length;
 
   const categoryData = [
@@ -50,9 +50,9 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
       displayName: `EBU (${((ebuCount / totalMovements) * 100).toFixed(1)}%)`,
     },
     {
-      name: "NON-EBU",
+      name: "NON EBU",
       value: nonEbuCount,
-      displayName: `NON-EBU (${((nonEbuCount / totalMovements) * 100).toFixed(1)}%)`,
+      displayName: `NON EBU (${((nonEbuCount / totalMovements) * 100).toFixed(1)}%)`,
     },
   ];
 
