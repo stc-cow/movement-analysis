@@ -296,10 +296,11 @@ export default function Dashboard() {
           />
         )}
 
-        {/* Movement Heat Map */}
+        {/* Static COWs Map */}
         {activeCard === "heatmap" && (
-          <MovementHeatMapCard
+          <StaticCowMapCard
             movements={filteredMovements}
+            cows={cows}
             locations={locations}
           />
         )}
