@@ -191,18 +191,14 @@ export function MovementHeatMapCard({
     const originPoints = originDestinationData.origins.map((p) => ({
       lon: p.lon,
       lat: p.lat,
-      z: Math.sqrt(p.count) * 3, // Scale for marker size
       value: p.count,
-      name: `Origin: ${p.count} movements`,
     }));
 
     // Convert destination points to Highcharts format
     const destinationPoints = originDestinationData.destinations.map((p) => ({
       lon: p.lon,
       lat: p.lat,
-      z: Math.sqrt(p.count) * 3, // Scale for marker size
       value: p.count,
-      name: `Destination: ${p.count} movements`,
     }));
 
     console.log('Origin points:', originPoints.length);
