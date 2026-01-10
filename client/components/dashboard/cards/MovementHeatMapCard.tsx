@@ -231,10 +231,14 @@ export function MovementHeatMapCard({
       series: [
         {
           type: "map",
-          name: "Saudi Arabia",
-          data: [],
+          name: "Movement Heat",
+          data: regionHeatData,
+          joinBy: ["hc-key", 0],
           showInLegend: false,
-          enableMouseTracking: false,
+          tooltip: {
+            headerFormat: "",
+            pointFormat: "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+          },
         } as any,
       ],
       exporting: {
