@@ -191,6 +191,7 @@ export function MovementHeatMapCard({
       lat: p.lat,
       z: Math.sqrt(p.count) * 3, // Scale for marker size
       value: p.count,
+      name: `Origin: ${p.count} movements`,
     }));
 
     // Convert destination points to Highcharts format
@@ -199,7 +200,13 @@ export function MovementHeatMapCard({
       lat: p.lat,
       z: Math.sqrt(p.count) * 3, // Scale for marker size
       value: p.count,
+      name: `Destination: ${p.count} movements`,
     }));
+
+    console.log('Origin points:', originPoints.length);
+    console.log('Destination points:', destinationPoints.length);
+    console.log('Sample origin:', originPoints[0]);
+    console.log('Sample destination:', destinationPoints[0]);
 
     return {
       chart: {
