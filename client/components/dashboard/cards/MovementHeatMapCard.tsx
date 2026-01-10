@@ -90,16 +90,29 @@ function EnforceSaudiBoundary() {
   return null;
 }
 
+// Helper function to check if coordinates are within Saudi Arabia
+function isWithinSaudiBounds(lat: number, lon: number): boolean {
+  // Saudi Arabia bounds: South 16.4°, North 32.15°, West 34.4°, East 55.67°
+  return lat >= 16.4 && lat <= 32.15 && lon >= 34.4 && lon <= 55.67;
+}
+
 export function MovementHeatMapCard({
   movements,
   locations,
 }: MovementHeatMapCardProps) {
+  // Filter locations to only include those within Saudi Arabia
+  const validLocations = useMemo(() => {
+    return locations.filter(
+      (loc) => isWithinSaudiBounds(loc.Latitude, loc.Longitude),
+    );
+  }, [locations]);
+
   const locMap = useMemo(
-    () => new Map(locations.map((l) => [l.Location_ID, l])),
-    [locations],
+    () => new Map(validLocations.map((l) => [l.Location_ID, l])),
+    [validLocations],
   );
 
-  // Aggregate movements by from-to location pairs
+  // Aggregate movements by from-to location pairs (only valid locations)
   const flowData = useMemo(() => {
     const flowsMap = new Map<string, MovementFlow>();
 
