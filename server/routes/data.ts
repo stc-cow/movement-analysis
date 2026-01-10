@@ -196,32 +196,32 @@ function normalizeRegion(
 }
 
 /**
- * Classify Royal/EBU/Non-EBU from column E
+ * Classify Royal/EBU/NON EBU from column E
  * Three mutually exclusive categories:
  * - "ROYAL": contains "Royal"
  * - "EBU": contains "EBU" but NOT "Royal"
- * - "NON-EBU": contains neither "Royal" nor "EBU"
+ * - "NON EBU": contains neither "Royal" nor "EBU"
  */
 function classifyEbuRoyal(flag: string | undefined): {
   isRoyal: boolean;
   isEBU: boolean;
-  category: "ROYAL" | "EBU" | "NON-EBU";
+  category: "ROYAL" | "EBU" | "NON EBU";
 } {
   if (!flag) {
-    return { isRoyal: false, isEBU: false, category: "NON-EBU" };
+    return { isRoyal: false, isEBU: false, category: "NON EBU" };
   }
 
   const normalized = flag.trim().toLowerCase();
   const hasRoyal = normalized.includes("royal");
   const hasEBU = normalized.includes("ebu");
 
-  // Priority: Royal > EBU > Non-EBU
+  // Priority: Royal > EBU > NON EBU
   if (hasRoyal) {
     return { isRoyal: true, isEBU: hasEBU, category: "ROYAL" };
   } else if (hasEBU) {
     return { isRoyal: false, isEBU: true, category: "EBU" };
   } else {
-    return { isRoyal: false, isEBU: false, category: "NON-EBU" };
+    return { isRoyal: false, isEBU: false, category: "NON EBU" };
   }
 }
 
