@@ -351,29 +351,50 @@ export function MovementHeatMapCard({
               immutable={false}
             />
 
-            {/* Bottom Left: Total Movements */}
+            {/* Bottom Left: Location Counts */}
             <div className="absolute bottom-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg">
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                Total Movements
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                Locations
               </p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-                {totalMovements}
-              </p>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-purple-600"></div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    Origins: {originDestinationData.origins.length}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-pink-500"></div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    Destinations: {originDestinationData.destinations.length}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {/* Bottom Right: Color Gradient Scale */}
+            {/* Bottom Right: Marker Size Scale */}
             <div className="absolute bottom-4 right-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-3 shadow-lg">
               <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
-                Activity Intensity
+                Marker Size
               </p>
-              <div className="w-40">
-                {/* Color gradient bar */}
-                <div className="h-5 rounded overflow-hidden border border-gray-300 dark:border-gray-600 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-600"></div>
-                {/* Scale labels */}
-                <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">
-                  <span>Low</span>
-                  <span>Medium</span>
-                  <span>High</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    Low Activity
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    Medium Activity
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-gray-600"></div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    High Activity
+                  </span>
                 </div>
               </div>
             </div>
