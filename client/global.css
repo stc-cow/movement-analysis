@@ -138,7 +138,7 @@
   }
 
   .kpi-card {
-    @apply rounded-xl p-4 border border-gray-200/60 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-all duration-300 ease-out backdrop-blur-sm bg-gradient-to-br from-white/70 to-white/50 dark:from-slate-800/70 dark:to-slate-700/50;
+    @apply rounded-xl p-4 border border-blue-200/30 dark:border-gray-700/60 shadow-sm hover:shadow-md transition-all duration-300 ease-out backdrop-blur-md bg-gradient-to-br from-blue-500/5 to-purple-500/5 dark:from-slate-800/70 dark:to-slate-700/50;
   }
 
   .metric-badge {
