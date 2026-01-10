@@ -67,7 +67,7 @@ export function MovementTypesCard({
   const COLORS = ["#3b82f6", "#a855f7", "#6b7280"];
 
   return (
-    <div className="h-full overflow-y-auto flex flex-col gap-4 p-4">
+    <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 md:p-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-shrink-0">
         {/* Distribution Donut Chart */}
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
