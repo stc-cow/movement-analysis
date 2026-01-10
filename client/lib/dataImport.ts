@@ -1,36 +1,39 @@
 import { DimCow, DimLocation, CowMovementsFact } from "@shared/models";
 
-// Map Google Sheet column indices to our data structures
+// Map Google Sheet column indices to our data structures (A → AE)
+// Standard column mapping as per Builder.io specification
 interface GoogleSheetRow {
-  cowsId: string; // A
-  siteLabel: string; // B
-  ebuRoyal: string; // C
-  shelterOutdoor: string; // D
-  towerType: string; // E
-  towerSystem: string; // F
-  towerHeight: string; // G
-  networkTypes: string; // H
-  vehicleMake: string; // I
-  plateNumber: string; // J
-  movedDateTime: string; // K
-  movedMonthYear: string; // L
-  reachedDateTime: string; // M
-  reachedMonthYear: string; // N
-  fromLocation: string; // O
-  fromSubLocation: string; // P
-  fromLatitude: string; // Q
-  fromLongitude: string; // R
-  toLocation: string; // S
-  toSubLocation: string; // T
-  toLatitude: string; // U
-  toLongitude: string; // V
-  distance: string; // W
-  movementType: string; // X
-  regionFrom: string; // Y
-  regionTo: string; // Z
-  vendor: string; // AA
-  installationStatus: string; // AB
-  remarks: string; // AC
+  cow_id: string; // A
+  site_label: string; // B
+  last_deploy_date: string; // C
+  first_deploy_date: string; // D
+  ebu_royal_flag: string; // E
+  shelter_type: string; // F
+  tower_type: string; // G
+  tower_system: string; // H
+  tower_height: string; // I
+  network_technology: string; // J
+  vehicle_make: string; // K
+  vehicle_plate_number: string; // L
+  moved_datetime: string; // M
+  moved_month_year: string; // N
+  reached_datetime: string; // O
+  reached_month_year: string; // P
+  from_location: string; // Q
+  from_sub_location: string; // R
+  from_latitude: string; // S
+  from_longitude: string; // T
+  to_location: string; // U
+  to_sub_location: string; // V
+  to_latitude: string; // W
+  to_longitude: string; // X
+  distance_km: string; // Y
+  movement_type: string; // Z
+  region_from: string; // AA
+  region_to: string; // AB
+  vendor: string; // AC
+  installation_status: string; // AD
+  remarks: string; // AE
 }
 
 /**
