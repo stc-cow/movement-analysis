@@ -265,7 +265,7 @@ export function MovementHeatMapCard({
           Movement Heat Map
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Yellow to Red intensity shows movement frequency between locations
+          Heat intensity visualization of movement activity across Saudi Arabia
         </p>
       </div>
 
