@@ -178,6 +178,24 @@ export function MovementHeatMapCard({
       mapNavigation: {
         enabled: false,
       },
+      colorAxis: {
+        min: 0,
+        max: maxCount > 0 ? maxCount : 1,
+        type: "linear",
+        minColor: "#fef3c7",
+        maxColor: "#dc2626",
+        stops: [
+          [0, "#fef3c7"],
+          [0.25, "#fcd34d"],
+          [0.5, "#f59e0b"],
+          [0.75, "#f97316"],
+          [1, "#dc2626"],
+        ],
+        labels: {
+          format: "{value}",
+        },
+        animation: false,
+      },
       legend: {
         enabled: false,
       },
