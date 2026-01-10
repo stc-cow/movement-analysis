@@ -31,7 +31,17 @@ export function WarehouseIntelligenceCard({
 }: WarehouseIntelligenceCardProps) {
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>();
 
-  const warehouses = locations.filter((l) => l.Location_Type === "Warehouse");
+  // Filter to include both warehouse types and locations with "WH" in their name
+  const warehouses = useMemo(
+    () =>
+      locations.filter(
+        (l) =>
+          l.Location_Type === "Warehouse" ||
+          l.Location_Name.toUpperCase().includes("WH"),
+      ),
+    [locations],
+  );
+
   const warehouseMetrics = useMemo(
     () =>
       warehouses
