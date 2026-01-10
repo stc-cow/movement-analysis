@@ -151,7 +151,7 @@ export function ExecutiveOverviewCard({
       value: "Full / Half / Zero",
     },
     {
-      label: "Avg Fleet Utilization",
+      label: "Avg COW Utilization",
       value: `${((kpis.activeCOWs / kpis.totalCOWs) * 100).toFixed(1)}%`,
     },
   ];

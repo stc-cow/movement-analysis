@@ -39,7 +39,7 @@ export function AIReadinessCard({
       icon: <TrendingUp className="w-5 h-5" />,
       value: cowMetrics.filter((c) => c.Total_Movements > 50).length,
       description: "COWs with 50+ movements",
-      recommendation: "These are critical fleet assets",
+      recommendation: "These are critical COW assets",
       color: "text-green-600",
       bgColor: "bg-green-50 dark:bg-green-950",
     },
