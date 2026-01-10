@@ -115,10 +115,10 @@ export function MovementAnalytics({
         </CardContent>
       </Card>
 
-      {/* Region-to-Region Transitions */}
+      {/* Region-to-Region Movement */}
       <Card>
         <CardHeader>
-          <CardTitle>Top Region Transitions</CardTitle>
+          <CardTitle>Top Region Movement</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>

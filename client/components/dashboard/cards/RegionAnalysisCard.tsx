@@ -78,10 +78,10 @@ export function RegionAnalysisCard({
     <div className="h-full overflow-y-auto flex flex-col gap-5 p-6">
       {/* Two-Column Layout with Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-0">
-        {/* Left Chart: Top Region Transitions */}
+        {/* Left Chart: Top Region Movement */}
         <div className="bg-gradient-to-br from-white/80 via-white/60 to-white/40 dark:from-slate-800/80 dark:via-slate-800/60 dark:to-slate-700/40 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 p-4 overflow-hidden flex flex-col backdrop-blur-sm hover:border-blue-300/50 dark:hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5 min-h-0">
           <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-400 dark:to-purple-300 bg-clip-text text-transparent mb-4 flex-shrink-0 uppercase tracking-wide px-4">
-            🔄 Region Transitions
+            🔄 Region Movement
           </h3>
           <div className="flex-1 min-h-0 w-full">
             <ResponsiveContainer width="100%" height="100%">
