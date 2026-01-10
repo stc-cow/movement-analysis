@@ -4,7 +4,6 @@ import {
   MapContainer,
   TileLayer,
   Polyline,
-  CircleMarker,
   Popup,
   useMap,
 } from "react-leaflet";
