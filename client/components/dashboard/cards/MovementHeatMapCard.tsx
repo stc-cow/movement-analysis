@@ -123,21 +123,35 @@ export function MovementHeatMapCard({
     return Array.from(flowsMap.values()).sort((a, b) => b.count - a.count);
   }, [movements, locMap, validLocations]);
 
-  // Calculate max count for color scaling
-  const maxCount = useMemo(() => {
-    return Math.max(...flowData.map((f) => f.count), 1);
+  // Calculate heat map data by destination region
+  const regionHeatData = useMemo(() => {
+    const regionCounts: Record<string, number> = {};
+
+    // Aggregate movements by destination region
+    flowData.forEach((flow) => {
+      const regionName = flow.toLoc.Region;
+      regionCounts[regionName] = (regionCounts[regionName] || 0) + flow.count;
+    });
+
+    // Convert region names to hc-keys and create data points
+    return Object.entries(regionCounts)
+      .map(([regionName, count]) => {
+        const hcKey = regionToHcKey[regionName];
+        if (!hcKey) return null;
+        return [hcKey, count] as [string, number];
+      })
+      .filter((item) => item !== null) as [string, number][];
   }, [flowData]);
 
-  // Generate color based on movement intensity (yellow to red gradient)
-  const getColorForIntensity = (count: number, max: number): string => {
-    const intensity = Math.min(count / max, 1);
-    // Yellow (60°) to Red (0°) gradient
-    const hue = 60 * (1 - intensity); // 60° (yellow) to 0° (red)
-    const saturation = 100; // Full saturation for vibrant colors
-    const lightness = 50; // Medium lightness for visibility
+  // Calculate max count for color scaling
+  const maxCount = useMemo(() => {
+    return Math.max(...regionHeatData.map((d) => d[1]), 1);
+  }, [regionHeatData]);
 
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  };
+  // Total movements
+  const totalMovements = useMemo(() => {
+    return regionHeatData.reduce((sum, d) => sum + d[1], 0);
+  }, [regionHeatData]);
 
 
   // Highcharts options for movement heat map
