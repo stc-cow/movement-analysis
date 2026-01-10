@@ -174,7 +174,7 @@ export function ExecutiveOverviewCard({
             }}
           >
             <p
-              className={`text-xs font-semibold ${metric.accentColor} uppercase tracking-wider`}
+              className={`text-xs font-bold ${metric.accentColor} uppercase tracking-wider`}
             >
               {metric.label}
             </p>
@@ -317,33 +317,33 @@ export function ExecutiveOverviewCard({
           <h3 className="text-lg font-bold text-purple-600 mb-4 text-center">
             Coverage Summary
           </h3>
-          <div className="space-y-2 text-sm w-full text-center">
-            <div className="flex flex-col">
-              <span className="text-gray-600 mb-1">
+          <div className="space-y-2 text-sm w-full">
+            <div className="flex justify-between">
+              <span className="text-gray-600">
                 Total Regions Served
               </span>
               <span className="font-bold text-gray-900">
                 4/4
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-gray-600 mb-1">
+            <div className="flex justify-between">
+              <span className="text-gray-600">
                 Avg Distance per Move
               </span>
               <span className="font-bold text-gray-900">
                 {(kpis.totalDistanceKM / kpis.totalMovements).toFixed(0)} KM
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-gray-600 mb-1">
+            <div className="flex justify-between">
+              <span className="text-gray-600">
                 Data Span
               </span>
               <span className="font-bold text-gray-900">
                 5 years
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-gray-600 mb-1">
+            <div className="flex justify-between">
+              <span className="text-gray-600">
                 Last Update
               </span>
               <span className="font-bold text-gray-900">
