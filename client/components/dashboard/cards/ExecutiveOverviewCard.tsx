@@ -297,8 +297,7 @@ export function ExecutiveOverviewCard({
       {/* Footer note */}
       <div className="flex-1 flex items-end px-6 pb-6">
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          All metrics calculated from immutable fact table spanning 5 years of
-          operational data
+          Powered by ACES MSD
         </p>
       </div>
     </div>
