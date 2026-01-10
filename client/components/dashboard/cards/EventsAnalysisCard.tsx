@@ -82,6 +82,13 @@ export function EventsAnalysisCard({
     }))
     .sort((a, b) => b.value - a.value);
 
+  const totalMovements = movements.length;
+  const eventDataWithPercentages = eventData.map((item) => ({
+    ...item,
+    percentage: ((item.value / totalMovements) * 100).toFixed(1),
+    displayName: `${item.name} (${((item.value / totalMovements) * 100).toFixed(1)}%)`,
+  }));
+
   const distanceData = Object.entries(distanceByEvent)
     .filter(([_, data]) => data.count > 0)
     .map(([type, data]) => ({
