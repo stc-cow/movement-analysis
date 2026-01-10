@@ -383,10 +383,10 @@ export function ExecutiveOverviewCard({
                   <TableRow>
                     <TableHead className="text-left">COW ID</TableHead>
                     <TableHead className="text-left">
-                      Last Deploying Date
+                      Region
                     </TableHead>
                     <TableHead className="text-left">
-                      First Deploying Date
+                      EBU/Royal
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -397,8 +397,8 @@ export function ExecutiveOverviewCard({
                         <TableCell className="font-medium">
                           {row.cow_id}
                         </TableCell>
-                        <TableCell>{row.last_deploy_date}</TableCell>
-                        <TableCell>{row.first_deploy_date}</TableCell>
+                        <TableCell>{row.region}</TableCell>
+                        <TableCell>{row.eb_royal}</TableCell>
                       </TableRow>
                     ))
                   ) : (
