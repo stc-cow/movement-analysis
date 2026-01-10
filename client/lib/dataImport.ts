@@ -38,6 +38,7 @@ interface GoogleSheetRow {
 
 /**
  * Parse CSV data from Google Sheets
+ * Maps columns A-AE to standardized snake_case field names
  */
 export function parseCSVData(csvText: string): GoogleSheetRow[] {
   const lines = csvText.trim().split("\n");
@@ -47,37 +48,40 @@ export function parseCSVData(csvText: string): GoogleSheetRow[] {
   const rows: GoogleSheetRow[] = [];
   for (let i = 1; i < lines.length; i++) {
     const cells = parseCSVLine(lines[i]);
-    if (cells.length >= 29) {
+    // Require at least 31 cells (A-AE columns)
+    if (cells.length >= 31) {
       rows.push({
-        cowsId: cells[0]?.trim() || "",
-        siteLabel: cells[1]?.trim() || "",
-        ebuRoyal: cells[2]?.trim() || "",
-        shelterOutdoor: cells[3]?.trim() || "",
-        towerType: cells[4]?.trim() || "",
-        towerSystem: cells[5]?.trim() || "",
-        towerHeight: cells[6]?.trim() || "",
-        networkTypes: cells[7]?.trim() || "",
-        vehicleMake: cells[8]?.trim() || "",
-        plateNumber: cells[9]?.trim() || "",
-        movedDateTime: cells[10]?.trim() || "",
-        movedMonthYear: cells[11]?.trim() || "",
-        reachedDateTime: cells[12]?.trim() || "",
-        reachedMonthYear: cells[13]?.trim() || "",
-        fromLocation: cells[14]?.trim() || "",
-        fromSubLocation: cells[15]?.trim() || "",
-        fromLatitude: cells[16]?.trim() || "",
-        fromLongitude: cells[17]?.trim() || "",
-        toLocation: cells[18]?.trim() || "",
-        toSubLocation: cells[19]?.trim() || "",
-        toLatitude: cells[20]?.trim() || "",
-        toLongitude: cells[21]?.trim() || "",
-        distance: cells[22]?.trim() || "",
-        movementType: cells[23]?.trim() || "",
-        regionFrom: cells[24]?.trim() || "",
-        regionTo: cells[25]?.trim() || "",
-        vendor: cells[26]?.trim() || "",
-        installationStatus: cells[27]?.trim() || "",
-        remarks: cells[28]?.trim() || "",
+        cow_id: cells[0]?.trim() || "",
+        site_label: cells[1]?.trim() || "",
+        last_deploy_date: cells[2]?.trim() || "",
+        first_deploy_date: cells[3]?.trim() || "",
+        ebu_royal_flag: cells[4]?.trim() || "",
+        shelter_type: cells[5]?.trim() || "",
+        tower_type: cells[6]?.trim() || "",
+        tower_system: cells[7]?.trim() || "",
+        tower_height: cells[8]?.trim() || "",
+        network_technology: cells[9]?.trim() || "",
+        vehicle_make: cells[10]?.trim() || "",
+        vehicle_plate_number: cells[11]?.trim() || "",
+        moved_datetime: cells[12]?.trim() || "",
+        moved_month_year: cells[13]?.trim() || "",
+        reached_datetime: cells[14]?.trim() || "",
+        reached_month_year: cells[15]?.trim() || "",
+        from_location: cells[16]?.trim() || "",
+        from_sub_location: cells[17]?.trim() || "",
+        from_latitude: cells[18]?.trim() || "",
+        from_longitude: cells[19]?.trim() || "",
+        to_location: cells[20]?.trim() || "",
+        to_sub_location: cells[21]?.trim() || "",
+        to_latitude: cells[22]?.trim() || "",
+        to_longitude: cells[23]?.trim() || "",
+        distance_km: cells[24]?.trim() || "",
+        movement_type: cells[25]?.trim() || "",
+        region_from: cells[26]?.trim() || "",
+        region_to: cells[27]?.trim() || "",
+        vendor: cells[28]?.trim() || "",
+        installation_status: cells[29]?.trim() || "",
+        remarks: cells[30]?.trim() || "",
       });
     }
   }
