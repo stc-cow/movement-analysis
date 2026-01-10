@@ -113,15 +113,28 @@ export function MovementHeatMapCard({
       flow.movementIds.push(mov.COW_ID);
     });
 
-    const flows = Array.from(flowsMap.values()).sort((a, b) => b.count - a.count);
-    console.log('FlowData flows found:', flows.length, 'out of movements:', movements.length);
+    const flows = Array.from(flowsMap.values()).sort(
+      (a, b) => b.count - a.count,
+    );
+    console.log(
+      "FlowData flows found:",
+      flows.length,
+      "out of movements:",
+      movements.length,
+    );
     return flows;
   }, [movements, locMap]);
 
   // Get origin and destination location points
   const originDestinationData = useMemo(() => {
-    const originMap = new Map<string, { lat: number; lon: number; count: number }>();
-    const destinationMap = new Map<string, { lat: number; lon: number; count: number }>();
+    const originMap = new Map<
+      string,
+      { lat: number; lon: number; count: number }
+    >();
+    const destinationMap = new Map<
+      string,
+      { lat: number; lon: number; count: number }
+    >();
 
     flowData.forEach((flow) => {
       // Add origin
@@ -150,16 +163,24 @@ export function MovementHeatMapCard({
     });
 
     // Filter to valid coordinates (must be proper numbers, not NaN or Infinity)
-    const origins = Array.from(originMap.values()).filter((p) =>
-      typeof p.lat === 'number' && typeof p.lon === 'number' &&
-      !isNaN(p.lat) && !isNaN(p.lon) &&
-      isFinite(p.lat) && isFinite(p.lon)
+    const origins = Array.from(originMap.values()).filter(
+      (p) =>
+        typeof p.lat === "number" &&
+        typeof p.lon === "number" &&
+        !isNaN(p.lat) &&
+        !isNaN(p.lon) &&
+        isFinite(p.lat) &&
+        isFinite(p.lon),
     );
 
-    const destinations = Array.from(destinationMap.values()).filter((p) =>
-      typeof p.lat === 'number' && typeof p.lon === 'number' &&
-      !isNaN(p.lat) && !isNaN(p.lon) &&
-      isFinite(p.lat) && isFinite(p.lon)
+    const destinations = Array.from(destinationMap.values()).filter(
+      (p) =>
+        typeof p.lat === "number" &&
+        typeof p.lon === "number" &&
+        !isNaN(p.lat) &&
+        !isNaN(p.lon) &&
+        isFinite(p.lat) &&
+        isFinite(p.lon),
     );
 
     return {
@@ -179,8 +200,14 @@ export function MovementHeatMapCard({
 
   // Total movements
   const totalMovements = useMemo(() => {
-    const originTotal = originDestinationData.origins.reduce((sum, p) => sum + p.count, 0);
-    const destTotal = originDestinationData.destinations.reduce((sum, p) => sum + p.count, 0);
+    const originTotal = originDestinationData.origins.reduce(
+      (sum, p) => sum + p.count,
+      0,
+    );
+    const destTotal = originDestinationData.destinations.reduce(
+      (sum, p) => sum + p.count,
+      0,
+    );
     return Math.max(originTotal, destTotal);
   }, [originDestinationData]);
 
@@ -202,10 +229,10 @@ export function MovementHeatMapCard({
       value: p.count,
     }));
 
-    console.log('Origin points:', originPoints.length);
-    console.log('Destination points:', destinationPoints.length);
-    console.log('Sample origin:', originPoints[0]);
-    console.log('Sample destination:', destinationPoints[0]);
+    console.log("Origin points:", originPoints.length);
+    console.log("Destination points:", destinationPoints.length);
+    console.log("Sample origin:", originPoints[0]);
+    console.log("Sample destination:", destinationPoints[0]);
 
     return {
       chart: {
@@ -291,7 +318,8 @@ export function MovementHeatMapCard({
           showInLegend: true,
           tooltip: {
             headerFormat: "",
-            pointFormat: "<b>Origin</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+            pointFormat:
+              "<b>Origin</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
           },
         } as any,
         {
@@ -302,7 +330,8 @@ export function MovementHeatMapCard({
           showInLegend: true,
           tooltip: {
             headerFormat: "",
-            pointFormat: "<b>Destination</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+            pointFormat:
+              "<b>Destination</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
           },
         } as any,
       ],
@@ -355,7 +384,8 @@ export function MovementHeatMapCard({
       </div>
 
       <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg relative">
-        {originDestinationData.origins.length > 0 || originDestinationData.destinations.length > 0 ? (
+        {originDestinationData.origins.length > 0 ||
+        originDestinationData.destinations.length > 0 ? (
           <>
             <HighchartsReact
               highcharts={Highcharts}

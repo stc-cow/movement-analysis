@@ -42,7 +42,10 @@ export function ExecutiveOverviewCard({
   const staticCowsData = cowMetrics
     .filter((m) => m.Is_Static)
     .map((metric) => {
-      const regionServed = metric.Regions_Served.length > 0 ? metric.Regions_Served.join(", ") : "N/A";
+      const regionServed =
+        metric.Regions_Served.length > 0
+          ? metric.Regions_Served.join(", ")
+          : "N/A";
       const cowData = cows.find((c) => c.COW_ID === metric.COW_ID);
       const remarks = cowData?.Remarks || "N/A";
 
@@ -173,7 +176,8 @@ export function ExecutiveOverviewCard({
               metric.label === "Static COWs" ? "cursor-pointer" : ""
             }`}
             style={{
-              boxShadow: "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)"
+              boxShadow:
+                "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)",
             }}
           >
             <p
@@ -195,24 +199,27 @@ export function ExecutiveOverviewCard({
             key={idx}
             className="bg-white rounded-2xl p-4 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center text-center"
             style={{
-              boxShadow: "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)"
+              boxShadow:
+                "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)",
             }}
           >
             <p className="text-sm font-bold text-purple-600 mb-2">
               {stat.label}
             </p>
-            <p className="text-2xl font-bold text-gray-900">
-              {stat.value}
-            </p>
+            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* Movement Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-shrink-0 mb-6 px-6">
-        <div className="bg-white rounded-2xl p-6 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center" style={{
-              boxShadow: "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)"
-            }}>
+        <div
+          className="bg-white rounded-2xl p-6 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center"
+          style={{
+            boxShadow:
+              "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)",
+          }}
+        >
           <h3 className="text-lg font-bold text-purple-600 mb-4 text-center">
             Movement Classification
           </h3>
@@ -250,9 +257,7 @@ export function ExecutiveOverviewCard({
               />
             </div>
             <div className="flex justify-between items-center pt-2">
-              <span className="text-sm text-gray-600">
-                Zero Moves (WH→WH)
-              </span>
+              <span className="text-sm text-gray-600">Zero Moves (WH→WH)</span>
               <span className="font-bold text-gray-900">
                 {movementsByType.zero}
               </span>
@@ -268,9 +273,13 @@ export function ExecutiveOverviewCard({
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center" style={{
-              boxShadow: "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)"
-            }}>
+        <div
+          className="bg-white rounded-2xl p-6 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center"
+          style={{
+            boxShadow:
+              "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)",
+          }}
+        >
           <h3 className="text-lg font-bold text-purple-600 mb-4 text-center">
             Asset Status
           </h3>
@@ -314,36 +323,30 @@ export function ExecutiveOverviewCard({
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center" style={{
-              boxShadow: "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)"
-            }}>
+        <div
+          className="bg-white rounded-2xl p-6 border-2 border-purple-600 transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col items-center justify-center"
+          style={{
+            boxShadow:
+              "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)",
+          }}
+        >
           <h3 className="text-lg font-bold text-purple-600 mb-4 text-center">
             Coverage Summary
           </h3>
           <div className="space-y-2 text-sm w-full">
             <div className="flex justify-between">
-              <span className="text-gray-600">
-                Total Regions Served
-              </span>
-              <span className="font-bold text-gray-900">
-                4/4
-              </span>
+              <span className="text-gray-600">Total Regions Served</span>
+              <span className="font-bold text-gray-900">4/4</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">
-                Avg Distance per Move
-              </span>
+              <span className="text-gray-600">Avg Distance per Move</span>
               <span className="font-bold text-gray-900">
                 {(kpis.totalDistanceKM / kpis.totalMovements).toFixed(0)} KM
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">
-                Data Span
-              </span>
-              <span className="font-bold text-gray-900">
-                5 years
-              </span>
+              <span className="text-gray-600">Data Span</span>
+              <span className="font-bold text-gray-900">5 years</span>
             </div>
           </div>
         </div>
@@ -372,12 +375,8 @@ export function ExecutiveOverviewCard({
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-left">COW ID</TableHead>
-                    <TableHead className="text-left">
-                      Region
-                    </TableHead>
-                    <TableHead className="text-left">
-                      Remarks
-                    </TableHead>
+                    <TableHead className="text-left">Region</TableHead>
+                    <TableHead className="text-left">Remarks</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
