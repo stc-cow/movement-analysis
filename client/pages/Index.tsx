@@ -204,10 +204,10 @@ export default function Dashboard() {
               />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-xl font-bold text-white leading-tight">
                 COW Analytics
               </h1>
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 tracking-wide">
+              <p className="text-xs font-medium text-purple-100 tracking-wide">
                 STC COW Management
               </p>
             </div>
