@@ -314,11 +314,37 @@ const processedDataHandler: RequestHandler = async (req, res) => {
       throw new Error("No data rows found in Google Sheet");
     }
 
+    console.log(`✓ Parsed ${rows.length} data rows from CSV`);
+
     const processedData = processData(rows);
+
+    // Detailed diagnostic logging
+    if (processedData.movements.length === 0) {
+      console.warn("\n⚠️  WARNING: No movements extracted from rows!");
+      console.warn(`   Total rows parsed: ${rows.length}`);
+      console.warn(`   First row keys: ${rows.length > 0 ? Object.keys(rows[0]).join(", ") : "N/A"}`);
+      console.warn(`   First row values: ${rows.length > 0 ? JSON.stringify(rows[0]) : "N/A"}`);
+
+      // Check for data in specific fields
+      const hasCowIds = rows.some((r: any) => r.cow_id?.trim());
+      const hasFromLocations = rows.some((r: any) => r.from_location?.trim());
+      const hasToLocations = rows.some((r: any) => r.to_location?.trim());
+
+      console.warn(`   Has cow_id: ${hasCowIds}`);
+      console.warn(`   Has from_location: ${hasFromLocations}`);
+      console.warn(`   Has to_location: ${hasToLocations}`);
+      console.warn(`\n   This usually means the column mapping doesn't match the Google Sheet structure.`);
+      console.warn(`   Check that the sheet has data in columns Q (from_location), U (to_location), etc.`);
+    }
 
     console.log(
       `✓ Processed ${processedData.movements.length} movements, ${processedData.cows.length} cows, ${processedData.locations.length} locations`,
     );
+
+    if (processedData.movements.length === 0) {
+      throw new Error("No movement data found in Google Sheet - column mapping may be incorrect");
+    }
+
     res.json(processedData);
   } catch (error) {
     console.error("Error processing Google Sheet data:", error);
