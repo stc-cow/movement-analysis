@@ -1,13 +1,7 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { CowMovementsFact, DimLocation } from "@shared/models";
-import {
-  MapContainer,
-  TileLayer,
-  Polyline,
-  Popup,
-  useMap,
-} from "react-leaflet";
-import L from "leaflet";
+import Highcharts, { ensureHighchartsModules } from "@/lib/highcharts";
+import HighchartsReact from "highcharts-react-official";
 
 interface MovementHeatMapCardProps {
   movements: CowMovementsFact[];
@@ -21,84 +15,72 @@ interface MovementFlow {
   movementIds: string[];
 }
 
-// Saudi Arabia bounding box
-const SAUDI_BOUNDS = L.latLngBounds([16.4, 34.4], [32.15, 55.67]);
-
-// Custom hook to fit map bounds to all markers within Saudi Arabia
-function FitBounds({
-  locations,
-}: {
-  locations: DimLocation[];
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (locations.length === 0) return;
-
-    // Create bounds from location coordinates
-    const locationBounds = L.latLngBounds(
-      locations.map((loc) => [loc.Latitude, loc.Longitude]),
-    );
-
-    // Check if location bounds are within Saudi Arabia
-    if (SAUDI_BOUNDS.contains(locationBounds.getNorthEast()) &&
-        SAUDI_BOUNDS.contains(locationBounds.getSouthWest())) {
-      // All locations are within Saudi Arabia, fit to them
-      map.fitBounds(locationBounds, { padding: [50, 50] });
-    } else {
-      // Fit to Saudi Arabia bounds
-      map.fitBounds(SAUDI_BOUNDS, { padding: [50, 50] });
-    }
-  }, [map, locations]);
-
-  return null;
-}
-
-// Custom hook to enforce Saudi Arabia boundary
-function EnforceSaudiBoundary() {
-  const map = useMap();
-
-  useEffect(() => {
-    // Set max bounds to prevent panning outside Saudi Arabia
-    map.setMaxBounds(SAUDI_BOUNDS);
-
-    // Restrict zoom levels
-    map.setMinZoom(4); // Can't zoom out too far
-    map.setMaxZoom(15); // Can't zoom in too far
-
-    // Constrain the map view to Saudi Arabia on load and pan
-    const constrainView = () => {
-      const bounds = map.getBounds();
-      if (!SAUDI_BOUNDS.contains(bounds)) {
-        map.fitBounds(SAUDI_BOUNDS, { padding: [50, 50] });
-      }
-    };
-
-    map.on("dragend", constrainView);
-    map.on("zoomend", constrainView);
-
-    // Initial constraint
-    constrainView();
-
-    return () => {
-      map.off("dragend", constrainView);
-      map.off("zoomend", constrainView);
-    };
-  }, [map]);
-
-  return null;
-}
-
 // Helper function to check if coordinates are within Saudi Arabia
 function isWithinSaudiBounds(lat: number, lon: number): boolean {
   // Saudi Arabia bounds: South 16.4°, North 32.15°, West 34.4°, East 55.67°
   return lat >= 16.4 && lat <= 32.15 && lon >= 34.4 && lon <= 55.67;
 }
 
+// Cache for geo data to prevent re-fetching
+let geoDataCache: any = null;
+let geoDataPromise: Promise<any> | null = null;
+
 export function MovementHeatMapCard({
   movements,
   locations,
 }: MovementHeatMapCardProps) {
+  const [saudiGeo, setSaudiGeo] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [modulesReady, setModulesReady] = useState(false);
+  const chartRef = useRef<any>(null);
+
+  // Ensure Highcharts modules are initialized
+  useEffect(() => {
+    ensureHighchartsModules().then(() => {
+      setModulesReady(true);
+    });
+  }, []);
+
+  // Load Saudi geo data from Highcharts CDN with caching
+  useEffect(() => {
+    if (!modulesReady) return;
+
+    const loadGeoData = async () => {
+      try {
+        if (geoDataCache) {
+          setSaudiGeo(geoDataCache);
+          setLoading(false);
+          return;
+        }
+
+        if (geoDataPromise) {
+          const data = await geoDataPromise;
+          setSaudiGeo(data);
+          setLoading(false);
+          return;
+        }
+
+        geoDataPromise = fetch(
+          "https://code.highcharts.com/mapdata/countries/sa/sa-all.geo.json",
+        ).then(async (response) => {
+          if (!response.ok) throw new Error("Failed to fetch geo data");
+          const data = await response.json();
+          geoDataCache = data;
+          return data;
+        });
+
+        const data = await geoDataPromise;
+        setSaudiGeo(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to load Saudi geo data:", error);
+        setLoading(false);
+      }
+    };
+
+    loadGeoData();
+  }, [modulesReady]);
+
   // Filter locations to only include those within Saudi Arabia
   const validLocations = useMemo(() => {
     return locations.filter(
@@ -156,15 +138,129 @@ export function MovementHeatMapCard({
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
-  // Get unique locations for markers
-  const uniqueLocations = useMemo(() => {
-    const locSet = new Set<string>();
-    flowData.forEach((flow) => {
-      locSet.add(flow.fromLoc.Location_ID);
-      locSet.add(flow.toLoc.Location_ID);
-    });
-    return Array.from(locSet).map((id) => locMap.get(id)!);
-  }, [flowData, locMap]);
+  // Transform flow data to Highcharts mapline format
+  const maplineData = useMemo(() => {
+    return flowData.map((flow) => ({
+      point: {
+        x: flow.fromLoc.Longitude,
+        y: flow.fromLoc.Latitude,
+      },
+      pointEnd: {
+        x: flow.toLoc.Longitude,
+        y: flow.toLoc.Latitude,
+      },
+      color: getColorForIntensity(flow.count, maxCount),
+      value: flow.count,
+      fromName: flow.fromLoc.Location_Name,
+      toName: flow.toLoc.Location_Name,
+    }));
+  }, [flowData, maxCount]);
+
+  // Highcharts options for movement heat map
+  const options: Highcharts.Options = useMemo(() => {
+    if (!saudiGeo) return {};
+
+    return {
+      chart: {
+        map: saudiGeo,
+        backgroundColor: "transparent",
+        borderWidth: 0,
+        spacingTop: 0,
+        spacingBottom: 0,
+        spacingLeft: 0,
+        spacingRight: 0,
+        animation: false,
+      },
+      title: {
+        text: null,
+      },
+      subtitle: {
+        text: null,
+      },
+      mapNavigation: {
+        enabled: false,
+      },
+      legend: {
+        enabled: false,
+      },
+      plotOptions: {
+        series: {
+          animation: false,
+        },
+        map: {
+          dataLabels: {
+            enabled: false,
+          },
+          borderColor: "#e5e7eb",
+          borderWidth: 1,
+          nullColor: "#f3f4f6",
+        },
+        mapline: {
+          lineWidth: 2,
+          states: {
+            hover: {
+              brightness: 0.1,
+              lineWidth: 3,
+            },
+          },
+        },
+      },
+      series: [
+        {
+          type: "map",
+          name: "Saudi Arabia",
+          data: [],
+          showInLegend: false,
+          enableMouseTracking: false,
+        } as any,
+        {
+          type: "mapline",
+          name: "Movement Routes",
+          data: maplineData,
+          colorByPoint: true,
+          tooltip: {
+            headerFormat: "",
+            pointFormat:
+              "<b>{point.fromName} → {point.toName}</b><br/>Movements: <strong>{point.value}</strong>",
+          },
+        } as any,
+      ],
+      exporting: {
+        buttons: {
+          contextButton: {
+            menuItems: [
+              "downloadPNG",
+              "downloadJPEG",
+              "downloadPDF",
+              "downloadSVG",
+              "separator",
+              "viewFullscreen",
+            ],
+            symbolFill: "#ef4444",
+          },
+        },
+        csv: {
+          dateFormat: "%Y-%m-%d",
+        },
+      },
+      credits: {
+        enabled: false,
+      },
+    } as Highcharts.Options;
+  }, [saudiGeo, maplineData]);
+
+  if (loading || !saudiGeo || !modulesReady) {
+    return (
+      <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {!modulesReady ? "Loading Highcharts..." : "Loading map..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full overflow-y-auto flex flex-col bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
@@ -173,87 +269,53 @@ export function MovementHeatMapCard({
           Movement Heat Map
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Origin coordinates (S, T) to Destination coordinates (W, X) - Line thickness and color indicate movement frequency
+          Yellow to Red intensity shows movement frequency between locations
         </p>
       </div>
 
-      <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg">
-        {flowData.length > 0 ? (
-          <MapContainer
-            center={[24.0, 46.0]}
-            zoom={5}
-            style={{ width: "100%", height: "100%" }}
-            maxBounds={SAUDI_BOUNDS}
-            maxBoundsViscosity={1.0}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg relative">
+        {maplineData.length > 0 ? (
+          <>
+            <HighchartsReact
+              highcharts={Highcharts}
+              constructorType="mapChart"
+              options={options}
+              onLoad={(chart) => {
+                chartRef.current = chart;
+              }}
+              containerProps={{
+                style: { width: "100%", height: "100%" },
+              }}
+              immutable={false}
             />
 
-            {/* Enforce Saudi Arabia boundary */}
-            <EnforceSaudiBoundary />
+            {/* Bottom Left: Total Movements */}
+            <div className="absolute bottom-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg">
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                Total Route Movements
+              </p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                {flowData.reduce((sum, f) => sum + f.count, 0)}
+              </p>
+            </div>
 
-            {/* Draw movement flow lines */}
-            {flowData.map((flow, idx) => {
-              const color = getColorForIntensity(flow.count, maxCount);
-              const weight = Math.max(1, (flow.count / maxCount) * 8); // 1 to 8px
-              const opacity = 0.6 + (flow.count / maxCount) * 0.4; // 0.6 to 1.0
-
-              return (
-                <Polyline
-                  key={`flow-${idx}`}
-                  positions={[
-                    [flow.fromLoc.Latitude, flow.fromLoc.Longitude],
-                    [flow.toLoc.Latitude, flow.toLoc.Longitude],
-                  ]}
-                  color={color}
-                  weight={weight}
-                  opacity={opacity}
-                  dashArray={flow.count < maxCount * 0.2 ? "5, 5" : ""}
-                >
-                  <Popup>
-                    <div className="text-sm">
-                      <p className="font-bold text-gray-900 mb-2">
-                        {flow.fromLoc.Location_Name} → {flow.toLoc.Location_Name}
-                      </p>
-                      <div className="space-y-1 text-gray-700">
-                        <p>
-                          <strong>Movements:</strong> {flow.count}
-                        </p>
-                        <p>
-                          <strong>From:</strong> {flow.fromLoc.Latitude.toFixed(3)}°,{" "}
-                          {flow.fromLoc.Longitude.toFixed(3)}°
-                        </p>
-                        <p>
-                          <strong>To:</strong> {flow.toLoc.Latitude.toFixed(3)}°,{" "}
-                          {flow.toLoc.Longitude.toFixed(3)}°
-                        </p>
-                        <p>
-                          <strong>Distance:</strong>{" "}
-                          {(
-                            Math.sqrt(
-                              Math.pow(
-                                flow.toLoc.Latitude - flow.fromLoc.Latitude,
-                                2,
-                              ) +
-                                Math.pow(
-                                  flow.toLoc.Longitude - flow.fromLoc.Longitude,
-                                  2,
-                                ),
-                            ) * 111
-                          ).toFixed(1)}{" "}
-                          km
-                        </p>
-                      </div>
-                    </div>
-                  </Popup>
-                </Polyline>
-              );
-            })}
-
-            <FitBounds locations={uniqueLocations} />
-          </MapContainer>
+            {/* Bottom Right: Color Gradient Scale */}
+            <div className="absolute bottom-4 right-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-3 shadow-lg">
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                Activity Intensity
+              </p>
+              <div className="w-40">
+                {/* Color gradient bar */}
+                <div className="h-5 rounded overflow-hidden border border-gray-300 dark:border-gray-600 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-600"></div>
+                {/* Scale labels */}
+                <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">
+                  <span>Low</span>
+                  <span>Medium</span>
+                  <span>High</span>
+                </div>
+              </div>
+            </div>
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             <p className="text-lg">No movement data available</p>
