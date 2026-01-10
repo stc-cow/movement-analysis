@@ -42,11 +42,24 @@ export function ExecutiveOverviewCard({
   const staticCowsData = cowMetrics
     .filter((m) => m.Is_Static)
     .map((metric) => {
-      const cowData = cows.find((c) => c.COW_ID === metric.COW_ID);
+      const regionServed = metric.Regions_Served.length > 0 ? metric.Regions_Served.join(", ") : "N/A";
+      const cowMovements = movements.filter((m) => m.COW_ID === metric.COW_ID);
+      const isRoyal = cowMovements.some((m) => m.Is_Royal);
+      const isEBU = cowMovements.some((m) => m.Is_EBU);
+
+      let ebRoyalStatus = "No";
+      if (isRoyal && isEBU) {
+        ebRoyalStatus = "Royal & EBU";
+      } else if (isRoyal) {
+        ebRoyalStatus = "Royal";
+      } else if (isEBU) {
+        ebRoyalStatus = "EBU";
+      }
+
       return {
         cow_id: metric.COW_ID,
-        last_deploy_date: cowData?.Last_Deploy_Date || "N/A",
-        first_deploy_date: cowData?.First_Deploy_Date || "N/A",
+        region: regionServed,
+        eb_royal: ebRoyalStatus,
       };
     });
   // Filter to include both warehouse types and locations with "WH" in their name
