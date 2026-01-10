@@ -342,14 +342,6 @@ export function ExecutiveOverviewCard({
                 5 years
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">
-                Last Update
-              </span>
-              <span className="font-bold text-gray-900">
-                Real-time
-              </span>
-            </div>
           </div>
         </div>
       </div>
