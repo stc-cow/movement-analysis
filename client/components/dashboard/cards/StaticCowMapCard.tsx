@@ -204,16 +204,6 @@ export function StaticCowMapCard({
   if (staticCowCount === 0) {
     return (
       <div className="h-full w-full flex flex-col bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
-        <div className="flex-shrink-0 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Static COWs Distribution
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            COWs with exactly one movement only - showing initial deployment
-            locations and status (ON-AIR/Inactive)
-          </p>
-        </div>
-
         <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg flex items-center justify-center">
           <p className="text-lg text-gray-400">
             No static COWs (COWs with exactly 1 movement) found
