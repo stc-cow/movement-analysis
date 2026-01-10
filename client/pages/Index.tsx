@@ -192,19 +192,19 @@ export default function Dashboard() {
     <div className="h-screen w-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden">
       {/* Fixed Header with Enhanced Design */}
       <header className="flex-shrink-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 border-b border-purple-700/40 backdrop-blur-xl shadow-lg shadow-purple-500/20">
-        <div className="px-6 py-4 flex items-center justify-between">
+        <div className="px-6 py-2 flex items-center justify-between gap-4">
           {/* Logo Section with Modern Styling */}
-          <div className="flex items-center gap-3 flex-shrink-0 group cursor-pointer">
+          <div className="flex items-center gap-2 flex-shrink-0 group cursor-pointer">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F9714b8edf4b54584a6f670699d58193d?format=webp&width=800"
                 alt="STC Logo"
-                className="h-8 object-contain relative z-10 transition-transform duration-300 group-hover:scale-105"
+                className="h-6 object-contain relative z-10 transition-transform duration-300 group-hover:scale-105"
               />
             </div>
-            <div className="space-y-0.5">
-              <h1 className="text-xl font-bold text-white leading-tight">
+            <div className="space-y-0">
+              <h1 className="text-lg font-bold text-white leading-tight">
                 COW Analytics
               </h1>
               <p className="text-xs font-medium text-purple-100 tracking-wide">
@@ -214,7 +214,7 @@ export default function Dashboard() {
           </div>
 
           {/* Filters Section */}
-          <div className="flex-1 mx-8">
+          <div className="flex-1 mx-4">
             <HeaderFilters
               filters={filters}
               onFiltersChange={setFilters}
@@ -229,7 +229,7 @@ export default function Dashboard() {
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F517b5a99a8d64dec873728f66fb46b24?format=webp&width=800"
               alt="ACES Logo"
-              className="h-24 object-contain relative transition-transform duration-300 group-hover:scale-105"
+              className="h-16 object-contain relative transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         </div>
