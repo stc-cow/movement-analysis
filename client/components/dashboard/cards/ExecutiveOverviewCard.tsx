@@ -195,7 +195,7 @@ export function ExecutiveOverviewCard({
               boxShadow: "0 10px 25px -5px rgba(168, 85, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.05)"
             }}
           >
-            <p className="text-sm font-semibold text-gray-600 mb-2">
+            <p className="text-sm font-bold text-purple-600 mb-2">
               {stat.label}
             </p>
             <p className="text-2xl font-bold text-gray-900">
