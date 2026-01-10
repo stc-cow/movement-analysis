@@ -29,11 +29,6 @@ export const DASHBOARD_CARDS: CardTab[] = [
     description: "Origin-Destination Matrix",
   },
   {
-    id: "movements",
-    label: "Movement Types",
-    description: "Full / Half / Zero",
-  },
-  {
     id: "regions",
     label: "Region Analysis",
     description: "Cross-Region Matrix",
