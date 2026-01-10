@@ -178,6 +178,22 @@ export function MovementHeatMapCard({
   const options: Highcharts.Options = useMemo(() => {
     if (!saudiGeo) return {};
 
+    // Convert origin points to Highcharts format
+    const originPoints = originDestinationData.origins.map((p) => ({
+      lon: p.lon,
+      lat: p.lat,
+      z: Math.sqrt(p.count) * 3, // Scale for marker size
+      value: p.count,
+    }));
+
+    // Convert destination points to Highcharts format
+    const destinationPoints = originDestinationData.destinations.map((p) => ({
+      lon: p.lon,
+      lat: p.lat,
+      z: Math.sqrt(p.count) * 3, // Scale for marker size
+      value: p.count,
+    }));
+
     return {
       chart: {
         map: saudiGeo,
@@ -198,26 +214,16 @@ export function MovementHeatMapCard({
       mapNavigation: {
         enabled: false,
       },
-      colorAxis: {
-        min: 0,
-        max: maxCount > 0 ? maxCount : 1,
-        type: "linear",
-        minColor: "#fef3c7",
-        maxColor: "#dc2626",
-        stops: [
-          [0, "#fef3c7"],
-          [0.25, "#fcd34d"],
-          [0.5, "#f59e0b"],
-          [0.75, "#f97316"],
-          [1, "#dc2626"],
-        ],
-        labels: {
-          format: "{value}",
-        },
-        animation: false,
-      },
       legend: {
-        enabled: false,
+        enabled: true,
+        layout: "vertical",
+        align: "right",
+        verticalAlign: "top",
+        y: 70,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderColor: "#e5e7eb",
+        borderWidth: 1,
+        borderRadius: 8,
       },
       plotOptions: {
         series: {
@@ -237,18 +243,47 @@ export function MovementHeatMapCard({
             },
           },
         },
+        mappoint: {
+          dataLabels: {
+            enabled: false,
+          },
+          states: {
+            hover: {
+              brightness: 0.2,
+            },
+          },
+        },
       },
       series: [
         {
           type: "map",
-          name: "Movement Heat",
-          data: regionHeatData,
-          joinBy: ["hc-key", 0],
+          name: "Base Map",
+          data: [],
           showInLegend: false,
+          borderColor: "#e5e7eb",
+          borderWidth: 1,
+          nullColor: "#f0f0f0",
+        } as any,
+        {
+          type: "mappoint",
+          name: "Origin Locations",
+          color: "#a855f7",
+          data: originPoints,
+          showInLegend: true,
           tooltip: {
             headerFormat: "",
-            pointFormat:
-              "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+            pointFormat: "<b>Origin</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+          },
+        } as any,
+        {
+          type: "mappoint",
+          name: "Destination Locations",
+          color: "#ec4899",
+          data: destinationPoints,
+          showInLegend: true,
+          tooltip: {
+            headerFormat: "",
+            pointFormat: "<b>Destination</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
           },
         } as any,
       ],
@@ -263,7 +298,7 @@ export function MovementHeatMapCard({
               "separator",
               "viewFullscreen",
             ],
-            symbolFill: "#ef4444",
+            symbolFill: "#a855f7",
           },
         },
         csv: {
@@ -274,7 +309,7 @@ export function MovementHeatMapCard({
         enabled: false,
       },
     } as Highcharts.Options;
-  }, [saudiGeo, regionHeatData, maxCount]);
+  }, [saudiGeo, originDestinationData, maxCount]);
 
   if (loading || !saudiGeo || !modulesReady) {
     return (
