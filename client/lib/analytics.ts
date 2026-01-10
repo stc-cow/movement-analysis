@@ -73,8 +73,7 @@ export function enrichMovements(
 
     // Use the original Movement_Type from Google Sheet if available
     // Otherwise, classify based on location types
-    const movementType =
-      mov.Movement_Type || classifyMovement(mov, locMap);
+    const movementType = mov.Movement_Type || classifyMovement(mov, locMap);
 
     const distance =
       fromLoc && toLoc
@@ -170,7 +169,10 @@ export function calculateWarehouseMetrics(
   const location = locations.find((l) => l.Location_ID === locationId);
 
   // Check if it's a warehouse - either by type or if the name contains "WH"
-  const isWarehouse = location && (location.Location_Type === "Warehouse" || location.Location_Name.toUpperCase().includes("WH"));
+  const isWarehouse =
+    location &&
+    (location.Location_Type === "Warehouse" ||
+      location.Location_Name.toUpperCase().includes("WH"));
 
   if (!location || !isWarehouse) return null;
 

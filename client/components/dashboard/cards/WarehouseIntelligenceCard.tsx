@@ -109,7 +109,10 @@ export function WarehouseIntelligenceCard({
             </div>
           </div>
         </div>
-        <WarehouseLocationMap warehouses={warehouses} selectedRegion={selectedRegion} />
+        <WarehouseLocationMap
+          warehouses={warehouses}
+          selectedRegion={selectedRegion}
+        />
       </div>
 
       {/* Charts Section */}
@@ -223,12 +226,18 @@ export function WarehouseIntelligenceCard({
                   </TableCell>
                   <TableCell className="py-3 text-gray-600 dark:text-gray-400">
                     <span className="inline-block px-2 py-1 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold">
-                      {warehouses.find((w) => w.Location_ID === m!.Location_ID)?.Region}
+                      {
+                        warehouses.find((w) => w.Location_ID === m!.Location_ID)
+                          ?.Region
+                      }
                     </span>
                   </TableCell>
                   <TableCell className="py-3 text-gray-600 dark:text-gray-400">
                     <span className="inline-block px-2 py-1 rounded bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs font-semibold">
-                      {warehouses.find((w) => w.Location_ID === m!.Location_ID)?.Owner}
+                      {
+                        warehouses.find((w) => w.Location_ID === m!.Location_ID)
+                          ?.Owner
+                      }
                     </span>
                   </TableCell>
                   <TableCell className="text-right py-3 font-semibold text-green-600 dark:text-green-400">
@@ -257,19 +266,31 @@ export function WarehouseIntelligenceCard({
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-900 dark:to-slate-800 rounded-xl border border-gray-200/60 dark:border-gray-700/40 p-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#3A0CA3" }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: "#3A0CA3" }}
+            />
             <span className="text-gray-700 dark:text-gray-300">STC</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#5F2EEA" }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: "#5F2EEA" }}
+            />
             <span className="text-gray-700 dark:text-gray-300">ACES</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#06B6D4" }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: "#06B6D4" }}
+            />
             <span className="text-gray-700 dark:text-gray-300">Madaf</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F97316" }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: "#F97316" }}
+            />
             <span className="text-gray-700 dark:text-gray-300">HOI</span>
           </div>
         </div>

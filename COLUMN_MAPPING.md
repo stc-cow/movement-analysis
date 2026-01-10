@@ -6,49 +6,51 @@
 
 ## Complete Column Mapping (A → AE)
 
-| Column | Field Name | Type | Original Meaning | Usage |
-|--------|-----------|------|-----------------|-------|
-| A | `cow_id` | String | COWs ID | Primary key for movements/COWs |
-| B | `site_label` | String | Site Label | Location/deployment label |
-| C | `last_deploy_date` | Date | Last Deploying Date | Time-based analytics |
-| D | `first_deploy_date` | Date | 1st Deploying Date | Time-based analytics |
-| E | `ebu_royal_flag` | String | EBU / Royal | Classification flag |
-| F | `shelter_type` | String | Shelter / Outdoor | Asset type |
-| G | `tower_type` | String | Tower Type | Asset specification |
-| H | `tower_system` | String | Tower System | Asset specification |
-| I | `tower_height` | Float | Tower Height (m) | Asset specification |
-| J | `network_technology` | String | 2G / 4G / LTE / 5G | Network capability |
-| K | `vehicle_make` | String | Vehicle Make | Equipment info |
-| L | `vehicle_plate_number` | String | Plate # | Equipment tracking |
-| M | `moved_datetime` | DateTime | Moved Date / Time | Movement timeline |
-| N | `moved_month_year` | String | Moved Month / Year | Movement timeline |
-| O | `reached_datetime` | DateTime | Reached Date / Time | Movement timeline |
-| P | `reached_month_year` | String | Reached Month / Year | Movement timeline |
-| Q | `from_location` | String | From Location | Movement origin |
-| R | `from_sub_location` | String | From Sub Location | Movement origin detail |
-| S | `from_latitude` | Float | From Latitude | Map visualization |
-| T | `from_longitude` | Float | From Longitude | Map visualization |
-| U | `to_location` | String | To Location | Movement destination |
-| V | `to_sub_location` | String | To Sub Location | Movement destination detail |
-| W | `to_latitude` | Float | To Latitude | Map visualization |
-| X | `to_longitude` | Float | To Longitude | Map visualization |
-| Y | `distance_km` | Float | Distance (KM) | Movement KPI |
-| Z | `movement_type` | String | Movement Type (Full/Half/Zero) | Movement classification |
-| AA | `region_from` | String | Region From (WEST/EAST/CENTRAL/SOUTH) | Regional analytics |
-| AB | `region_to` | String | Region To (WEST/EAST/CENTRAL/SOUTH) | Regional analytics |
-| AC | `vendor` | String | Vendor (STC/ACES/Madaf/HOI) | Asset ownership |
-| AD | `installation_status` | String | Installation Status | Asset status |
-| AE | `remarks` | String | Remarks | Free-form notes |
+| Column | Field Name             | Type     | Original Meaning                      | Usage                          |
+| ------ | ---------------------- | -------- | ------------------------------------- | ------------------------------ |
+| A      | `cow_id`               | String   | COWs ID                               | Primary key for movements/COWs |
+| B      | `site_label`           | String   | Site Label                            | Location/deployment label      |
+| C      | `last_deploy_date`     | Date     | Last Deploying Date                   | Time-based analytics           |
+| D      | `first_deploy_date`    | Date     | 1st Deploying Date                    | Time-based analytics           |
+| E      | `ebu_royal_flag`       | String   | EBU / Royal                           | Classification flag            |
+| F      | `shelter_type`         | String   | Shelter / Outdoor                     | Asset type                     |
+| G      | `tower_type`           | String   | Tower Type                            | Asset specification            |
+| H      | `tower_system`         | String   | Tower System                          | Asset specification            |
+| I      | `tower_height`         | Float    | Tower Height (m)                      | Asset specification            |
+| J      | `network_technology`   | String   | 2G / 4G / LTE / 5G                    | Network capability             |
+| K      | `vehicle_make`         | String   | Vehicle Make                          | Equipment info                 |
+| L      | `vehicle_plate_number` | String   | Plate #                               | Equipment tracking             |
+| M      | `moved_datetime`       | DateTime | Moved Date / Time                     | Movement timeline              |
+| N      | `moved_month_year`     | String   | Moved Month / Year                    | Movement timeline              |
+| O      | `reached_datetime`     | DateTime | Reached Date / Time                   | Movement timeline              |
+| P      | `reached_month_year`   | String   | Reached Month / Year                  | Movement timeline              |
+| Q      | `from_location`        | String   | From Location                         | Movement origin                |
+| R      | `from_sub_location`    | String   | From Sub Location                     | Movement origin detail         |
+| S      | `from_latitude`        | Float    | From Latitude                         | Map visualization              |
+| T      | `from_longitude`       | Float    | From Longitude                        | Map visualization              |
+| U      | `to_location`          | String   | To Location                           | Movement destination           |
+| V      | `to_sub_location`      | String   | To Sub Location                       | Movement destination detail    |
+| W      | `to_latitude`          | Float    | To Latitude                           | Map visualization              |
+| X      | `to_longitude`         | Float    | To Longitude                          | Map visualization              |
+| Y      | `distance_km`          | Float    | Distance (KM)                         | Movement KPI                   |
+| Z      | `movement_type`        | String   | Movement Type (Full/Half/Zero)        | Movement classification        |
+| AA     | `region_from`          | String   | Region From (WEST/EAST/CENTRAL/SOUTH) | Regional analytics             |
+| AB     | `region_to`            | String   | Region To (WEST/EAST/CENTRAL/SOUTH)   | Regional analytics             |
+| AC     | `vendor`               | String   | Vendor (STC/ACES/Madaf/HOI)           | Asset ownership                |
+| AD     | `installation_status`  | String   | Installation Status                   | Asset status                   |
+| AE     | `remarks`              | String   | Remarks                               | Free-form notes                |
 
 ## Why This Structure Works Well
 
 ### ✅ Developer-Friendly
+
 - **Camel/snake-case safe** (no spaces, no symbols, no special characters)
 - **Consistent naming** across frontend + backend
 - **Easy to bind** to UI components and filters
 - **Database-ready** for SQL/BigQuery/Power BI
 
 ### ✅ Dashboard-Ready
+
 ```
 Map Components:
   from_latitude, from_longitude → Origin pin
@@ -74,10 +76,12 @@ Timeline:
 ## Implementation Files
 
 ### Backend
+
 - **`server/routes/data.ts`** - Parses CSV and maps columns A-AE to snake_case fields
 - **`client/lib/dataImport.ts`** - Client-side CSV parsing with same mapping
 
 ### Frontend Components Using These Fields
+
 - **ExecutiveOverviewCard.tsx** - Uses COW counts, movement types
 - **SaudiMapCard.tsx** - Uses lat/long for mapping
 - **RegionAnalysisCard.tsx** - Uses region_from/region_to for transitions
@@ -89,26 +93,26 @@ Timeline:
 ```typescript
 // Movement Object (from parseCSVData)
 {
-  cow_id: string;                    // "COW-001"
-  site_label: string;                // "Riyadh Central"
-  ebu_royal_flag: string;            // "Royal" | "EBU" | ""
-  shelter_type: string;              // "Shelter" | "Outdoor"
-  tower_type: string;                // "Macro" | "Small Cell" | "Micro Cell"
-  network_technology: string;        // "2G" | "4G" | "5G" | "LTE"
-  moved_datetime: DateTime;          // ISO 8601 format
-  reached_datetime: DateTime;        // ISO 8601 format
-  from_location: string;             // Location name
-  from_latitude: number;             // 24.7136
-  from_longitude: number;            // 46.6753
-  to_location: string;               // Location name
-  to_latitude: number;               // 21.5433
-  to_longitude: number;              // 39.172
-  distance_km: number;               // 234.5
-  movement_type: string;             // "Full" | "Half" | "Zero"
-  region_from: string;               // "WEST" | "EAST" | "CENTRAL" | "SOUTH"
-  region_to: string;                 // "WEST" | "EAST" | "CENTRAL" | "SOUTH"
-  vendor: string;                    // "STC" | "ACES" | "Madaf" | "HOI"
-  installation_status: string;       // "Active" | "Inactive" | etc.
+  cow_id: string; // "COW-001"
+  site_label: string; // "Riyadh Central"
+  ebu_royal_flag: string; // "Royal" | "EBU" | ""
+  shelter_type: string; // "Shelter" | "Outdoor"
+  tower_type: string; // "Macro" | "Small Cell" | "Micro Cell"
+  network_technology: string; // "2G" | "4G" | "5G" | "LTE"
+  moved_datetime: DateTime; // ISO 8601 format
+  reached_datetime: DateTime; // ISO 8601 format
+  from_location: string; // Location name
+  from_latitude: number; // 24.7136
+  from_longitude: number; // 46.6753
+  to_location: string; // Location name
+  to_latitude: number; // 21.5433
+  to_longitude: number; // 39.172
+  distance_km: number; // 234.5
+  movement_type: string; // "Full" | "Half" | "Zero"
+  region_from: string; // "WEST" | "EAST" | "CENTRAL" | "SOUTH"
+  region_to: string; // "WEST" | "EAST" | "CENTRAL" | "SOUTH"
+  vendor: string; // "STC" | "ACES" | "Madaf" | "HOI"
+  installation_status: string; // "Active" | "Inactive" | etc.
 }
 ```
 
@@ -119,6 +123,7 @@ https://docs.google.com/spreadsheets/d/SHEET_ID/export?format=csv&gid=GID
 ```
 
 **Current Configuration:**
+
 - Sheet ID: `1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM`
 - GID: `1539310010`
 - Environment Variables: `GOOGLE_SHEET_ID`, `GOOGLE_SHEET_GID`
@@ -126,6 +131,7 @@ https://docs.google.com/spreadsheets/d/SHEET_ID/export?format=csv&gid=GID
 ## Future Integration Examples
 
 ### REST API Endpoint
+
 ```json
 GET /api/data
 Response:
@@ -145,8 +151,9 @@ Response:
 ```
 
 ### SQL Query Example
+
 ```sql
-SELECT 
+SELECT
   cow_id,
   from_location,
   to_location,
@@ -163,6 +170,7 @@ ORDER BY moved_datetime DESC;
 ```
 
 ### Power BI / Looker Integration
+
 ```
 Dimensions:
   - vendor
@@ -175,7 +183,7 @@ Measures:
   - COUNT(cow_id)
   - SUM(distance_km)
   - AVG(distance_km)
-  
+
 Date Fields:
   - moved_datetime
   - reached_datetime

@@ -46,7 +46,9 @@ function parseCSVData(csvText: string) {
   // New structure has more columns before from_location
   const isNewStructure = firstDataCells.length >= 31;
 
-  console.log(`Detected ${isNewStructure ? "NEW" : "OLD"} column structure (${firstDataCells.length} columns)`);
+  console.log(
+    `Detected ${isNewStructure ? "NEW" : "OLD"} column structure (${firstDataCells.length} columns)`,
+  );
 
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
@@ -251,13 +253,21 @@ function processData(rows: any[]) {
             : "Macro",
         Tower_Height: parseFloat(row.tower_height) || 0,
         Network_2G: row.network_technology?.includes("2G") || false,
-        Network_4G: row.network_technology?.includes("4G") || row.network_technology?.includes("LTE") || false,
+        Network_4G:
+          row.network_technology?.includes("4G") ||
+          row.network_technology?.includes("LTE") ||
+          false,
         Network_5G: row.network_technology?.includes("5G") || false,
-        Shelter_Type: row.shelter_type?.includes("Shelter") ? "Shelter" : "Outdoor",
+        Shelter_Type: row.shelter_type?.includes("Shelter")
+          ? "Shelter"
+          : "Outdoor",
         Vendor: row.vendor || "Unknown",
-        Installation_Date: row.first_deploy_date || new Date().toISOString().split("T")[0],
-        Last_Deploy_Date: row.last_deploy_date || new Date().toISOString().split("T")[0],
-        First_Deploy_Date: row.first_deploy_date || new Date().toISOString().split("T")[0],
+        Installation_Date:
+          row.first_deploy_date || new Date().toISOString().split("T")[0],
+        Last_Deploy_Date:
+          row.last_deploy_date || new Date().toISOString().split("T")[0],
+        First_Deploy_Date:
+          row.first_deploy_date || new Date().toISOString().split("T")[0],
       });
     }
 
@@ -372,8 +382,12 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     if (processedData.movements.length === 0) {
       console.warn("\n⚠️  WARNING: No movements extracted from rows!");
       console.warn(`   Total rows parsed: ${rows.length}`);
-      console.warn(`   First row keys: ${rows.length > 0 ? Object.keys(rows[0]).join(", ") : "N/A"}`);
-      console.warn(`   First row values: ${rows.length > 0 ? JSON.stringify(rows[0]) : "N/A"}`);
+      console.warn(
+        `   First row keys: ${rows.length > 0 ? Object.keys(rows[0]).join(", ") : "N/A"}`,
+      );
+      console.warn(
+        `   First row values: ${rows.length > 0 ? JSON.stringify(rows[0]) : "N/A"}`,
+      );
 
       // Check for data in specific fields
       const hasCowIds = rows.some((r: any) => r.cow_id?.trim());
@@ -383,8 +397,12 @@ const processedDataHandler: RequestHandler = async (req, res) => {
       console.warn(`   Has cow_id: ${hasCowIds}`);
       console.warn(`   Has from_location: ${hasFromLocations}`);
       console.warn(`   Has to_location: ${hasToLocations}`);
-      console.warn(`\n   This usually means the column mapping doesn't match the Google Sheet structure.`);
-      console.warn(`   Check that the sheet has data in columns Q (from_location), U (to_location), etc.`);
+      console.warn(
+        `\n   This usually means the column mapping doesn't match the Google Sheet structure.`,
+      );
+      console.warn(
+        `   Check that the sheet has data in columns Q (from_location), U (to_location), etc.`,
+      );
     }
 
     console.log(
@@ -392,7 +410,9 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     );
 
     if (processedData.movements.length === 0) {
-      throw new Error("No movement data found in Google Sheet - column mapping may be incorrect");
+      throw new Error(
+        "No movement data found in Google Sheet - column mapping may be incorrect",
+      );
     }
 
     res.json(processedData);

@@ -84,8 +84,8 @@ export function MovementHeatMapCard({
 
   // Filter locations to only include those within Saudi Arabia
   const validLocations = useMemo(() => {
-    return locations.filter(
-      (loc) => isWithinSaudiBounds(loc.Latitude, loc.Longitude),
+    return locations.filter((loc) =>
+      isWithinSaudiBounds(loc.Latitude, loc.Longitude),
     );
   }, [locations]);
 
@@ -152,7 +152,6 @@ export function MovementHeatMapCard({
   const totalMovements = useMemo(() => {
     return regionHeatData.reduce((sum, d) => sum + d[1], 0);
   }, [regionHeatData]);
-
 
   // Highcharts options for movement heat map
   const options: Highcharts.Options = useMemo(() => {
@@ -227,7 +226,8 @@ export function MovementHeatMapCard({
           showInLegend: false,
           tooltip: {
             headerFormat: "",
-            pointFormat: "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
+            pointFormat:
+              "<b>{point.properties.name}</b><br/>Movements: <strong>{point.value:,.0f}</strong>",
           },
         } as any,
       ],

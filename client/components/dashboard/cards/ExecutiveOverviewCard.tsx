@@ -63,13 +63,23 @@ export function ExecutiveOverviewCard({
 
   movements.forEach((mov) => {
     // Also check location names for "WH" in movements
-    const fromLoc = locations.find((l) => l.Location_ID === mov.From_Location_ID);
+    const fromLoc = locations.find(
+      (l) => l.Location_ID === mov.From_Location_ID,
+    );
     const toLoc = locations.find((l) => l.Location_ID === mov.To_Location_ID);
 
-    if (fromLoc && (fromLoc.Location_Type === "Warehouse" || fromLoc.Location_Name.toUpperCase().includes("WH"))) {
+    if (
+      fromLoc &&
+      (fromLoc.Location_Type === "Warehouse" ||
+        fromLoc.Location_Name.toUpperCase().includes("WH"))
+    ) {
       activeWarehouses.add(mov.From_Location_ID);
     }
-    if (toLoc && (toLoc.Location_Type === "Warehouse" || toLoc.Location_Name.toUpperCase().includes("WH"))) {
+    if (
+      toLoc &&
+      (toLoc.Location_Type === "Warehouse" ||
+        toLoc.Location_Name.toUpperCase().includes("WH"))
+    ) {
       activeWarehouses.add(mov.To_Location_ID);
     }
   });
@@ -84,14 +94,16 @@ export function ExecutiveOverviewCard({
     {
       label: "Total COWs",
       value: kpis.totalCOWs,
-      bgColor: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30",
+      bgColor:
+        "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30",
       accentColor: "text-blue-600 dark:text-blue-400",
       borderColor: "border-blue-200/50 dark:border-blue-800/50",
     },
     {
       label: "Total Movements",
       value: kpis.totalMovements,
-      bgColor: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30",
+      bgColor:
+        "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30",
       accentColor: "text-purple-600 dark:text-purple-400",
       borderColor: "border-purple-200/50 dark:border-purple-800/50",
     },
@@ -100,28 +112,32 @@ export function ExecutiveOverviewCard({
       value: kpis.totalDistanceKM.toLocaleString("en-US", {
         maximumFractionDigits: 0,
       }),
-      bgColor: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/30",
+      bgColor:
+        "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/30",
       accentColor: "text-green-600 dark:text-green-400",
       borderColor: "border-green-200/50 dark:border-green-800/50",
     },
     {
       label: "Active COWs",
       value: kpis.activeCOWs,
-      bgColor: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30",
+      bgColor:
+        "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30",
       accentColor: "text-orange-600 dark:text-orange-400",
       borderColor: "border-orange-200/50 dark:border-orange-800/50",
     },
     {
       label: "Static COWs",
       value: kpis.staticCOWs,
-      bgColor: "bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/30",
+      bgColor:
+        "bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/30",
       accentColor: "text-red-600 dark:text-red-400",
       borderColor: "border-red-200/50 dark:border-red-800/50",
     },
     {
       label: "Avg Moves/COW",
       value: kpis.avgMovesPerCOW.toFixed(1),
-      bgColor: "bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/50 dark:to-yellow-900/30",
+      bgColor:
+        "bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/50 dark:to-yellow-900/30",
       accentColor: "text-yellow-600 dark:text-yellow-400",
       borderColor: "border-yellow-200/50 dark:border-yellow-800/50",
     },
@@ -153,12 +169,16 @@ export function ExecutiveOverviewCard({
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            onClick={() => metric.label === "Static COWs" && setShowStaticCowsModal(true)}
+            onClick={() =>
+              metric.label === "Static COWs" && setShowStaticCowsModal(true)
+            }
             className={`${metric.bgColor} ${metric.borderColor} border rounded-xl p-4 hover-lift transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 group ${
               metric.label === "Static COWs" ? "cursor-pointer" : ""
             }`}
           >
-            <p className={`text-xs font-semibold ${metric.accentColor} uppercase tracking-wider`}>
+            <p
+              className={`text-xs font-semibold ${metric.accentColor} uppercase tracking-wider`}
+            >
               {metric.label}
             </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2 group-hover:scale-105 transition-transform duration-300">
@@ -171,7 +191,10 @@ export function ExecutiveOverviewCard({
       {/* Summary Statistics Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0 px-6">
         {summaryStats.map((stat, idx) => (
-          <div key={idx} className="card-modern-sm hover-lift bg-gradient-to-br from-purple-500/10 to-blue-500/10 dark:from-slate-800/60 dark:to-slate-700/40 border border-purple-200/30 dark:border-gray-700/60 backdrop-blur-md hover:border-purple-300/50 dark:hover:border-blue-600/50 transition-all duration-300">
+          <div
+            key={idx}
+            className="card-modern-sm hover-lift bg-gradient-to-br from-purple-500/10 to-blue-500/10 dark:from-slate-800/60 dark:to-slate-700/40 border border-purple-200/30 dark:border-gray-700/60 backdrop-blur-md hover:border-purple-300/50 dark:hover:border-blue-600/50 transition-all duration-300"
+          >
             <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
               {stat.label}
             </p>
@@ -185,7 +208,9 @@ export function ExecutiveOverviewCard({
       {/* Movement Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-shrink-0 mb-6 px-6">
         <div className="card-modern hover-lift bg-gradient-to-br from-blue-500/10 to-purple-500/10 dark:from-slate-800/70 dark:to-slate-700/50 border border-blue-200/30 dark:border-gray-700/60 backdrop-blur-md hover:border-blue-300/50 dark:hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5">
-          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-4">Movement Classification</h3>
+          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-4">
+            Movement Classification
+          </h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -239,7 +264,9 @@ export function ExecutiveOverviewCard({
         </div>
 
         <div className="card-modern hover-lift bg-gradient-to-br from-green-500/10 to-blue-500/10 dark:from-slate-800/70 dark:to-slate-700/50 border border-green-200/30 dark:border-gray-700/60 backdrop-blur-md hover:border-green-300/50 dark:hover:border-green-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/5">
-          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-green-600 to-green-700 dark:from-green-400 dark:to-green-300 bg-clip-text text-transparent mb-4">Asset Status</h3>
+          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-green-600 to-green-700 dark:from-green-400 dark:to-green-300 bg-clip-text text-transparent mb-4">
+            Asset Status
+          </h3>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between items-center mb-2">
@@ -281,7 +308,9 @@ export function ExecutiveOverviewCard({
         </div>
 
         <div className="card-modern hover-lift bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-slate-800/70 dark:to-slate-700/50 border border-purple-200/30 dark:border-gray-700/60 backdrop-blur-md hover:border-purple-300/50 dark:hover:border-purple-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5">
-          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-400 dark:to-purple-300 bg-clip-text text-transparent mb-4">Coverage Summary</h3>
+          <h3 className="card-header text-lg font-bold bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-400 dark:to-purple-300 bg-clip-text text-transparent mb-4">
+            Coverage Summary
+          </h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600 dark:text-gray-400">
@@ -325,7 +354,9 @@ export function ExecutiveOverviewCard({
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between bg-gradient-to-r from-red-500 to-red-600 p-6 flex-shrink-0">
-              <h2 className="text-xl font-bold text-white">Static COWs Details</h2>
+              <h2 className="text-xl font-bold text-white">
+                Static COWs Details
+              </h2>
               <button
                 onClick={() => setShowStaticCowsModal(false)}
                 className="text-white hover:bg-red-700 rounded-lg p-1 transition-colors"
@@ -340,22 +371,31 @@ export function ExecutiveOverviewCard({
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-left">COW ID</TableHead>
-                    <TableHead className="text-left">Last Deploying Date</TableHead>
-                    <TableHead className="text-left">First Deploying Date</TableHead>
+                    <TableHead className="text-left">
+                      Last Deploying Date
+                    </TableHead>
+                    <TableHead className="text-left">
+                      First Deploying Date
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {staticCowsData.length > 0 ? (
                     staticCowsData.map((row) => (
                       <TableRow key={row.cow_id}>
-                        <TableCell className="font-medium">{row.cow_id}</TableCell>
+                        <TableCell className="font-medium">
+                          {row.cow_id}
+                        </TableCell>
                         <TableCell>{row.last_deploy_date}</TableCell>
                         <TableCell>{row.first_deploy_date}</TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-gray-500">
+                      <TableCell
+                        colSpan={3}
+                        className="text-center text-gray-500"
+                      >
                         No static COWs found
                       </TableCell>
                     </TableRow>

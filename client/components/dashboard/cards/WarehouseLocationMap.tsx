@@ -143,7 +143,8 @@ export function WarehouseLocationMap({
           data: warehousePoints,
           dataLabels: {
             enabled: true,
-            format: "<span style=\"font-size:11px;font-weight:bold\">{point.name}</span>",
+            format:
+              '<span style="font-size:11px;font-weight:bold">{point.name}</span>',
             style: {
               textOutline: "1px white",
               color: "#1f2937",
@@ -159,7 +160,8 @@ export function WarehouseLocationMap({
           },
           tooltip: {
             headerFormat: "<b>{point.name}</b><br/>",
-            pointFormat: "Owner: {point.owner}<br/>Region: {point.region}<br/>Lat: {point.lat:.4f}<br/>Lon: {point.lon:.4f}",
+            pointFormat:
+              "Owner: {point.owner}<br/>Region: {point.region}<br/>Lat: {point.lat:.4f}<br/>Lon: {point.lon:.4f}",
           },
         },
       ],

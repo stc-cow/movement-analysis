@@ -23,9 +23,12 @@ interface SaudiMapCardProps {
 
 // Vendor logo mapping
 const VENDOR_LOGOS: Record<string, string> = {
-  Ericsson: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fce8a05f0444047fbab6b38351ba3e00b?format=webp&width=800",
-  Nokia: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F8b1d4da5de9a4830adc8ff8bb94f9384?format=webp&width=800",
-  Huawei: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F1d0933328ffa4621ac07c43c539a6656?format=webp&width=800",
+  Ericsson:
+    "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fce8a05f0444047fbab6b38351ba3e00b?format=webp&width=800",
+  Nokia:
+    "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F8b1d4da5de9a4830adc8ff8bb94f9384?format=webp&width=800",
+  Huawei:
+    "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F1d0933328ffa4621ac07c43c539a6656?format=webp&width=800",
 };
 
 export function SaudiMapCard({
@@ -160,7 +163,6 @@ export function SaudiMapCard({
     <div className="h-full w-full overflow-y-auto flex flex-col bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800">
       {/* Header with Controls - Enhanced Design */}
       <div className="flex-shrink-0 px-6 py-5 flex items-center justify-between bg-gradient-to-r from-white/80 via-blue-50/40 to-white/80 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 border-b border-gray-200/40 dark:border-gray-700/40 backdrop-blur-sm">
-
         {/* Timeline Selector */}
         <div className="flex items-center gap-4 flex-1">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
@@ -185,8 +187,8 @@ export function SaudiMapCard({
             {currentMonthIndex === -1
               ? "All Months"
               : timelineMonths[currentMonthIndex]
-              ? `${timelineMonths[currentMonthIndex].month} ${timelineMonths[currentMonthIndex].year}`
-              : "Select"}
+                ? `${timelineMonths[currentMonthIndex].month} ${timelineMonths[currentMonthIndex].year}`
+                : "Select"}
           </span>
 
           {/* Play Button */}
@@ -229,7 +231,9 @@ export function SaudiMapCard({
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mb-1 uppercase tracking-wide">Top Vendor</p>
+                <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mb-1 uppercase tracking-wide">
+                  Top Vendor
+                </p>
                 <p className="font-bold text-gray-900 dark:text-white text-sm truncate">
                   {vendorChartData[0].name}
                 </p>
@@ -246,8 +250,15 @@ export function SaudiMapCard({
           {vendorChartData.length > 0 ? (
             <div className="bg-gradient-to-br from-white/60 to-white/40 dark:from-slate-700/40 dark:to-slate-600/30 rounded-lg p-3 border border-purple-200/30 dark:border-purple-800/20 backdrop-blur-sm">
               <ResponsiveContainer width="100%" height={150}>
-                <BarChart data={vendorChartData} margin={{ left: 30, right: 5, top: 5, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="2 2" stroke="#d1d5db" opacity={0.5} />
+                <BarChart
+                  data={vendorChartData}
+                  margin={{ left: 30, right: 5, top: 5, bottom: 5 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="2 2"
+                    stroke="#d1d5db"
+                    opacity={0.5}
+                  />
                   <XAxis dataKey="name" tick={{ fontSize: 8 }} />
                   <YAxis tick={{ fontSize: 8 }} />
                   <Tooltip cursor={{ fill: "rgba(139, 92, 246, 0.15)" }} />
@@ -264,7 +275,10 @@ export function SaudiMapCard({
           {vendorChartData.length > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-200/40 dark:border-gray-700/40 text-xs space-y-2">
               {vendorChartData.map((item) => (
-                <div key={item.name} className="flex justify-between items-center p-2 hover:bg-white/40 dark:hover:bg-slate-700/40 rounded-lg transition-colors duration-200">
+                <div
+                  key={item.name}
+                  className="flex justify-between items-center p-2 hover:bg-white/40 dark:hover:bg-slate-700/40 rounded-lg transition-colors duration-200"
+                >
                   <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
                     {item.name}
                   </span>
