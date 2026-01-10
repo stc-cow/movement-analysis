@@ -45,7 +45,7 @@ export function SaudiMapCard({
     setCurrentMonthIndex(Math.max(0, months.length - 1));
   }, [movements, cows, locations]);
 
-  // Auto-play timeline
+  // Auto-play timeline with looping
   useEffect(() => {
     if (!isPlaying || timelineMonths.length === 0) return;
 
@@ -54,8 +54,7 @@ export function SaudiMapCard({
     const interval = setInterval(() => {
       playIndexRef.current++;
       if (playIndexRef.current >= timelineMonths.length) {
-        setIsPlaying(false);
-        return;
+        playIndexRef.current = 0; // Loop back to start
       }
       setCurrentMonthIndex(playIndexRef.current);
     }, 1500);
