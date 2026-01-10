@@ -255,14 +255,6 @@ export default function Dashboard() {
           />
         )}
 
-        {/* Movement Types */}
-        {activeCard === "movements" && (
-          <MovementTypesCard
-            movements={filteredMovements}
-            locations={locations}
-          />
-        )}
-
         {/* Region Analysis */}
         {activeCard === "regions" && (
           <RegionAnalysisCard
