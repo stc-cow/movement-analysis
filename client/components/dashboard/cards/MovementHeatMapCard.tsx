@@ -105,6 +105,8 @@ export function MovementHeatMapCard({
         flowsMap.set(key, {
           fromLoc,
           toLoc,
+          fromSubLocations: new Set(),
+          toSubLocations: new Set(),
           count: 0,
           movementIds: [],
         });
@@ -113,6 +115,14 @@ export function MovementHeatMapCard({
       const flow = flowsMap.get(key)!;
       flow.count++;
       flow.movementIds.push(mov.COW_ID);
+
+      // Collect sub-location information
+      if (mov.From_Sub_Location) {
+        flow.fromSubLocations.add(mov.From_Sub_Location);
+      }
+      if (mov.To_Sub_Location) {
+        flow.toSubLocations.add(mov.To_Sub_Location);
+      }
     });
 
     const flows = Array.from(flowsMap.values()).sort(
