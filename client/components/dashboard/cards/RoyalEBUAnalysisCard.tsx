@@ -16,6 +16,14 @@ interface RoyalEBUAnalysisCardProps {
   movements: CowMovementsFact[];
 }
 
+/**
+ * RoyalEBUAnalysisCard
+ *
+ * Displays analysis of Royal and EBU movements
+ * Data source: Column E (ebu_royal_flag) from Google Sheet
+ * - Is_Royal: true if column E contains "Royal"
+ * - Is_EBU: true if column E contains "EBU"
+ */
 export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
   const totalMovements = movements.length;
   const royalCount = movements.filter((m) => m.Is_Royal).length;
