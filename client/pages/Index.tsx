@@ -229,7 +229,7 @@ export default function Dashboard() {
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F517b5a99a8d64dec873728f66fb46b24?format=webp&width=800"
               alt="ACES Logo"
-              className="h-6 object-contain relative transition-transform duration-300 group-hover:scale-105"
+              className="h-24 object-contain relative transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         </div>
