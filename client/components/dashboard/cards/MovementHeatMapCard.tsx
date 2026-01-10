@@ -263,7 +263,7 @@ export function MovementHeatMapCard({
         enabled: false,
       },
     } as Highcharts.Options;
-  }, [saudiGeo]);
+  }, [saudiGeo, regionHeatData, maxCount]);
 
   if (loading || !saudiGeo || !modulesReady) {
     return (
