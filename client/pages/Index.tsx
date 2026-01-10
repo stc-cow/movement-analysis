@@ -194,9 +194,9 @@ export default function Dashboard() {
       <header className="flex-shrink-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 border-b border-purple-700/40 backdrop-blur-xl shadow-lg shadow-purple-500/20">
         <div className="px-6 py-4 flex items-center justify-between">
           {/* Logo Section with Modern Styling */}
-          <div className="flex items-center gap-3 flex-shrink-0 group cursor-pointer">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="flex items-center gap-3 flex-shrink-0 group cursor-pointer pointer-events-none">
+            <div className="relative pointer-events-auto">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F9714b8edf4b54584a6f670699d58193d?format=webp&width=800"
                 alt="STC Logo"
