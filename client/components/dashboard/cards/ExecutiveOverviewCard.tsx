@@ -30,6 +30,19 @@ export function ExecutiveOverviewCard({
   const warehouses = locations.filter((l) => l.Location_Type === "Warehouse");
   const sites = locations.filter((l) => l.Location_Type === "Site");
 
+  // Count warehouses that have at least one movement (incoming or outgoing)
+  const warehouseLocationIds = new Set(warehouses.map((w) => w.Location_ID));
+  const activeWarehouses = new Set<string>();
+
+  movements.forEach((mov) => {
+    if (warehouseLocationIds.has(mov.From_Location_ID)) {
+      activeWarehouses.add(mov.From_Location_ID);
+    }
+    if (warehouseLocationIds.has(mov.To_Location_ID)) {
+      activeWarehouses.add(mov.To_Location_ID);
+    }
+  });
+
   const movementsByType = {
     full: movements.filter((m) => m.Movement_Type === "Full").length,
     half: movements.filter((m) => m.Movement_Type === "Half").length,
@@ -86,7 +99,7 @@ export function ExecutiveOverviewCard({
   const summaryStats = [
     {
       label: "Active Warehouses",
-      value: warehouses.length,
+      value: activeWarehouses.size,
     },
     {
       label: "Deployment Sites",
