@@ -138,23 +138,6 @@ export function MovementHeatMapCard({
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
-  // Transform flow data to Highcharts mapline format
-  const maplineData = useMemo(() => {
-    return flowData.map((flow) => ({
-      point: {
-        x: flow.fromLoc.Longitude,
-        y: flow.fromLoc.Latitude,
-      },
-      pointEnd: {
-        x: flow.toLoc.Longitude,
-        y: flow.toLoc.Latitude,
-      },
-      color: getColorForIntensity(flow.count, maxCount),
-      value: flow.count,
-      fromName: flow.fromLoc.Location_Name,
-      toName: flow.toLoc.Location_Name,
-    }));
-  }, [flowData, maxCount]);
 
   // Highcharts options for movement heat map
   const options: Highcharts.Options = useMemo(() => {
