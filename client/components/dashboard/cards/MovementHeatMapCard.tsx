@@ -85,14 +85,13 @@ export function MovementHeatMapCard({
     return Math.max(...flowData.map((f) => f.count), 1);
   }, [flowData]);
 
-  // Generate color based on movement intensity (0-255 range for purple gradient)
+  // Generate color based on movement intensity (yellow to red gradient)
   const getColorForIntensity = (count: number, max: number): string => {
     const intensity = Math.min(count / max, 1);
-    // Purple gradient: light to dark
-    // RGB values for purple gradient
-    const hue = 270; // Purple hue
-    const lightness = 85 - intensity * 40; // 85% (light) to 45% (dark)
-    const saturation = 50 + intensity * 30; // 50% to 80%
+    // Yellow (60°) to Red (0°) gradient
+    const hue = 60 * (1 - intensity); // 60° (yellow) to 0° (red)
+    const saturation = 100; // Full saturation for vibrant colors
+    const lightness = 50; // Medium lightness for visibility
 
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
