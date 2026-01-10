@@ -4,7 +4,6 @@ import { HeaderFilters } from "@/components/dashboard/HeaderFilters";
 import { ExecutiveOverviewCard } from "@/components/dashboard/cards/ExecutiveOverviewCard";
 import { SaudiMapCard } from "@/components/dashboard/cards/SaudiMapCard";
 import { MovementHeatMapCard } from "@/components/dashboard/cards/MovementHeatMapCard";
-import { MovementTypesCard } from "@/components/dashboard/cards/MovementTypesCard";
 import { RegionAnalysisCard } from "@/components/dashboard/cards/RegionAnalysisCard";
 import { WarehouseIntelligenceCard } from "@/components/dashboard/cards/WarehouseIntelligenceCard";
 import { COWUtilizationCard } from "@/components/dashboard/cards/COWUtilizationCard";
