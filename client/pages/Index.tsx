@@ -304,6 +304,14 @@ export default function Dashboard() {
             locations={locations}
           />
         )}
+
+        {/* Movement Heat Map */}
+        {activeCard === "heatmap" && (
+          <MovementHeatMapCard
+            movements={filteredMovements}
+            locations={locations}
+          />
+        )}
       </div>
     </div>
   );
