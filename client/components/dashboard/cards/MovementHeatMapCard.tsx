@@ -139,7 +139,7 @@ export function MovementHeatMapCard({
     });
 
     return Array.from(flowsMap.values()).sort((a, b) => b.count - a.count);
-  }, [movements, locMap]);
+  }, [movements, locMap, validLocations]);
 
   // Calculate max count for color scaling
   const maxCount = useMemo(() => {
