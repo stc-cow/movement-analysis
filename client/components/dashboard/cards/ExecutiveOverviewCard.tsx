@@ -27,7 +27,12 @@ export function ExecutiveOverviewCard({
   movements,
   cowMetrics,
 }: ExecutiveOverviewCardProps) {
-  const warehouses = locations.filter((l) => l.Location_Type === "Warehouse");
+  // Filter to include both warehouse types and locations with "WH" in their name
+  const warehouses = locations.filter(
+    (l) =>
+      l.Location_Type === "Warehouse" ||
+      l.Location_Name.toUpperCase().includes("WH"),
+  );
   const sites = locations.filter((l) => l.Location_Type === "Site");
 
   // Count warehouses that have at least one movement (incoming or outgoing)
@@ -35,10 +40,14 @@ export function ExecutiveOverviewCard({
   const activeWarehouses = new Set<string>();
 
   movements.forEach((mov) => {
-    if (warehouseLocationIds.has(mov.From_Location_ID)) {
+    // Also check location names for "WH" in movements
+    const fromLoc = locations.find((l) => l.Location_ID === mov.From_Location_ID);
+    const toLoc = locations.find((l) => l.Location_ID === mov.To_Location_ID);
+
+    if (fromLoc && (fromLoc.Location_Type === "Warehouse" || fromLoc.Location_Name.toUpperCase().includes("WH"))) {
       activeWarehouses.add(mov.From_Location_ID);
     }
-    if (warehouseLocationIds.has(mov.To_Location_ID)) {
+    if (toLoc && (toLoc.Location_Type === "Warehouse" || toLoc.Location_Name.toUpperCase().includes("WH"))) {
       activeWarehouses.add(mov.To_Location_ID);
     }
   });
