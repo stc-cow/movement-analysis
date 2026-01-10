@@ -146,7 +146,7 @@ export function HeaderFilters({
           }
         }}
       >
-        <SelectTrigger className="w-36 h-10 text-sm bg-white/70 dark:bg-slate-800/70 border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-slate-700 transition-all duration-200 rounded-lg font-medium text-gray-700 dark:text-gray-300 backdrop-blur-sm">
+        <SelectTrigger className="w-36 h-10 text-sm bg-white/80 border-white/30 hover:bg-white transition-all duration-200 rounded-lg font-medium text-gray-700 backdrop-blur-sm shadow-md">
           <SelectValue placeholder="Type" />
         </SelectTrigger>
         <SelectContent>
