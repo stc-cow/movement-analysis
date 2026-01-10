@@ -61,6 +61,7 @@ function parseCSVData(csvText: string) {
 
     if (isNewStructure) {
       // New structure (A-AE with 31 columns)
+      // Column E (index 4) contains Royal/EBU classification
       row = {
         cow_id: cells[0]?.trim() || "",
         site_label: cells[1]?.trim() || "",
