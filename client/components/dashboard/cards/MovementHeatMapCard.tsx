@@ -356,8 +356,8 @@ export function MovementHeatMapCard({
               const point = this as any;
               let tooltip = `<b>${point.name}</b><br/>`;
               tooltip += `Movements: <strong>${point.value?.toLocaleString() || 0}</strong><br/>`;
-              if (point.subLocations && point.subLocations.length > 0) {
-                tooltip += `<span style="font-size: 12px; color: #666;">Sub-locations: ${point.subLocations.join(", ")}</span>`;
+              if (point.events && point.events.length > 0) {
+                tooltip += `<span style="font-size: 12px; color: #666;">Event Types: ${point.events.filter((e: string) => e?.trim()).join(", ") || "Normal"}</span>`;
               }
               return tooltip;
             },
@@ -375,8 +375,8 @@ export function MovementHeatMapCard({
               const point = this as any;
               let tooltip = `<b>${point.name}</b><br/>`;
               tooltip += `Movements: <strong>${point.value?.toLocaleString() || 0}</strong><br/>`;
-              if (point.subLocations && point.subLocations.length > 0) {
-                tooltip += `<span style="font-size: 12px; color: #666;">Sub-locations: ${point.subLocations.join(", ")}</span>`;
+              if (point.events && point.events.length > 0) {
+                tooltip += `<span style="font-size: 12px; color: #666;">Event Types: ${point.events.filter((e: string) => e?.trim()).join(", ") || "Normal"}</span>`;
               }
               return tooltip;
             },
