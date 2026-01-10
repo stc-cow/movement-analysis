@@ -241,8 +241,8 @@ export default function Dashboard() {
         onTabChange={setActiveCard}
       />
 
-      {/* Card Content Area - Full Screen with Enhanced Styling */}
-      <div className="flex-1 overflow-y-auto bg-white dark:bg-white">
+      {/* Card Content Area - Fully responsive */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white dark:bg-white w-full">
         {/* Executive Overview */}
         {activeCard === "executive" && (
           <ExecutiveOverviewCard
