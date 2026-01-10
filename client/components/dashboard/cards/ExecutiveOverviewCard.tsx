@@ -45,8 +45,8 @@ export function ExecutiveOverviewCard({
       const cowData = cows.find((c) => c.COW_ID === metric.COW_ID);
       return {
         cow_id: metric.COW_ID,
-        last_deploy_date: cowData?.Installation_Date || "N/A",
-        first_deploy_date: cowData?.Installation_Date || "N/A",
+        last_deploy_date: cowData?.Last_Deploy_Date || "N/A",
+        first_deploy_date: cowData?.First_Deploy_Date || "N/A",
       };
     });
   // Filter to include both warehouse types and locations with "WH" in their name
