@@ -146,7 +146,7 @@ export function MovementHeatMapCard({
         lon: number;
         count: number;
         locationName: string;
-        subLocations: Set<string>;
+        events: Set<string>;
       }
     >();
     const destinationMap = new Map<
@@ -156,7 +156,7 @@ export function MovementHeatMapCard({
         lon: number;
         count: number;
         locationName: string;
-        subLocations: Set<string>;
+        events: Set<string>;
       }
     >();
 
@@ -169,12 +169,12 @@ export function MovementHeatMapCard({
           lon: flow.fromLoc.Longitude,
           count: 0,
           locationName: flow.fromLoc.Location_Name,
-          subLocations: new Set(),
+          events: new Set(),
         });
       }
       const origin = originMap.get(originKey)!;
       origin.count += flow.count;
-      flow.fromSubLocations.forEach((sub) => origin.subLocations.add(sub));
+      flow.fromEvents.forEach((event) => origin.events.add(event));
 
       // Add destination
       const destKey = flow.toLoc.Location_ID;
@@ -184,12 +184,12 @@ export function MovementHeatMapCard({
           lon: flow.toLoc.Longitude,
           count: 0,
           locationName: flow.toLoc.Location_Name,
-          subLocations: new Set(),
+          events: new Set(),
         });
       }
       const destination = destinationMap.get(destKey)!;
       destination.count += flow.count;
-      flow.toSubLocations.forEach((sub) => destination.subLocations.add(sub));
+      flow.toEvents.forEach((event) => destination.events.add(event));
     });
 
     // Filter to valid coordinates (must be proper numbers, not NaN or Infinity)
