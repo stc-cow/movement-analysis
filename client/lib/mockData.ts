@@ -411,9 +411,41 @@ export function generateMockMovements(
 ): CowMovementsFact[] {
   const movements: CowMovementsFact[] = [];
 
+  // Separate warehouse and site locations
+  const allLocations = locationIds;
+  const warehouseIds = locationIds.filter((id) => id.includes("WH"));
+  const siteIds = locationIds.filter((id) => !id.includes("WH"));
+
+  let movementIndex = 0;
+
   for (let i = 1; i <= count; i++) {
-    const from = locationIds[Math.floor(Math.random() * locationIds.length)];
-    const to = locationIds[Math.floor(Math.random() * locationIds.length)];
+    let from: string;
+    let to: string;
+
+    // Intelligent movement type generation to ensure proper distribution:
+    // 30% WH->WH (Zero moves)
+    // 40% WH->Site (Half moves)
+    // 10% Site->WH (Half moves)
+    // 20% Site->Site (Full moves)
+    const rand = Math.random();
+
+    if (rand < 0.3) {
+      // WH->WH movements
+      from = warehouseIds[Math.floor(Math.random() * warehouseIds.length)];
+      to = warehouseIds[Math.floor(Math.random() * warehouseIds.length)];
+    } else if (rand < 0.7) {
+      // WH->Site movements
+      from = warehouseIds[Math.floor(Math.random() * warehouseIds.length)];
+      to = siteIds[Math.floor(Math.random() * siteIds.length)];
+    } else if (rand < 0.8) {
+      // Site->WH movements
+      from = siteIds[Math.floor(Math.random() * siteIds.length)];
+      to = warehouseIds[Math.floor(Math.random() * warehouseIds.length)];
+    } else {
+      // Site->Site movements
+      from = siteIds[Math.floor(Math.random() * siteIds.length)];
+      to = siteIds[Math.floor(Math.random() * siteIds.length)];
+    }
 
     if (from === to) continue;
 
@@ -437,7 +469,7 @@ export function generateMockMovements(
         : undefined;
 
     movements.push({
-      SN: i,
+      SN: movementIndex++,
       COW_ID: cowIds[Math.floor(Math.random() * cowIds.length)],
       From_Location_ID: from,
       To_Location_ID: to,
