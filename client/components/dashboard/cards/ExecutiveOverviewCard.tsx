@@ -193,7 +193,7 @@ export function ExecutiveOverviewCard({
       </div>
 
       {/* Summary Statistics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 flex-shrink-0 px-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 flex-shrink-0 px-3 sm:px-4 md:px-6">
         {summaryStats.map((stat, idx) => (
           <div
             key={idx}
