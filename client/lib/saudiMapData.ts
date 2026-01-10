@@ -9,8 +9,10 @@ export interface MapLine {
   vendor: string;
   month: string;
   date: string;
-  toRegion: string; // Destination region
+  fromRegion: string; // Origin region (from coordinates)
+  toRegion: string; // Destination region (to coordinates)
   toLocationId: string; // Destination location ID
+  fromLocationId: string; // Origin location ID
 }
 
 export interface TimelineMonth {
