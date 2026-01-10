@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { CowMovementsFact, DimCow, DimLocation } from "@shared/models";
-import Highcharts, { ensureHighchartsModules } from "@/lib/highcharts";
-import HighchartsReact from "highcharts-react-official";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 interface StaticCowMapCardProps {
   movements: CowMovementsFact[];
@@ -19,73 +20,34 @@ interface CowPosition {
   remarks: string;
 }
 
+// Custom icons for ON-AIR and Inactive COWs
+const createMarkerIcon = (isOnAir: boolean) => {
+  const color = isOnAir ? "#22c55e" : "#ef4444";
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="32" height="32">
+      <circle cx="12" cy="12" r="10" fill="${color}" stroke="white" stroke-width="2"/>
+      <circle cx="12" cy="12" r="6" fill="white" opacity="0.3"/>
+    </svg>
+  `;
+  return L.icon({
+    iconUrl: `data:image/svg+xml;base64,${btoa(svg)}`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  });
+};
+
 // Helper function to check if coordinates are within Saudi Arabia
 function isWithinSaudiBounds(lat: number, lon: number): boolean {
   // Saudi Arabia bounds: South 16.4°, North 32.15°, West 34.4°, East 55.67°
   return lat >= 16.4 && lat <= 32.15 && lon >= 34.4 && lon <= 55.67;
 }
 
-// Cache for geo data to prevent re-fetching
-let geoDataCache: any = null;
-let geoDataPromise: Promise<any> | null = null;
-
 export function StaticCowMapCard({
   movements,
   cows,
   locations,
 }: StaticCowMapCardProps) {
-  const [saudiGeo, setSaudiGeo] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [modulesReady, setModulesReady] = useState(false);
-  const chartRef = useRef<any>(null);
-
-  // Ensure Highcharts modules are initialized
-  useEffect(() => {
-    ensureHighchartsModules().then(() => {
-      setModulesReady(true);
-    });
-  }, []);
-
-  // Load Saudi geo data from Highcharts CDN with caching
-  useEffect(() => {
-    if (!modulesReady) return;
-
-    const loadGeoData = async () => {
-      try {
-        if (geoDataCache) {
-          setSaudiGeo(geoDataCache);
-          setLoading(false);
-          return;
-        }
-
-        if (geoDataPromise) {
-          const data = await geoDataPromise;
-          setSaudiGeo(data);
-          setLoading(false);
-          return;
-        }
-
-        geoDataPromise = fetch(
-          "https://code.highcharts.com/mapdata/countries/sa/sa-all.geo.json",
-        ).then(async (response) => {
-          if (!response.ok) throw new Error("Failed to fetch geo data");
-          const data = await response.json();
-          geoDataCache = data;
-          return data;
-        });
-
-        const data = await geoDataPromise;
-        setSaudiGeo(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to load Saudi geo data:", error);
-        setLoading(false);
-      }
-    };
-
-    loadGeoData();
-  }, [modulesReady]);
-
   // Create location map for quick lookup
   const locMap = useMemo(
     () => new Map(locations.map((l) => [l.Location_ID, l])),
@@ -173,13 +135,20 @@ export function StaticCowMapCard({
       isWithinSaudiBounds(p.latitude, p.longitude)
     );
 
-    console.log(`Static COWs Map: ${movements.length} movements, ${cowMovementMap.size} unique COWs, ${validPositions.length} with valid coordinates`);
+    console.log(
+      `Static COWs Map: ${movements.length} movements, ${cowMovementMap.size} unique COWs, ${validPositions.length} with valid coordinates`,
+    );
 
     return validPositions;
   }, [movements, cowMap, locMap]);
 
   // Separate COWs by status - ONLY show COWs with exactly 1 movement (static COWs)
-  const { onAirCows, inactiveCows, staticCowCount, distributionByLocation } = useMemo(() => {
+  const {
+    onAirCows,
+    inactiveCows,
+    staticCowCount,
+    distributionByLocation,
+  } = useMemo(() => {
     // Filter to only COWs with exactly 1 movement (static/newly deployed)
     const staticCows = cowPositions.filter((p) => p.movementCount === 1);
 
@@ -211,7 +180,9 @@ export function StaticCowMapCard({
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
-    console.log(`Static COWs (1 movement only): ${staticCows.length} total, ${onAir.length} ON-AIR, ${inactive.length} Inactive`);
+    console.log(
+      `Static COWs (1 movement only): ${staticCows.length} total, ${onAir.length} ON-AIR, ${inactive.length} Inactive`,
+    );
 
     return {
       onAirCows: onAir,
@@ -221,178 +192,31 @@ export function StaticCowMapCard({
     };
   }, [cowPositions]);
 
-  // Highcharts options for static COW map
-  const options: Highcharts.Options = useMemo(() => {
-    if (!saudiGeo) return {};
+  // Combine all static COWs for map display
+  const allStaticCows = useMemo(
+    () => [...onAirCows, ...inactiveCows],
+    [onAirCows, inactiveCows],
+  );
 
-    // Convert ON-AIR points to Highcharts format (only 1 movement)
-    const onAirPoints = onAirCows.map((p) => ({
-      lon: p.longitude,
-      lat: p.latitude,
-      value: 1, // All static COWs have exactly 1 movement
-      name: p.cowId,
-      location: p.currentLocation,
-      status: "On-Air",
-    }));
+  // Saudi Arabia center coordinates
+  const saudiCenter: [number, number] = [23.8859, 45.0792];
 
-    // Convert INACTIVE points to Highcharts format (only 1 movement)
-    const inactivePoints = inactiveCows.map((p) => ({
-      lon: p.longitude,
-      lat: p.latitude,
-      value: 1, // All static COWs have exactly 1 movement
-      name: p.cowId,
-      location: p.currentLocation,
-      status: "Inactive",
-    }));
-
-    console.log("Static COWs (1 movement): ON-AIR =", onAirPoints.length, ", INACTIVE =", inactivePoints.length);
-
-    return {
-      chart: {
-        map: saudiGeo,
-        backgroundColor: "transparent",
-        borderWidth: 0,
-        spacingTop: 0,
-        spacingBottom: 0,
-        spacingLeft: 0,
-        spacingRight: 0,
-        animation: false,
-      },
-      title: {
-        text: null,
-      },
-      subtitle: {
-        text: null,
-      },
-      mapNavigation: {
-        enabled: false,
-      },
-      legend: {
-        enabled: true,
-        layout: "vertical",
-        align: "right",
-        verticalAlign: "top",
-        y: 70,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        borderColor: "#e5e7eb",
-        borderWidth: 1,
-        borderRadius: 8,
-      },
-      plotOptions: {
-        series: {
-          animation: false,
-        },
-        map: {
-          dataLabels: {
-            enabled: false,
-          },
-          borderColor: "#e5e7eb",
-          borderWidth: 1,
-          nullColor: "#f0f0f0",
-          states: {
-            hover: {
-              brightness: 0.1,
-              borderColor: "#e5e7eb",
-            },
-          },
-        },
-        mappoint: {
-          marker: {
-            radius: 6,
-            lineWidth: 2,
-            lineColor: "#ffffff",
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          states: {
-            hover: {
-              marker: {
-                radius: 8,
-                lineWidth: 2,
-              },
-            },
-          },
-        },
-      },
-      series: [
-        {
-          type: "map",
-          name: "Base Map",
-          data: [],
-          showInLegend: false,
-          borderColor: "#e5e7eb",
-          borderWidth: 1,
-          nullColor: "#f0f0f0",
-        } as any,
-        {
-          type: "mappoint",
-          name: "ON-AIR COWs",
-          color: "#22c55e",
-          data: onAirPoints,
-          showInLegend: true,
-          tooltip: {
-            headerFormat: "",
-            pointFormatter: function () {
-              const point = this as any;
-              let tooltip = `<b>COW: ${point.name}</b><br/>`;
-              tooltip += `Status: <strong style="color: #22c55e;">●</strong> ${point.status}<br/>`;
-              tooltip += `Current Location: <strong>${point.location}</strong><br/>`;
-              tooltip += `Movements: <strong>${point.value?.toLocaleString() || 0}</strong>`;
-              return tooltip;
-            },
-          },
-        } as any,
-        {
-          type: "mappoint",
-          name: "Inactive COWs",
-          color: "#ef4444",
-          data: inactivePoints,
-          showInLegend: true,
-          tooltip: {
-            headerFormat: "",
-            pointFormatter: function () {
-              const point = this as any;
-              let tooltip = `<b>COW: ${point.name}</b><br/>`;
-              tooltip += `Status: <strong style="color: #ef4444;">●</strong> ${point.status}<br/>`;
-              tooltip += `Current Location: <strong>${point.location}</strong><br/>`;
-              tooltip += `Movements: <strong>${point.value?.toLocaleString() || 0}</strong>`;
-              return tooltip;
-            },
-          },
-        } as any,
-      ],
-      exporting: {
-        buttons: {
-          contextButton: {
-            menuItems: [
-              "downloadPNG",
-              "downloadJPEG",
-              "downloadPDF",
-              "downloadSVG",
-              "separator",
-              "viewFullscreen",
-            ],
-            symbolFill: "#6366f1",
-          },
-        },
-        csv: {
-          dateFormat: "%Y-%m-%d",
-        },
-      },
-      credits: {
-        enabled: false,
-      },
-    } as Highcharts.Options;
-  }, [saudiGeo, onAirCows, inactiveCows]);
-
-  if (loading || !saudiGeo || !modulesReady) {
+  if (staticCowCount === 0) {
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+      <div className="h-full w-full flex flex-col bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
+        <div className="flex-shrink-0 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Static COWs Distribution
+          </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {!modulesReady ? "Loading Highcharts..." : "Loading map..."}
+            COWs with exactly one movement only - showing initial deployment
+            locations and status (ON-AIR/Inactive)
+          </p>
+        </div>
+
+        <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg flex items-center justify-center">
+          <p className="text-lg text-gray-400">
+            No static COWs (COWs with exactly 1 movement) found
           </p>
         </div>
       </div>
@@ -400,107 +224,137 @@ export function StaticCowMapCard({
   }
 
   return (
-    <div className="h-full w-full overflow-y-auto flex flex-col bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
+    <div className="h-full w-full flex flex-col bg-gradient-to-br from-white via-blue-50/20 to-white dark:from-slate-800 dark:via-slate-800/50 dark:to-slate-800 p-6">
       <div className="flex-shrink-0 mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Static COWs Distribution
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          COWs with exactly one movement only - showing initial deployment locations and status (ON-AIR/Inactive)
+          COWs with exactly one movement only - showing initial deployment
+          locations and status (ON-AIR/Inactive)
         </p>
       </div>
 
       <div className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 shadow-lg relative">
-        {staticCowCount > 0 ? (
-          <>
-            <HighchartsReact
-              highcharts={Highcharts}
-              constructorType="mapChart"
-              options={options}
-              onLoad={(chart) => {
-                chartRef.current = chart;
-              }}
-              containerProps={{
-                style: { width: "100%", height: "100%" },
-              }}
-              immutable={false}
-            />
+        {/* OpenStreetMap Container */}
+        <MapContainer
+          center={saudiCenter}
+          zoom={5}
+          style={{ width: "100%", height: "100%" }}
+          className="rounded-lg"
+        >
+          {/* OpenStreetMap Tiles (locked to Saudi Arabia) */}
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            minZoom={5}
+            maxZoom={16}
+          />
 
-            {/* Bottom Left: COW Count Summary */}
-            <div className="absolute bottom-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg max-w-xs max-h-64 overflow-y-auto">
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
-                Static COWs Status (1 Movement Only)
-              </p>
-              <div className="space-y-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">
-                    ON-AIR: <strong>{onAirCows.length}</strong>
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">
-                    Inactive: <strong>{inactiveCows.length}</strong>
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-600 pt-2">
-                  <span className="text-xs text-gray-600 dark:text-gray-400">
-                    Total: <strong>{staticCowCount}</strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Right: Top Deployment Locations */}
-            <div className="absolute bottom-4 right-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg max-w-xs max-h-64 overflow-y-auto">
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
-                Top Deployment Locations
-              </p>
-              <div className="space-y-2 text-xs">
-                {distributionByLocation.length > 0 ? (
-                  distributionByLocation.map((dist, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-gray-50 dark:bg-slate-700 rounded px-2 py-1.5"
-                    >
-                      <p className="font-medium text-gray-900 dark:text-white truncate mb-1">
-                        {dist.location}
-                      </p>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {dist.onAir}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {dist.inactive}
-                          </span>
-                        </div>
-                        <span className="ml-auto font-semibold text-gray-900 dark:text-white">
-                          {dist.count}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400">
-                    No location distribution
+          {/* COW Markers */}
+          {allStaticCows.map((cowPos) => (
+            <Marker
+              key={cowPos.cowId}
+              position={[cowPos.latitude, cowPos.longitude]}
+              icon={createMarkerIcon(cowPos.isOnAir)}
+            >
+              <Popup className="text-sm">
+                <div className="space-y-1">
+                  <p className="font-semibold text-gray-900">
+                    {cowPos.cowId}
                   </p>
-                )}
-              </div>
+                  <p className="text-xs text-gray-600">
+                    Status:{" "}
+                    <span
+                      className={
+                        cowPos.isOnAir
+                          ? "text-green-600 font-semibold"
+                          : "text-red-600 font-semibold"
+                      }
+                    >
+                      {cowPos.isOnAir ? "ON-AIR" : "Inactive"}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Location: <span className="font-medium">{cowPos.currentLocation}</span>
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Coordinates: {cowPos.latitude.toFixed(4)},
+                    {cowPos.longitude.toFixed(4)}
+                  </p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+
+        {/* Bottom Left: COW Count Summary */}
+        <div className="absolute bottom-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg max-w-xs max-h-64 overflow-y-auto">
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
+            Static COWs Status (1 Movement Only)
+          </p>
+          <div className="space-y-2 mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                ON-AIR: <strong>{onAirCows.length}</strong>
+              </span>
             </div>
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <p className="text-lg text-gray-400">
-              No static COWs (COWs with exactly 1 movement) found
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Inactive: <strong>{inactiveCows.length}</strong>
+              </span>
+            </div>
+            <div className="border-t border-gray-200 dark:border-gray-600 pt-2">
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Total: <strong>{staticCowCount}</strong>
+              </span>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* Bottom Right: Top Deployment Locations */}
+        <div className="absolute bottom-4 right-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg max-w-xs max-h-64 overflow-y-auto">
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
+            Top Deployment Locations
+          </p>
+          <div className="space-y-2 text-xs">
+            {distributionByLocation.length > 0 ? (
+              distributionByLocation.map((dist, idx) => (
+                <div
+                  key={idx}
+                  className="bg-gray-50 dark:bg-slate-700 rounded px-2 py-1.5"
+                >
+                  <p className="font-medium text-gray-900 dark:text-white truncate mb-1">
+                    {dist.location}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {dist.onAir}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {dist.inactive}
+                      </span>
+                    </div>
+                    <span className="ml-auto font-semibold text-gray-900 dark:text-white">
+                      {dist.count}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">
+                No location distribution
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
