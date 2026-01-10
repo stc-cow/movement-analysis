@@ -1,5 +1,6 @@
 export { ExecutiveOverviewCard } from "./ExecutiveOverviewCard";
 export { SaudiMapCard } from "./SaudiMapCard";
+export { MovementHeatMapCard } from "./MovementHeatMapCard";
 export { MovementTypesCard } from "./MovementTypesCard";
 export { RegionAnalysisCard } from "./RegionAnalysisCard";
 export { WarehouseIntelligenceCard } from "./WarehouseIntelligenceCard";
