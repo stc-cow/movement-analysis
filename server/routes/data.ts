@@ -466,11 +466,11 @@ function processData(rows: any[]) {
     }
 
     // Add from location
-    const fromId = `LOC-${row.from_location.replace(/\s+/g, "-").substring(0, 20)}`;
+    const fromId = `LOC-${from_loc.replace(/\s+/g, "-").substring(0, 20)}`;
     if (!locationMap.has(fromId)) {
       locationMap.set(fromId, {
         Location_ID: fromId,
-        Location_Name: row.from_location,
+        Location_Name: from_loc,
         Sub_Location: row.from_sub_location || "",
         Latitude: parseFloat(row.from_latitude) || 0,
         Longitude: parseFloat(row.from_longitude) || 0,
@@ -481,11 +481,11 @@ function processData(rows: any[]) {
     }
 
     // Add to location
-    const toId = `LOC-${row.to_location.replace(/\s+/g, "-").substring(0, 20)}`;
+    const toId = `LOC-${to_loc.replace(/\s+/g, "-").substring(0, 20)}`;
     if (!locationMap.has(toId)) {
       locationMap.set(toId, {
         Location_ID: toId,
-        Location_Name: row.to_location,
+        Location_Name: to_loc,
         Sub_Location: row.to_sub_location || "",
         Latitude: parseFloat(row.to_latitude) || 0,
         Longitude: parseFloat(row.to_longitude) || 0,
