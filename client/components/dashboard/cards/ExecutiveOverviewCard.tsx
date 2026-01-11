@@ -458,48 +458,42 @@ export function ExecutiveOverviewCard({
               <h3 className="text-gray-900 text-sm font-bold mb-3 text-center">
                 Movement Category (EBU)
               </h3>
-              {ebuChartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={ebuChartData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {ebuChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "rgba(255, 255, 255, 0.95)",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "8px",
-                        color: "#000",
-                      }}
-                      formatter={(value: number) =>
-                        `${value} movements (${totalCurrentMovements > 0 ? ((value / totalCurrentMovements) * 100).toFixed(1) : 0}%)`
-                      }
-                    />
-                    <Legend
-                      wrapperStyle={{ paddingTop: "10px" }}
-                      formatter={(value, entry: any) => (
-                        <span style={{ color: "#374151", fontSize: "11px" }}>
-                          {entry.payload.name}
-                        </span>
-                      )}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                  No category data
-                </div>
-              )}
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={ebuChartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {ebuChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      color: "#000",
+                    }}
+                    formatter={(value: number) =>
+                      `${value} movements (${totalCurrentMovements > 0 ? ((value / totalCurrentMovements) * 100).toFixed(1) : 0}%)`
+                    }
+                  />
+                  <Legend
+                    wrapperStyle={{ paddingTop: "10px" }}
+                    formatter={(value, entry: any) => (
+                      <span style={{ color: "#374151", fontSize: "11px" }}>
+                        {entry.payload.name}
+                      </span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
 
             {/* Movement Category by Event Type Donut Chart */}
