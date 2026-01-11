@@ -1,58 +1,83 @@
-# Netlify Environment Variables Setup
+# Netlify Environment Variables Setup (Simplified)
 
-## Problem
+## Overview
 
-The Netlify deployment is returning **API 502 errors** because required environment variables are not configured.
+The COW Analytics dashboard now uses **published Google Sheets CSV exports** for simplified data integration. No complex API keys or sheet IDs required.
+
+## ✅ Current Setup (Simplified)
+
+**Two CSV URLs from a single published Google Sheet:**
+
+1. **Movement-data** (Main Dashboard Data)
+   ```
+   https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv
+   ```
+
+2. **Dashboard** (Never Moved COWs Data)
+   ```
+   https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv
+   ```
 
 ## Required Environment Variables
 
-### For Never Moved COWs Data
+| Variable                  | Value                                        | Required    | Notes                                    |
+| ------------------------- | -------------------------------------------- | ----------- | ---------------------------------------- |
+| `MOVEMENT_DATA_CSV_URL`   | Published CSV URL (see above)                | ✅ Yes      | Main dashboard data (Movement-data)      |
+| `NEVER_MOVED_COW_CSV_URL` | Published CSV URL (see above)                | ✅ Yes      | Never moved COWs data (Dashboard sheet)  |
 
-```
-NEVER_MOVED_COW_CSV_URL=https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv
-```
+## ✨ Benefits of This Setup
 
-### For Main Dashboard Data (Optional but recommended)
-
-```
-GOOGLE_SHEET_ID=1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM
-GOOGLE_SHEET_GID=1539310010
-```
+✅ **No API Keys** - Uses public CSV exports  
+✅ **Simple** - Just copy-paste the CSV URL  
+✅ **Reliable** - 5-minute in-memory cache prevents timeouts  
+✅ **Fast** - ~20 second fetch timeout with retry logic  
+✅ **Easy to Update** - Change the Google Sheet, redeploy  
 
 ## How to Set Environment Variables on Netlify
 
-### Option 1: Via Netlify UI (Easiest)
+### Option 1: Via Netlify UI (Easiest) ⭐
 
 1. **Go to your Netlify site dashboard**
    - Visit: https://app.netlify.com
    - Select your site: `cow-analysis`
 
-2. **Navigate to Settings**
+2. **Navigate to Environment Settings**
    - Click: **Site Settings** (top menu bar)
    - Then: **Build & Deploy** → **Environment**
 
-3. **Click "Edit Variables"**
-   - Or the **+ Add variable** button
+3. **Add Environment Variables**
 
-4. **Add Each Environment Variable**
+   **Variable 1: MOVEMENT_DATA_CSV_URL**
+   - Click **+ Add variable** (or **Edit variables**)
+   - Key: `MOVEMENT_DATA_CSV_URL`
+   - Value: 
+     ```
+     https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv
+     ```
+   - Click **Save**
+
+   **Variable 2: NEVER_MOVED_COW_CSV_URL**
+   - Click **+ Add variable**
    - Key: `NEVER_MOVED_COW_CSV_URL`
-   - Value: `https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv`
+   - Value: 
+     ```
+     https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv
+     ```
    - Click **Save**
 
-5. **Add Additional Variables (Optional)**
-   - Key: `GOOGLE_SHEET_ID`
-   - Value: `1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM`
-   - Click **Save**
-
-6. **Redeploy Your Site**
-   - Go to **Deploys**
+4. **Trigger a Redeploy**
+   - Go to **Deploys** tab
    - Click **Trigger deploy** → **Deploy site**
-   - Wait for the deployment to complete
+   - Wait for deployment to complete (usually 1-2 minutes)
+
+5. **Verify the Deploy**
+   - Once complete, visit your site: https://cow-analysis.netlify.app
+   - Dashboard should load without errors
 
 ### Option 2: Via Netlify CLI
 
 ```bash
-# Install Netlify CLI if you haven't already
+# Install Netlify CLI (if needed)
 npm install -g netlify-cli
 
 # Login to Netlify
@@ -61,131 +86,153 @@ netlify login
 # Link your site (if not already linked)
 netlify link
 
-# Set environment variables
+# Set the two required environment variables
+netlify env:set MOVEMENT_DATA_CSV_URL "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv"
+
 netlify env:set NEVER_MOVED_COW_CSV_URL "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv"
 
-netlify env:set GOOGLE_SHEET_ID "1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM"
-
-netlify env:set GOOGLE_SHEET_GID "1539310010"
-
-# Trigger a redeploy
+# Trigger a production deploy
 netlify deploy --prod
 ```
 
-### Option 3: Via netlify.toml (Advanced)
+### Option 3: Via netlify.toml (Version Control)
 
-Add to `netlify.toml`:
+**Edit `netlify.toml`:**
 
 ```toml
 [build.environment]
+  MOVEMENT_DATA_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv"
   NEVER_MOVED_COW_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv"
-  GOOGLE_SHEET_ID = "1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM"
-  GOOGLE_SHEET_GID = "1539310010"
 ```
 
-Then push to git:
+**Then push to git:**
 
 ```bash
 git add netlify.toml
-git commit -m "Add environment variables to netlify.toml"
+git commit -m "Add simplified CSV URLs to netlify.toml"
 git push origin main
 ```
 
-## Verification
+## ✅ Verification
 
-### Step 1: Check Netlify Dashboard
+### Test the API Endpoint
 
-- Go to: **Site Settings** → **Build & Deploy** → **Environment**
-- Confirm all variables are listed
-
-### Step 2: Test the API
-
-After redeploy, visit:
+After redeploy, visit the diagnostic endpoint:
 
 ```
 https://cow-analysis.netlify.app/api/data/diagnostic
 ```
 
-You should see:
+**Expected response:**
 
 ```json
 {
-  "currentSheetId": "1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM",
-  "currentGid": "1539310010",
-  "urlsAttempted": [...],
-  "recommendations": ["✓ Found working URL! Sheet is accessible."]
+  "urls": {
+    "movement_data": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv",
+    "never_moved_cows": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv"
+  },
+  "urlsAttempted": [
+    {
+      "endpoint": "movement_data",
+      "status": 200,
+      "success": true
+    },
+    {
+      "endpoint": "never_moved_cows",
+      "status": 200,
+      "success": true
+    }
+  ],
+  "recommendations": [
+    "✓ Movement-data CSV is accessible and working.",
+    "✓ Never-moved-cows CSV is accessible and working."
+  ]
 }
 ```
 
-### Step 3: Check Dashboard
+### Test the Dashboard
 
-Visit: `https://cow-analysis.netlify.app`
+1. Visit: https://cow-analysis.netlify.app
+2. Should load without 502 errors
+3. Dashboard cards should display data
+4. No "Unable to Load Dashboard Data" message
 
-- Should load without 502 errors
-- Dashboard data should display
-- No "Unable to Load Dashboard Data" message
+## 🔧 Troubleshooting
 
-## Troubleshooting
+### Still Getting 502 or Blank Page?
 
-### Still Getting 502?
+1. **Verify Variables Are Set**
+   - Go to: **Site Settings** → **Build & Deploy** → **Environment**
+   - Confirm `MOVEMENT_DATA_CSV_URL` and `NEVER_MOVED_COW_CSV_URL` are listed
 
-1. **Clear Browser Cache**
-   - Hard refresh: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
+2. **Check the Diagnostic Endpoint**
+   ```
+   https://cow-analysis.netlify.app/api/data/diagnostic
+   ```
+   - Shows which URLs are working and which failed
 
-2. **Check Netlify Logs**
-   - Go to: **Site Settings** → **Build & Deploy** → **Deploy log**
-   - Look for error messages starting with `[Function]`
+3. **Clear Netlify Cache**
+   - Go to: **Deploys** tab
+   - Click **Clear cache and retry deploy**
+   - Wait 2-3 minutes for rebuild
 
-3. **Verify Variable Names**
-   - Make sure variable names match exactly:
-     - `NEVER_MOVED_COW_CSV_URL` (not `NEVER_MOVED_CSV_URL`)
-     - `GOOGLE_SHEET_ID` (not `GOOGLE_SHEET`)
+4. **Check CSV URLs Manually**
+   - Open each CSV URL in a browser
+   - Should download a CSV file (not an error page)
+   - If you get permission denied, the sheet may not be published
 
-4. **Wait for Deploy to Complete**
-   - Netlify functions need time to rebuild
-   - Wait 2-3 minutes before testing
+5. **Verify Google Sheet is Published**
+   - Open your Google Sheet
+   - Click **Share**
+   - Ensure "Published to web" is enabled
+   - Copy the publish link
+   - Append `&gid=SHEET_GID&single=true&output=csv` to export as CSV
 
-### Environment Variables Not Taking Effect?
+### "Unable to Load Dashboard Data"
 
-1. Netlify caches built functions
-2. Clear cache:
-   - Go to **Build & Deploy** → **Clear cache and deploy site**
-3. Or trigger a new deploy:
-   - Go to **Deploys** → **Trigger deploy** → **Deploy site**
+1. Check the browser console (F12 → Console tab)
+2. Look for error messages
+3. Visit `/api/data/diagnostic` to see which endpoint is failing
+4. Verify the CSV URL is accessible
 
-## Variable Reference
+### Variables Not Taking Effect
 
-| Variable                  | Value                                        | Required    | Notes                             |
-| ------------------------- | -------------------------------------------- | ----------- | --------------------------------- |
-| `NEVER_MOVED_COW_CSV_URL` | CSV export URL                               | ✅ Yes      | Published Google Sheet CSV export |
-| `GOOGLE_SHEET_ID`         | 1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM | ⚠️ Optional | Used for movement data            |
-| `GOOGLE_SHEET_GID`        | 1539310010                                   | ⚠️ Optional | Sheet tab ID (default is 0)       |
+1. **New builds use new variables automatically**
+2. **Existing deployments need a rebuild:**
+   - Go to **Deploys** tab
+   - Click **Trigger deploy** → **Deploy site**
+3. **Or clear cache:**
+   - Go to **Deploys** → **Clear cache and retry deploy**
 
-## Important Notes
+## 🚀 Deployment Checklist
 
-⚠️ **Security**
+- [ ] Variables set in Netlify UI or netlify.toml
+- [ ] Redeploy triggered or cache cleared
+- [ ] Diagnostic endpoint returns 200 for both URLs
+- [ ] Dashboard loads without errors
+- [ ] Data displays in all cards
 
-- Never commit environment variables to git
-- Use Netlify UI or CLI instead
-- `.env` files are for development only
+## 📝 Notes
 
-✅ **Best Practice**
+**Changed from:**
+- Complex Sheet ID + GID configuration
+- Multiple fallback URLs
+- SDK dependencies
 
-- Use Option 1 (Netlify UI) for simplicity
-- Use Option 2 (CLI) if you manage multiple sites
-- Use Option 3 (netlify.toml) if you want version control
+**Now using:**
+- Single published CSV export URLs
+- Direct fetch with timeout protection
+- 5-minute in-memory caching
 
-🔄 **After Setting Variables**
+**Why this is better:**
+- Simpler setup (just URLs, no API keys)
+- More reliable (published links are stable)
+- Easier to debug (diagnostic endpoint shows status)
+- Faster deploys (fewer dependencies)
 
-- New deployments automatically use the variables
-- Existing deployments need a rebuild to use new variables
-- Test the `/api/data/diagnostic` endpoint to verify
+## Need Help?
 
-## Contact Support
-
-If still having issues:
-
-1. Visit `/api/data/diagnostic` for detailed error info
-2. Check Netlify build logs
-3. Verify CSV URL is accessible in browser
-4. Contact Netlify support with deployment ID
+1. Check `/api/data/diagnostic` for detailed error information
+2. Visit [Netlify Docs](https://docs.netlify.com/environment-variables/overview/) for environment variable help
+3. Ensure CSV URL is accessible by opening it in a browser
+4. Contact Netlify support if experiencing deployment issues
