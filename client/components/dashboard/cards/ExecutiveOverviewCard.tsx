@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import {
   DimCow,
   DimLocation,
@@ -14,6 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import { SaudiHighchartsMap } from "./SaudiHighchartsMap";
+import { generateTimelineMonths, TimelineMonth } from "@/lib/saudiMapData";
 
 interface ExecutiveOverviewCardProps {
   kpis: {
@@ -39,68 +41,91 @@ export function ExecutiveOverviewCard({
 }: ExecutiveOverviewCardProps) {
   const [showStaticCowsModal, setShowStaticCowsModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(0);
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
+  const playIndexRef = useRef(0);
 
-  // Get all unique months from movement data
-  const allMonths = useMemo(() => {
-    const monthSet = new Set<string>();
-    movements.forEach((m) => {
-      const date = new Date(m.Moved_DateTime);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      monthSet.add(`${year}-${month}`);
-    });
-    return Array.from(monthSet).sort();
-  }, [movements]);
+  // Generate timeline from Saudi map data
+  const timelineMonths = useMemo(() => {
+    return generateTimelineMonths(movements, cows, locations);
+  }, [movements, cows, locations]);
 
-  // Auto-play monthly progression
+  // Initialize to last month
   useEffect(() => {
-    if (!isPlaying) return;
+    setCurrentMonthIndex(Math.max(0, timelineMonths.length - 1));
+  }, [timelineMonths.length]);
+
+  // Auto-play timeline with looping
+  useEffect(() => {
+    if (!isPlaying || timelineMonths.length === 0) return;
+
+    playIndexRef.current = currentMonthIndex === -1 ? 0 : currentMonthIndex;
 
     const interval = setInterval(() => {
-      setCurrentMonth((prev) => {
-        if (prev + 1 >= allMonths.length) {
-          setIsPlaying(false);
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 2000); // Change month every 2 seconds
+      playIndexRef.current++;
+      if (playIndexRef.current >= timelineMonths.length) {
+        playIndexRef.current = 0;
+      }
+      setCurrentMonthIndex(playIndexRef.current);
+    }, 1500);
 
     return () => clearInterval(interval);
-  }, [isPlaying, allMonths.length]);
+  }, [isPlaying, timelineMonths.length]);
 
-  // Filter movements by current month - no useMemo to avoid reference issues
-  const filteredMonthlyMovements = useMemo(() => {
-    if (allMonths.length === 0) return movements;
-    const targetMonth = allMonths[currentMonth];
-    return movements.filter((m) => {
-      const date = new Date(m.Moved_DateTime);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      return `${year}-${month}` === targetMonth;
-    });
-  }, [movements, allMonths, currentMonth]);
+  // Get current month data
+  const currentMonth = useMemo(() => {
+    if (currentMonthIndex === -1 && timelineMonths.length > 0) {
+      const aggregated: TimelineMonth = {
+        month: "All",
+        year: 0,
+        movements: [],
+        totalDistance: 0,
+        movementCounts: { Full: 0, Half: 0, Zero: 0 },
+        vendorCounts: {},
+      };
+
+      timelineMonths.forEach((month) => {
+        aggregated.movements.push(...month.movements);
+        aggregated.totalDistance += month.totalDistance;
+        aggregated.movementCounts.Full += month.movementCounts.Full;
+        aggregated.movementCounts.Half += month.movementCounts.Half;
+        aggregated.movementCounts.Zero += month.movementCounts.Zero;
+        Object.keys(month.vendorCounts).forEach((vendor) => {
+          aggregated.vendorCounts[vendor] =
+            (aggregated.vendorCounts[vendor] || 0) + month.vendorCounts[vendor];
+        });
+      });
+
+      return aggregated;
+    }
+
+    return (
+      timelineMonths[Math.max(0, currentMonthIndex)] || {
+        month: "N/A",
+        year: 0,
+        movements: [],
+        totalDistance: 0,
+        movementCounts: { Full: 0, Half: 0, Zero: 0 },
+        vendorCounts: {},
+      }
+    );
+  }, [currentMonthIndex, timelineMonths]);
 
   // Calculate KPIs for current month
   const monthlyKpis = useMemo(() => {
-    const uniqueCows = new Set(filteredMonthlyMovements.map((m) => m.COW_ID));
+    const uniqueCows = new Set(currentMonth.movements.map((m) => m.COW_ID));
 
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
-      totalMovements: filteredMonthlyMovements.length,
-      totalDistanceKM: filteredMonthlyMovements.reduce(
-        (sum, m) => sum + (m.Distance_KM || 0),
-        0
-      ),
+      totalMovements: currentMonth.movements.length,
+      totalDistanceKM: currentMonth.totalDistance,
       activeCOWs: uniqueCows.size,
       staticCOWs: kpis.staticCOWs,
       avgMovesPerCOW:
         uniqueCows.size > 0
-          ? filteredMonthlyMovements.length / uniqueCows.size
+          ? currentMonth.movements.length / uniqueCows.size
           : 0,
     };
-  }, [filteredMonthlyMovements, kpis]);
+  }, [currentMonth, kpis]);
 
   // Get static COWs data
   const staticCowsData = cowMetrics
@@ -123,9 +148,9 @@ export function ExecutiveOverviewCard({
   const sites = locations.filter((l) => l.Location_Type === "Site");
 
   const movementsByType = {
-    full: filteredMonthlyMovements.filter((m) => m.Movement_Type === "Full").length,
-    half: filteredMonthlyMovements.filter((m) => m.Movement_Type === "Half").length,
-    zero: filteredMonthlyMovements.filter((m) => m.Movement_Type === "Zero").length,
+    full: currentMonth.movementCounts.Full,
+    half: currentMonth.movementCounts.Half,
+    zero: currentMonth.movementCounts.Zero,
   };
 
   // Donut chart data for Movement Classification
@@ -213,52 +238,51 @@ export function ExecutiveOverviewCard({
   ];
 
   return (
-    <div className="h-full overflow-x-hidden flex flex-col">
-      {/* Main Split Layout: 40% Map + 60% Overview */}
-      <div className="flex flex-col lg:flex-row flex-1 gap-4 p-4 overflow-hidden">
-        {/* Left Side: Movement Map (40%) */}
-        <div className="w-full lg:w-2/5 flex flex-col">
-          <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl p-6 flex-1 flex flex-col items-center justify-center shadow-2xl border-2 border-purple-800">
-            <div className="text-center">
-              <p className="text-white text-sm font-bold mb-2">MOVEMENT MAP</p>
-              <p className="text-white/80 text-xs">
-                {allMonths.length > 0 && currentMonth < allMonths.length
-                  ? `Month: ${allMonths[currentMonth]}`
-                  : "Select a month to view"}
-              </p>
-              <div className="mt-4 text-white/60 text-xs">
-                Map visualization area
-              </div>
-            </div>
+    <div className="h-full overflow-x-hidden flex flex-col bg-white">
+      {/* Timeline Controls at Top */}
+      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 flex-shrink-0">
+        <div className="flex items-center gap-4 flex-wrap">
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className="px-6 py-2 bg-white text-purple-600 font-bold rounded-lg hover:bg-purple-50 transition-all"
+          >
+            {isPlaying ? "⏸ Pause" : "▶ Play All"}
+          </button>
 
-            {/* Play All Button */}
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="mt-6 px-6 py-2 bg-white text-purple-600 font-bold rounded-lg hover:bg-purple-50 transition-all"
-            >
-              {isPlaying ? "⏸ Pause" : "▶ Play All"}
-            </button>
-
-            {/* Month Selector */}
-            {allMonths.length > 0 && (
-              <div className="mt-4 w-full max-w-xs">
-                <input
-                  type="range"
-                  min="0"
-                  max={allMonths.length - 1}
-                  value={currentMonth}
-                  onChange={(e) => {
-                    setCurrentMonth(parseInt(e.target.value));
-                    setIsPlaying(false);
-                  }}
-                  className="w-full"
-                />
-                <p className="text-white text-xs text-center mt-2">
-                  {currentMonth + 1} of {allMonths.length}
-                </p>
-              </div>
+          <div className="flex-1 min-w-xs flex items-center gap-3">
+            <input
+              type="range"
+              min="0"
+              max={timelineMonths.length - 1}
+              value={currentMonthIndex}
+              onChange={(e) => {
+                setCurrentMonthIndex(parseInt(e.target.value));
+                setIsPlaying(false);
+              }}
+              className="flex-1"
+            />
+            <span className="text-sm whitespace-nowrap">
+              {currentMonthIndex + 1} of {timelineMonths.length}
+            </span>
+            {timelineMonths.length > 0 && (
+              <span className="text-sm whitespace-nowrap">
+                {timelineMonths[currentMonthIndex]?.month}/{" "}
+                {timelineMonths[currentMonthIndex]?.year}
+              </span>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Main Split Layout: Map (40%) + Overview (60%) */}
+      <div className="flex flex-col lg:flex-row flex-1 gap-4 p-4 overflow-hidden">
+        {/* Left Side: Saudi Map (40%) */}
+        <div className="w-full lg:w-2/5 flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
+          <SaudiHighchartsMap
+            movements={currentMonth.movements}
+            cows={cows}
+            locations={locations}
+          />
         </div>
 
         {/* Right Side: Executive Overview (60%) */}
@@ -307,18 +331,13 @@ export function ExecutiveOverviewCard({
             ))}
           </div>
 
-          {/* Charts: Movement Classification and COW Status (Donut Charts) */}
+          {/* Charts: Movement Classification and COW Status (Donut Charts) - WHITE BACKGROUND */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
             {/* Movement Classification Donut Chart */}
             <div
-              className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-4 flex flex-col items-center justify-center"
-              style={{
-                boxShadow:
-                  "0 15px 35px -5px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-                border: "2px solid rgba(255, 255, 255, 0.2)",
-              }}
+              className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg border border-gray-200"
             >
-              <h3 className="text-white text-sm font-bold mb-3 text-center">
+              <h3 className="text-gray-900 text-sm font-bold mb-3 text-center">
                 Movement Classification
               </h3>
               <ResponsiveContainer width="100%" height={200}>
@@ -338,16 +357,16 @@ export function ExecutiveOverviewCard({
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "rgba(0, 0, 0, 0.8)",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid #e5e7eb",
                       borderRadius: "8px",
-                      color: "#fff",
+                      color: "#000",
                     }}
                   />
                   <Legend
                     wrapperStyle={{ paddingTop: "10px" }}
                     formatter={(value, entry: any) => (
-                      <span style={{ color: "#fff", fontSize: "11px" }}>
+                      <span style={{ color: "#374151", fontSize: "11px" }}>
                         {entry.payload.name}
                       </span>
                     )}
@@ -358,14 +377,9 @@ export function ExecutiveOverviewCard({
 
             {/* COW Status Donut Chart */}
             <div
-              className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-4 flex flex-col items-center justify-center"
-              style={{
-                boxShadow:
-                  "0 15px 35px -5px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-                border: "2px solid rgba(255, 255, 255, 0.2)",
-              }}
+              className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg border border-gray-200"
             >
-              <h3 className="text-white text-sm font-bold mb-3 text-center">
+              <h3 className="text-gray-900 text-sm font-bold mb-3 text-center">
                 COW Status
               </h3>
               <ResponsiveContainer width="100%" height={200}>
@@ -385,16 +399,16 @@ export function ExecutiveOverviewCard({
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "rgba(0, 0, 0, 0.8)",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid #e5e7eb",
                       borderRadius: "8px",
-                      color: "#fff",
+                      color: "#000",
                     }}
                   />
                   <Legend
                     wrapperStyle={{ paddingTop: "10px" }}
                     formatter={(value, entry: any) => (
-                      <span style={{ color: "#fff", fontSize: "11px" }}>
+                      <span style={{ color: "#374151", fontSize: "11px" }}>
                         {entry.payload.name}
                       </span>
                     )}
