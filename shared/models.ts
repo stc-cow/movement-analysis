@@ -62,6 +62,7 @@ export interface CowMovementsFact {
   Is_Royal?: boolean; // Derived from Column E (ebu_royal_flag) - true if contains "Royal"
   Is_EBU?: boolean; // Derived from Column E (ebu_royal_flag) - true if contains "EBU"
   EbuRoyalCategory?: "ROYAL" | "EBU" | "NON EBU"; // Mutually exclusive category from Column E
+  Vendor?: string; // Column AC - Vendor name (Nokia, Ericsson, Huawei, etc.)
 }
 
 // Analytics: COW aggregated metrics
