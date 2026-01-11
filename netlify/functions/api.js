@@ -72,13 +72,11 @@ async function initializeHandler() {
 }
 
 async function fetchGoogleSheetsData() {
-  const GOOGLE_SHEET_ID =
-    process.env.GOOGLE_SHEET_ID ||
-    "1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM";
-  const GID = process.env.GOOGLE_SHEET_GID || "1539310010";
-  const CSV_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID}`;
+  const CSV_URL =
+    process.env.MOVEMENT_DATA_CSV_URL ||
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv";
 
-  console.log("[API] Fetching from:", CSV_URL.substring(0, 80) + "...");
+  console.log("[API] Fetching Movement-data from published CSV...");
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 20000);
