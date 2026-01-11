@@ -437,13 +437,13 @@ export function ExecutiveOverviewCard({
                   />
                   <Bar
                     dataKey="value"
-                    fill="#a855f7"
                     radius={[4, 4, 0, 0]}
-                    shape={
-                      <VendorBarShape
-                        vendorColors={VENDOR_COLORS}
-                      />
-                    }
+                    label={{
+                      position: "top",
+                      fill: "#374151",
+                      fontSize: 10,
+                      formatter: (value: number) => value.toString(),
+                    }}
                   >
                     {vendorData.map((vendor, idx) => (
                       <Cell
