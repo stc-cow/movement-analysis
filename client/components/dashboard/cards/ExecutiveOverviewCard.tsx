@@ -537,7 +537,7 @@ export function ExecutiveOverviewCard({
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                <div className="flex items-center justify-center flex-1 text-gray-400 text-xs">
                   No event data
                 </div>
               )}
