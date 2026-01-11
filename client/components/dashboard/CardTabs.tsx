@@ -16,12 +16,7 @@ export const DASHBOARD_CARDS: CardTab[] = [
   {
     id: "executive",
     label: "Executive Overview",
-    description: "KPIs & Summary",
-  },
-  {
-    id: "map",
-    label: "Movement Map",
-    description: "Movement Flows",
+    description: "KPIs & Summary with Movement Map",
   },
   {
     id: "never-moved",
