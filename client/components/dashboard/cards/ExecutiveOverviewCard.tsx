@@ -197,12 +197,19 @@ export function ExecutiveOverviewCard({
 
   // Calculate vendor counts for current month (from Column AC - Vendor)
   const vendorCounts: Record<string, number> = {};
-  currentMonth.movements.forEach((mov) => {
+  currentMonth.movements.forEach((mov: any) => {
     if (mov.Vendor && mov.Vendor.trim()) {
       const vendor = mov.Vendor.trim();
       vendorCounts[vendor] = (vendorCounts[vendor] || 0) + 1;
     }
   });
+
+  // Debug logging (temporary)
+  if (Object.keys(vendorCounts).length > 0) {
+    console.log("Vendor counts found:", vendorCounts);
+  } else if (currentMonth.movements.length > 0) {
+    console.log("No vendor data found. Sample movement:", currentMonth.movements[0]);
+  }
 
   // Sort vendors by movement count descending
   const vendorData = Object.entries(vendorCounts)
