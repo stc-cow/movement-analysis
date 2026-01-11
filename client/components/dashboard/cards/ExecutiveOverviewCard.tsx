@@ -379,18 +379,28 @@ export function ExecutiveOverviewCard({
           </div>
 
           {/* Top Vendor Chart (35% of left panel) */}
-          <div className="h-48 bg-white rounded-lg p-3 border border-gray-200 shadow-sm overflow-hidden">
-            <h3 className="text-gray-900 text-sm font-bold mb-2">Top Vendor</h3>
-            {topVendor ? (
-              <div className="h-full flex flex-col items-center justify-between">
-                {/* Vendor Logo Section */}
-                <div className="flex flex-col items-center gap-1">
-                  <div className="w-14 h-14 bg-gray-100 rounded border border-purple-600 flex items-center justify-center">
-                    <div className="text-xs font-bold text-purple-600 text-center px-1">
-                      {topVendor.name}
-                    </div>
+          <div className="h-48 bg-white rounded-lg p-3 border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-gray-900 text-sm font-bold">Top Vendor</h3>
+              {topVendor && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor:
+                        VENDOR_COLORS[topVendor.name]?.bgColor ||
+                        "#f0f0f0",
+                      borderColor:
+                        VENDOR_COLORS[topVendor.name]?.color ||
+                        "#999",
+                      color:
+                        VENDOR_COLORS[topVendor.name]?.color ||
+                        "#666",
+                    }}
+                  >
+                    {topVendor.name.substring(0, 1)}
                   </div>
-                  <div className="text-center">
+                  <div className="text-right">
                     <div className="text-xs font-semibold text-gray-900">
                       {topVendor.name}
                     </div>
@@ -399,47 +409,89 @@ export function ExecutiveOverviewCard({
                     </div>
                   </div>
                 </div>
+              )}
+            </div>
 
-                {/* Column Chart */}
-                {vendorData.length > 0 && (
-                  <ResponsiveContainer width="100%" height={90}>
-                    <BarChart
-                      data={vendorData}
-                      margin={{ top: 2, right: 5, left: 5, bottom: 15 }}
-                    >
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="#e5e7eb"
-                        vertical={false}
+            {/* Vendor Column Chart with Logos */}
+            {topVendor && vendorData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={130}>
+                <BarChart
+                  data={vendorData}
+                  margin={{ top: 20, right: 5, left: 5, bottom: 5 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#e5e7eb"
+                    vertical={false}
+                  />
+                  <XAxis dataKey="name" hide={true} />
+                  <YAxis fontSize={8} width={25} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                    }}
+                    formatter={(value: number) => `${value} movements`}
+                    cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
+                  />
+                  <Bar
+                    dataKey="value"
+                    fill="#a855f7"
+                    radius={[4, 4, 0, 0]}
+                    shape={
+                      <VendorBarShape
+                        vendorColors={VENDOR_COLORS}
                       />
-                      <XAxis
-                        dataKey="name"
-                        angle={-45}
-                        textAnchor="end"
-                        height={35}
-                        tick={{ fontSize: 8 }}
+                    }
+                  >
+                    {vendorData.map((vendor, idx) => (
+                      <Cell
+                        key={`vendor-${idx}`}
+                        fill={
+                          VENDOR_COLORS[vendor.name]?.color ||
+                          "#a855f7"
+                        }
                       />
-                      <YAxis fontSize={8} width={25} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "rgba(255, 255, 255, 0.95)",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "8px",
-                        }}
-                        formatter={(value: number) => `${value} movements`}
-                      />
-                      <Bar
-                        dataKey="value"
-                        fill="#a855f7"
-                        radius={[8, 8, 0, 0]}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                )}
-              </div>
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+              <div className="flex-1 flex items-center justify-center text-gray-400 text-xs">
                 No vendor data available
+              </div>
+            )}
+
+            {/* Vendor Legend with Logos */}
+            {vendorData.length > 0 && (
+              <div className="flex justify-center gap-3 mt-2 flex-wrap text-xs">
+                {vendorData.map((vendor) => (
+                  <div
+                    key={vendor.name}
+                    className="flex items-center gap-1"
+                  >
+                    <div
+                      className="w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold"
+                      style={{
+                        backgroundColor:
+                          VENDOR_COLORS[vendor.name]?.bgColor ||
+                          "#f0f0f0",
+                        borderColor:
+                          VENDOR_COLORS[vendor.name]?.color ||
+                          "#999",
+                        color:
+                          VENDOR_COLORS[vendor.name]?.color ||
+                          "#666",
+                      }}
+                    >
+                      {vendor.name.substring(0, 1)}
+                    </div>
+                    <span className="text-gray-700 font-medium">
+                      {vendor.name}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
