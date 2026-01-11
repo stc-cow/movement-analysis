@@ -20,7 +20,7 @@ export const DASHBOARD_CARDS: CardTab[] = [
   },
   {
     id: "map",
-    label: "Saudi Map",
+    label: "Movement Map",
     description: "Movement Flows",
   },
   {
@@ -35,7 +35,7 @@ export const DASHBOARD_CARDS: CardTab[] = [
   },
   {
     id: "warehouse",
-    label: "Warehouse Intel",
+    label: "Warehouse Analysis",
     description: "Dispatch & Receive",
   },
   {
