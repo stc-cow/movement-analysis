@@ -471,10 +471,10 @@ export function ExecutiveOverviewCard({
                           dataKey="name"
                           angle={-45}
                           textAnchor="end"
-                          height={60}
-                          tick={{ fontSize: 10 }}
+                          height={40}
+                          tick={{ fontSize: 8 }}
                         />
-                        <YAxis fontSize={10} />
+                        <YAxis fontSize={8} width={25} />
                         <Tooltip
                           contentStyle={{
                             backgroundColor: "rgba(255, 255, 255, 0.95)",
