@@ -41,18 +41,22 @@ const FETCH_TIMEOUT = 20000; // 20 seconds - safe for Netlify 30s limit
 const CACHE_TTL = 300; // 5 minutes cache for data endpoints
 
 // Google Sheet Configuration
-// Using a single published CSV URL for simplified integration
-// This URL contains the "Movement-data" sheet (GID 1464106304)
+// Sheet ID: 1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM
+// Two different sheets within the same file (different GIDs):
+// - GID 1539310010: Movement-data (main dashboard data)
+// - GID 1464106304: Dashboard (Never Moved COWs data)
+
+const SHEET_ID = "1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM";
+const MOVEMENT_DATA_GID = "1539310010"; // Movement-data sheet
+const NEVER_MOVED_COW_GID = "1464106304"; // Never Moved COWs sheet
 
 const MOVEMENT_DATA_CSV_URL =
   process.env.MOVEMENT_DATA_CSV_URL ||
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv";
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${MOVEMENT_DATA_GID}`;
 
-// Alternative published CSV URL for "dashboard" sheet (Never Moved COWs)
-// If the above URL doesn't contain dashboard data, use this for never-moved-cows endpoint
 const NEVER_MOVED_COW_CSV_URL =
   process.env.NEVER_MOVED_COW_CSV_URL ||
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv";
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${NEVER_MOVED_COW_GID}`;
 
 /**
  * ENHANCED CSV PARSER WITH DETAILED DEBUGGING
