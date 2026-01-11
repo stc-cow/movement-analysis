@@ -492,6 +492,8 @@ function processData(rows: any[]) {
     // Add from location
     const fromId = `LOC-${from_loc.replace(/\s+/g, "-").substring(0, 20)}`;
     if (!locationMap.has(fromId)) {
+      // Detect warehouse based on "WH" in location name
+      const isFromWarehouse = from_loc.toUpperCase().includes("WH");
       locationMap.set(fromId, {
         Location_ID: fromId,
         Location_Name: from_loc,
@@ -499,7 +501,7 @@ function processData(rows: any[]) {
         Latitude: parseFloat(row.from_latitude) || 0,
         Longitude: parseFloat(row.from_longitude) || 0,
         Region: normalizeRegion(row.region_from),
-        Location_Type: "Site",
+        Location_Type: isFromWarehouse ? "Warehouse" : "Site",
         Owner: row.vendor || "STC",
       });
     }
@@ -507,6 +509,8 @@ function processData(rows: any[]) {
     // Add to location
     const toId = `LOC-${to_loc.replace(/\s+/g, "-").substring(0, 20)}`;
     if (!locationMap.has(toId)) {
+      // Detect warehouse based on "WH" in location name
+      const isToWarehouse = to_loc.toUpperCase().includes("WH");
       locationMap.set(toId, {
         Location_ID: toId,
         Location_Name: to_loc,
@@ -514,7 +518,7 @@ function processData(rows: any[]) {
         Latitude: parseFloat(row.to_latitude) || 0,
         Longitude: parseFloat(row.to_longitude) || 0,
         Region: normalizeRegion(row.region_to),
-        Location_Type: "Site",
+        Location_Type: isToWarehouse ? "Warehouse" : "Site",
         Owner: row.vendor || "STC",
       });
     }
