@@ -567,6 +567,14 @@ const processedDataHandler: RequestHandler = async (req, res) => {
  */
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
+    // Check cache first
+    const cacheKey = "never-moved-cows";
+    const cachedData = getCached(cacheKey);
+    if (cachedData) {
+      console.log(`✓ Serving cached data for never-moved-cows`);
+      return res.json(cachedData);
+    }
+
     // Published CSV URL for Dashboard sheet (GID: 1464106304)
     const CSV_URL =
       process.env.NEVER_MOVED_COW_CSV_URL ||
@@ -574,12 +582,19 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
 
     console.log(`📡 Fetching Never Moved COWs from Dashboard sheet CSV...`);
 
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
     const response = await fetch(CSV_URL, {
       method: "GET",
       headers: {
         "User-Agent": "Mozilla/5.0",
       },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: Failed to fetch Dashboard CSV`);
