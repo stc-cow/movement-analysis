@@ -448,32 +448,49 @@ export function ExecutiveOverviewCard({
                 Top Vendor
               </h3>
               {topVendor ? (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-600">
-                      {topVendor.value}
+                <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                  {/* Vendor Logo Section */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg border-2 border-purple-600 flex items-center justify-center">
+                      <div className="text-sm font-bold text-purple-600 text-center px-2">
+                        {topVendor.name}
+                      </div>
                     </div>
-                    <div className="text-gray-600 text-sm mt-1">
-                      {topVendor.name}
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-gray-900">
+                        {topVendor.name}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {topVendor.value} movements
+                      </div>
                     </div>
                   </div>
+
+                  {/* Column Chart */}
                   {vendorData.length > 0 && (
-                    <ResponsiveContainer width="100%" height={120}>
+                    <ResponsiveContainer width="100%" height={140}>
                       <BarChart
                         data={vendorData}
-                        layout="vertical"
-                        margin={{ top: 5, right: 20, left: 80, bottom: 5 }}
+                        margin={{ top: 5, right: 10, left: 10, bottom: 20 }}
                       >
-                        <XAxis type="number" fontSize={10} />
-                        <YAxis dataKey="name" type="category" fontSize={9} width={80} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                        <XAxis
+                          dataKey="name"
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                          tick={{ fontSize: 10 }}
+                        />
+                        <YAxis fontSize={10} />
                         <Tooltip
                           contentStyle={{
                             backgroundColor: "rgba(255, 255, 255, 0.95)",
                             border: "1px solid #e5e7eb",
                             borderRadius: "8px",
                           }}
+                          formatter={(value: number) => `${value} movements`}
                         />
-                        <Bar dataKey="value" fill="#a855f7" radius={[0, 8, 8, 0]} />
+                        <Bar dataKey="value" fill="#a855f7" radius={[8, 8, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
