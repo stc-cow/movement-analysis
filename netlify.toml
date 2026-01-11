@@ -1,11 +1,13 @@
 [build]
-  command = "pnpm install && pnpm run build:client"
+  command = "pnpm install && pnpm run build"
   functions = "netlify/functions"
   publish = "dist/spa"
 
 [functions]
   external_node_modules = ["express", "cors", "serverless-http", "dotenv", "zod"]
   node_bundler = "esbuild"
+  # Increase timeout for Google Sheets API calls
+  timeout = 30
 
 # API routes redirect to serverless functions
 [[redirects]]
