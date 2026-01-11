@@ -194,34 +194,23 @@ export function ExecutiveOverviewCard({
 
   // Calculate EBU Classification data
   const totalCurrentMovements = currentMonth.movements.length;
-  const royalCount = currentMonth.movements.filter(
-    (m) => m.EbuRoyalCategory === "ROYAL",
-  ).length;
-  const ebuCount = currentMonth.movements.filter(
-    (m) => m.EbuRoyalCategory === "EBU",
-  ).length;
-  const nonEbuCount = currentMonth.movements.filter(
-    (m) => m.EbuRoyalCategory === "NON EBU",
-  ).length;
 
-  // Donut chart data for EBU Classification
-  const ebuChartData = [
-    {
-      name: "ROYAL",
-      value: royalCount,
-      color: "#8b5cf6",
-    },
-    {
-      name: "EBU",
-      value: ebuCount,
-      color: "#fbbf24",
-    },
-    {
-      name: "NON EBU",
-      value: nonEbuCount,
-      color: "#6b7280",
-    },
-  ];
+  // Calculate vendor counts for current month
+  const vendorCounts: Record<string, number> = {};
+  currentMonth.movements.forEach((mov) => {
+    const vendor = mov.Vendor || "Unknown";
+    vendorCounts[vendor] = (vendorCounts[vendor] || 0) + 1;
+  });
+
+  const vendorData = Object.entries(vendorCounts)
+    .map(([vendor, count]) => ({
+      name: vendor,
+      value: count,
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5); // Top 5 vendors
+
+  const topVendor = vendorData.length > 0 ? vendorData[0] : null;
 
   const metrics = [
     {
