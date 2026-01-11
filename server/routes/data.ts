@@ -434,7 +434,17 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     const rows = parseCSVData(csvData);
 
     if (rows.length === 0) {
-      throw new Error("No data rows found in Google Sheet");
+      console.error("\n❌ NO DATA ROWS FOUND:");
+      console.error(`   CSV received: ${csvData.length} bytes`);
+      console.error(`   CSV line count: ${csvData.split("\n").length}`);
+      console.error(`   First 200 chars: ${csvData.substring(0, 200)}`);
+      console.error("");
+      console.error("📋 POSSIBLE CAUSES:");
+      console.error("   1. CSV is empty or contains only headers");
+      console.error("   2. Column structure doesn't match expected format");
+      console.error("   3. All rows were filtered out as invalid");
+      console.error("");
+      throw new Error("No data rows found in Google Sheet - CSV may be empty or incorrectly formatted");
     }
 
     console.log(`✓ Parsed ${rows.length} data rows from CSV`);
