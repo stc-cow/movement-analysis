@@ -84,8 +84,8 @@ export function ExecutiveOverviewCard({
 
   // Calculate KPIs for current month
   const monthlyKpis = useMemo(() => {
-    const monthlyMovements = monthlyMovements;
-    const uniqueCows = new Set(monthlyMovements.map((m) => m.COW_ID));
+    const currentMonthMovements = monthlyMovements;
+    const uniqueCows = new Set(currentMonthMovements.map((m) => m.COW_ID));
     
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
