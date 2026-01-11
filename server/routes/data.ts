@@ -535,6 +535,9 @@ const processedDataHandler: RequestHandler = async (req, res) => {
       );
     }
 
+    // Cache the result to reduce API calls on Netlify
+    setCached(cacheKey, processedData, CACHE_TTL);
+
     res.json(processedData);
   } catch (error) {
     console.error("Error processing Google Sheet data:", error);
