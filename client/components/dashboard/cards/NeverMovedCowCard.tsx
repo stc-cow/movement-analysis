@@ -36,11 +36,19 @@ export function NeverMovedCowCard({ neverMovedCows }: NeverMovedCowCardProps) {
   }, [neverMovedCows, selectedStatus]);
 
   const recentlyDeployed = useMemo(() => {
+    const seenIds = new Set<string>();
     return [...neverMovedCows]
       .sort((a, b) => {
         const dateA = new Date(a.Last_Deploy_Date).getTime();
         const dateB = new Date(b.Last_Deploy_Date).getTime();
         return dateB - dateA;
+      })
+      .filter((cow) => {
+        if (seenIds.has(cow.COW_ID)) {
+          return false;
+        }
+        seenIds.add(cow.COW_ID);
+        return true;
       })
       .slice(0, 5);
   }, [neverMovedCows]);
