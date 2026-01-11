@@ -34,12 +34,12 @@ export function KpiStrip({
       bgColor: "bg-green-50 dark:bg-green-950",
     },
     {
-      label: "Active COWs",
+      label: "High Moved COWs",
       value: activeCOWs,
       bgColor: "bg-orange-50 dark:bg-orange-950",
     },
     {
-      label: "Static COWs",
+      label: "One Time Moved COWs",
       value: staticCOWs,
       bgColor: "bg-red-50 dark:bg-red-950",
     },
