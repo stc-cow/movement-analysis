@@ -437,13 +437,13 @@ export function ExecutiveOverviewCard({
 
             {/* Top Vendor Chart */}
             <div
-              className="bg-white rounded-lg p-2 flex flex-col items-center justify-center shadow-sm border border-gray-200 overflow-hidden"
+              className="bg-white rounded-lg p-2 flex flex-col items-center shadow-sm border border-gray-200 overflow-hidden"
             >
-              <h3 className="text-gray-900 text-xs font-bold mb-1 text-center">
+              <h3 className="text-gray-900 text-xs font-bold mb-2 text-center flex-shrink-0">
                 Top Vendor
               </h3>
               {topVendor ? (
-                <div className="w-full flex flex-col items-center justify-center gap-1">
+                <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-center gap-1">
                   {/* Vendor Logo Section */}
                   <div className="flex flex-col items-center gap-1">
                     <div className="w-12 h-12 bg-gray-100 rounded border border-purple-600 flex items-center justify-center">
