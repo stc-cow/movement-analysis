@@ -515,7 +515,36 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       );
     }
 
-    const jsonData = await response.json();
+    const contentType = response.headers.get("content-type");
+    const text = await response.text();
+
+    // Check if response is HTML (error page) instead of JSON
+    if (text.startsWith("<")) {
+      console.error("\n❌ GOOGLE APPS SCRIPT ERROR:");
+      console.error("   The endpoint returned HTML instead of JSON.");
+      console.error("   This usually means:");
+      console.error("   1. The script is not properly deployed");
+      console.error("   2. Access permissions are not set to 'Anyone'");
+      console.error("   3. The script needs to be redeployed");
+      console.error("\n📋 TO FIX:");
+      console.error("   1. Open the Google Apps Script project");
+      console.error("   2. Click 'Deploy' > 'New Deployment'");
+      console.error("   3. Select 'Web app' type");
+      console.error("   4. Set 'Execute as' to your account");
+      console.error("   5. Set 'Who has access' to 'Anyone'");
+      console.error("   6. Deploy and copy the new endpoint URL");
+      throw new Error(
+        "Google Apps Script returned HTML. Script may not be deployed or access is restricted.",
+      );
+    }
+
+    let jsonData;
+    try {
+      jsonData = JSON.parse(text);
+    } catch (e) {
+      console.error("Failed to parse response as JSON:", text.substring(0, 200));
+      throw new Error("Response is not valid JSON");
+    }
 
     // The script should return data in one of these formats:
     // 1. { data: [...] } - array of cow objects
