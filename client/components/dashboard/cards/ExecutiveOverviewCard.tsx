@@ -146,7 +146,7 @@ export function ExecutiveOverviewCard({
   const summaryStats = [
     {
       label: "Active Warehouses",
-      value: activeWarehouses.size,
+      value: 10,
     },
     {
       label: "Deployment Sites",
