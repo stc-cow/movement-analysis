@@ -684,13 +684,16 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
 };
 
 /**
- * Diagnostic endpoint to test Google Sheet connectivity
+ * Diagnostic endpoint to test Google Sheets CSV connectivity
  */
 const diagnosticHandler: RequestHandler = async (req, res) => {
   const diagnostics = {
-    currentSheetId: ACTUAL_SHEET_ID,
-    currentGid: GID,
+    urls: {
+      movement_data: MOVEMENT_DATA_CSV_URL,
+      never_moved_cows: NEVER_MOVED_COW_CSV_URL,
+    },
     urlsAttempted: [] as {
+      endpoint: string;
       url: string;
       status: number | string;
       success: boolean;
@@ -698,50 +701,92 @@ const diagnosticHandler: RequestHandler = async (req, res) => {
     recommendations: [] as string[],
   };
 
-  for (const url of CSV_URLS) {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          "User-Agent": "Mozilla/5.0",
-        },
-      });
+  // Test Movement Data CSV
+  try {
+    const response = await fetch(MOVEMENT_DATA_CSV_URL, {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
 
-      diagnostics.urlsAttempted.push({
-        url,
-        status: response.status,
-        success: response.ok,
-      });
+    diagnostics.urlsAttempted.push({
+      endpoint: "movement_data",
+      url: MOVEMENT_DATA_CSV_URL,
+      status: response.status,
+      success: response.ok,
+    });
 
-      if (response.ok) {
-        diagnostics.recommendations.push(
-          "✓ Found working URL! Sheet is accessible.",
-        );
-        break;
-      }
-    } catch (error) {
-      diagnostics.urlsAttempted.push({
-        url,
-        status: error instanceof Error ? error.message : "Network error",
-        success: false,
-      });
+    if (response.ok) {
+      diagnostics.recommendations.push(
+        "✓ Movement-data CSV is accessible and working.",
+      );
+    } else {
+      diagnostics.recommendations.push(
+        `✗ Movement-data CSV returned HTTP ${response.status}. Check if the sheet is published.`,
+      );
     }
+  } catch (error) {
+    diagnostics.urlsAttempted.push({
+      endpoint: "movement_data",
+      url: MOVEMENT_DATA_CSV_URL,
+      status: error instanceof Error ? error.message : "Network error",
+      success: false,
+    });
+    diagnostics.recommendations.push(
+      `✗ Failed to fetch movement-data CSV: ${error instanceof Error ? error.message : "Network error"}`,
+    );
+  }
+
+  // Test Never Moved COWs CSV
+  try {
+    const response = await fetch(NEVER_MOVED_COW_CSV_URL, {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+
+    diagnostics.urlsAttempted.push({
+      endpoint: "never_moved_cows",
+      url: NEVER_MOVED_COW_CSV_URL,
+      status: response.status,
+      success: response.ok,
+    });
+
+    if (response.ok) {
+      diagnostics.recommendations.push(
+        "✓ Never-moved-cows CSV is accessible and working.",
+      );
+    } else {
+      diagnostics.recommendations.push(
+        `✗ Never-moved-cows CSV returned HTTP ${response.status}. Check if the sheet is published.`,
+      );
+    }
+  } catch (error) {
+    diagnostics.urlsAttempted.push({
+      endpoint: "never_moved_cows",
+      url: NEVER_MOVED_COW_CSV_URL,
+      status: error instanceof Error ? error.message : "Network error",
+      success: false,
+    });
+    diagnostics.recommendations.push(
+      `✗ Failed to fetch never-moved-cows CSV: ${error instanceof Error ? error.message : "Network error"}`,
+    );
   }
 
   if (diagnostics.urlsAttempted.every((u) => !u.success)) {
+    diagnostics.recommendations.push("");
+    diagnostics.recommendations.push("TROUBLESHOOTING:");
     diagnostics.recommendations.push(
-      "✗ No accessible URLs found. Please check:",
+      "1. Ensure the Google Sheet is published to the web (File → Share → Publish to web)",
     );
     diagnostics.recommendations.push(
-      "1. Is this the actual Sheet ID (from /spreadsheets/d/...) or a published link ID?",
+      "2. Set the correct CSV URL in environment variables:",
     );
     diagnostics.recommendations.push(
-      "2. Has the sheet been published to the web? (File → Share → Publish to web)",
+      "   - MOVEMENT_DATA_CSV_URL for main dashboard data",
     );
     diagnostics.recommendations.push(
-      "3. Can you access the sheet in a browser with this URL:",
-    );
-    diagnostics.recommendations.push(
-      `   https://docs.google.com/spreadsheets/d/${ACTUAL_SHEET_ID}/edit`,
+      "   - NEVER_MOVED_COW_CSV_URL for never-moved-cows data",
     );
   }
 
