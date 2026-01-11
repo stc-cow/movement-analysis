@@ -70,8 +70,8 @@ export function ExecutiveOverviewCard({
     return () => clearInterval(interval);
   }, [isPlaying, allMonths.length]);
 
-  // Filter movements by current month
-  const monthlyMovements = useMemo(() => {
+  // Filter movements by current month - no useMemo to avoid reference issues
+  const filteredMonthlyMovements = useMemo(() => {
     if (allMonths.length === 0) return movements;
     const targetMonth = allMonths[currentMonth];
     return movements.filter((m) => {
@@ -84,12 +84,12 @@ export function ExecutiveOverviewCard({
 
   // Calculate KPIs for current month
   const monthlyKpis = useMemo(() => {
-    const uniqueCows = new Set(monthlyMovements.map((m) => m.COW_ID));
+    const uniqueCows = new Set(filteredMonthlyMovements.map((m) => m.COW_ID));
 
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
-      totalMovements: monthlyMovements.length,
-      totalDistanceKM: monthlyMovements.reduce(
+      totalMovements: filteredMonthlyMovements.length,
+      totalDistanceKM: filteredMonthlyMovements.reduce(
         (sum, m) => sum + (m.Distance_KM || 0),
         0
       ),
@@ -97,10 +97,10 @@ export function ExecutiveOverviewCard({
       staticCOWs: kpis.staticCOWs,
       avgMovesPerCOW:
         uniqueCows.size > 0
-          ? monthlyMovements.length / uniqueCows.size
+          ? filteredMonthlyMovements.length / uniqueCows.size
           : 0,
     };
-  }, [monthlyMovements, kpis]);
+  }, [filteredMonthlyMovements, kpis]);
 
   // Get static COWs data
   const staticCowsData = cowMetrics
@@ -123,9 +123,9 @@ export function ExecutiveOverviewCard({
   const sites = locations.filter((l) => l.Location_Type === "Site");
 
   const movementsByType = {
-    full: monthlyMovements.filter((m) => m.Movement_Type === "Full").length,
-    half: monthlyMovements.filter((m) => m.Movement_Type === "Half").length,
-    zero: monthlyMovements.filter((m) => m.Movement_Type === "Zero").length,
+    full: filteredMonthlyMovements.filter((m) => m.Movement_Type === "Full").length,
+    half: filteredMonthlyMovements.filter((m) => m.Movement_Type === "Half").length,
+    zero: filteredMonthlyMovements.filter((m) => m.Movement_Type === "Zero").length,
   };
 
   // Donut chart data for Movement Classification
