@@ -3,6 +3,43 @@ import { RequestHandler } from "express";
 
 const router = Router();
 
+/**
+ * Simple in-memory cache with TTL to prevent repeated Google Sheets fetches
+ * This reduces load on Netlify serverless functions and improves response times
+ */
+interface CacheEntry {
+  data: any;
+  timestamp: number;
+  ttl: number; // TTL in milliseconds
+}
+
+const cache = new Map<string, CacheEntry>();
+
+function getCached(key: string): any | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+
+  const now = Date.now();
+  if (now - entry.timestamp > entry.ttl) {
+    cache.delete(key);
+    return null;
+  }
+
+  return entry.data;
+}
+
+function setCached(key: string, data: any, ttlSeconds: number = 300): void {
+  cache.set(key, {
+    data,
+    timestamp: Date.now(),
+    ttl: ttlSeconds * 1000,
+  });
+}
+
+// Fetch timeout configuration (in milliseconds)
+const FETCH_TIMEOUT = 20000; // 20 seconds - safe for Netlify 30s limit
+const CACHE_TTL = 300; // 5 minutes cache for data endpoints
+
 // Google Sheet Configuration
 // IMPORTANT: Use the actual Sheet ID from the URL bar when editing the sheet
 // The Sheet ID is the long alphanumeric string after /spreadsheets/d/
