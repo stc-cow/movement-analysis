@@ -382,7 +382,7 @@ function processData(rows: any[]) {
     const hasFromLocation = row.from_location && row.from_location.toString().trim().length > 0;
     const hasToLocation = row.to_location && row.to_location.toString().trim().length > 0;
 
-    // Require cow_id but be lenient about locations - they might be in different columns
+    // Require cow_id but be lenient about locations
     if (!hasCowId) {
       if (idx < 5) {
         console.warn(`⚠️  Row ${idx} skipped: no cow_id`);
@@ -391,14 +391,17 @@ function processData(rows: any[]) {
       return;
     }
 
-    // Safely parse dates - use current date if invalid
+    // Use defaults for empty locations
+    const from_loc = hasFromLocation ? row.from_location.trim() : "Unknown";
+    const to_loc = hasToLocation ? row.to_location.trim() : "Unknown";
+
+    // Safely parse dates
     const parseDate = (dateStr: string): string => {
       if (!dateStr || dateStr.trim() === "") {
         return new Date().toISOString();
       }
       try {
         const date = new Date(dateStr);
-        // Check if date is valid
         if (isNaN(date.getTime())) {
           return new Date().toISOString();
         }
@@ -408,16 +411,16 @@ function processData(rows: any[]) {
       }
     };
 
-    // Parse Royal/EBU classification from column E (ebu_royal_flag)
+    // Parse Royal/EBU classification
     const { isRoyal, isEBU, category } = classifyEbuRoyal(row.ebu_royal_flag);
 
     // Add movement with standard field names
     movements.push({
       SN: idx + 1,
       COW_ID: row.cow_id,
-      From_Location_ID: `LOC-${row.from_location.replace(/\s+/g, "-").substring(0, 20)}`,
+      From_Location_ID: `LOC-${from_loc.replace(/\s+/g, "-").substring(0, 20)}`,
       From_Sub_Location: row.from_sub_location || undefined,
-      To_Location_ID: `LOC-${row.to_location.replace(/\s+/g, "-").substring(0, 20)}`,
+      To_Location_ID: `LOC-${to_loc.replace(/\s+/g, "-").substring(0, 20)}`,
       To_Sub_Location: row.to_sub_location || undefined,
       Moved_DateTime: parseDate(row.moved_datetime),
       Reached_DateTime: parseDate(row.reached_datetime),
