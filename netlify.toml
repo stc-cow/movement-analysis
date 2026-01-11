@@ -1,14 +1,20 @@
 [build]
-  command = "npm run build:client"
+  command = "pnpm install && pnpm run build:client"
   functions = "netlify/functions"
   publish = "dist/spa"
-
 
 [functions]
   external_node_modules = ["express", "cors", "serverless-http", "dotenv", "zod"]
   node_bundler = "esbuild"
 
+# API routes redirect to serverless functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# SPA routing - redirect all non-existent routes to index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
