@@ -456,7 +456,7 @@ export function ExecutiveOverviewCard({
               className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg border border-gray-200"
             >
               <h3 className="text-gray-900 text-sm font-bold mb-3 text-center">
-                EBU Classification
+                Movement Category
               </h3>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
