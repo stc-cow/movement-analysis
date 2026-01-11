@@ -521,17 +521,18 @@ export function ExecutiveOverviewCard({
               <div className="flex justify-center gap-3 mt-2 flex-wrap text-xs">
                 {vendorData.map((vendor) => (
                   <div key={vendor.name} className="flex items-center gap-1">
-                    <div
-                      className="w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold"
-                      style={{
-                        backgroundColor:
-                          VENDOR_COLORS[vendor.name]?.bgColor || "#f0f0f0",
-                        borderColor:
-                          VENDOR_COLORS[vendor.name]?.color || "#999",
-                        color: VENDOR_COLORS[vendor.name]?.color || "#666",
-                      }}
-                    >
-                      {vendor.name.substring(0, 1)}
+                    <div className="w-6 h-6 rounded-md border border-gray-200 bg-white flex items-center justify-center overflow-hidden">
+                      {VENDOR_LOGOS[vendor.name] ? (
+                        <img
+                          src={VENDOR_LOGOS[vendor.name]}
+                          alt={vendor.name}
+                          className="w-full h-full object-contain p-0.5"
+                        />
+                      ) : (
+                        <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                          {vendor.name.substring(0, 1)}
+                        </div>
+                      )}
                     </div>
                     <span className="text-gray-700 font-medium">
                       {vendor.name}
