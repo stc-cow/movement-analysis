@@ -4,10 +4,20 @@
   publish = "dist/spa"
 
 [functions]
-  external_node_modules = ["express", "cors", "serverless-http", "dotenv", "zod"]
+  # esbuild will bundle everything, making these external modules optional
   node_bundler = "esbuild"
-  # Increase timeout for Google Sheets API calls
+  # Increase timeout for Google Sheets API calls (max 30s)
   timeout = 30
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 # API routes redirect to serverless functions
 [[redirects]]
