@@ -1,5 +1,5 @@
 // Netlify API handler with server integration
-require('dotenv').config();
+require("dotenv").config();
 
 let serverlessHttp;
 let handler;
@@ -9,24 +9,24 @@ async function initializeHandler() {
 
   try {
     // Dynamically import serverless-http
-    serverlessHttp = require('serverless-http');
+    serverlessHttp = require("serverless-http");
 
     // Try to load and use the Express server
     try {
-      const { createServer } = require('../../server');
+      const { createServer } = require("../../server");
       const app = createServer();
 
-      console.log('[API] Successfully loaded Express server from ../../server');
+      console.log("[API] Successfully loaded Express server from ../../server");
 
       handler = serverlessHttp(app, {
-        basePath: '/.netlify/functions/api',
+        basePath: "/.netlify/functions/api",
       });
     } catch (serverError) {
-      console.warn('[API] Could not load Express server:', serverError.message);
+      console.warn("[API] Could not load Express server:", serverError.message);
 
       // Fallback: create minimal Express app with data routes
-      const express = require('express');
-      const cors = require('cors');
+      const express = require("express");
+      const cors = require("cors");
 
       const app = express();
       app.use(cors());
@@ -34,47 +34,51 @@ async function initializeHandler() {
 
       // Try to attach the data routes
       try {
-        const dataRoutes = require('../../server/routes/data').default;
-        app.use('/api/data', dataRoutes);
-        console.log('[API] Successfully loaded data routes');
+        const dataRoutes = require("../../server/routes/data").default;
+        app.use("/api/data", dataRoutes);
+        console.log("[API] Successfully loaded data routes");
       } catch (routeError) {
-        console.warn('[API] Could not load data routes:', routeError.message);
+        console.warn("[API] Could not load data routes:", routeError.message);
 
         // Ultimate fallback: hard code the data routes inline
-        app.get('/api/data/processed-data', (req, res) => {
+        app.get("/api/data/processed-data", (req, res) => {
           // Try to fetch Google Sheets data directly
           fetchGoogleSheetsData()
-            .then(data => res.json(data))
-            .catch(err => {
-              console.error('[API] Data fetch error:', err);
-              res.status(500).json({ error: 'Failed to fetch data', details: err.message });
+            .then((data) => res.json(data))
+            .catch((err) => {
+              console.error("[API] Data fetch error:", err);
+              res
+                .status(500)
+                .json({ error: "Failed to fetch data", details: err.message });
             });
         });
       }
 
       // Ping endpoint
-      app.get('/api/ping', (req, res) => {
-        res.json({ message: 'pong', timestamp: new Date().toISOString() });
+      app.get("/api/ping", (req, res) => {
+        res.json({ message: "pong", timestamp: new Date().toISOString() });
       });
 
       handler = serverlessHttp(app, {
-        basePath: '/.netlify/functions/api',
+        basePath: "/.netlify/functions/api",
       });
     }
 
     return handler;
   } catch (error) {
-    console.error('[API] Failed to initialize:', error);
+    console.error("[API] Failed to initialize:", error);
     throw error;
   }
 }
 
 async function fetchGoogleSheetsData() {
-  const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || '1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM';
-  const GID = process.env.GOOGLE_SHEET_GID || '1539310010';
+  const GOOGLE_SHEET_ID =
+    process.env.GOOGLE_SHEET_ID ||
+    "1bzcG70TopGRRm60NbKX4o3SCE2-QRUDFnY0Z4fYSjEM";
+  const GID = process.env.GOOGLE_SHEET_GID || "1539310010";
   const CSV_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID}`;
 
-  console.log('[API] Fetching from:', CSV_URL.substring(0, 80) + '...');
+  console.log("[API] Fetching from:", CSV_URL.substring(0, 80) + "...");
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 20000);
@@ -82,7 +86,7 @@ async function fetchGoogleSheetsData() {
   try {
     const response = await fetch(CSV_URL, {
       signal: controller.signal,
-      headers: { 'User-Agent': 'Mozilla/5.0' },
+      headers: { "User-Agent": "Mozilla/5.0" },
     });
 
     clearTimeout(timeoutId);
@@ -92,7 +96,7 @@ async function fetchGoogleSheetsData() {
     }
 
     const csvText = await response.text();
-    console.log('[API] Received', csvText.length, 'bytes of CSV data');
+    console.log("[API] Received", csvText.length, "bytes of CSV data");
 
     // Return minimal structure - the real parsing happens in the server
     return {
@@ -100,7 +104,7 @@ async function fetchGoogleSheetsData() {
       cows: [],
       locations: [],
       events: [],
-      note: 'Raw data - needs parsing',
+      note: "Raw data - needs parsing",
     };
   } finally {
     clearTimeout(timeoutId);
@@ -112,12 +116,12 @@ exports.handler = async (event, context) => {
     const handlerFunc = await initializeHandler();
     return handlerFunc(event, context);
   } catch (error) {
-    console.error('[API] Handler error:', error);
+    console.error("[API] Handler error:", error);
     return {
       statusCode: 502,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        error: 'Service initialization failed',
+        error: "Service initialization failed",
         message: String(error),
       }),
     };
