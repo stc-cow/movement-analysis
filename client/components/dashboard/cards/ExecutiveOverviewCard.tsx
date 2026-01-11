@@ -304,9 +304,9 @@ export function ExecutiveOverviewCard({
         {/* Left Side: Saudi Map (40%) */}
         <div className="w-full lg:w-2/5 flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
           <SaudiHighchartsMap
-            movements={currentMonth.movements}
-            cows={cows}
-            locations={locations}
+            regionMetrics={regionMetrics || {}}
+            maxMetric={maxMetric}
+            title="Movement Distribution by Region"
           />
         </div>
 
