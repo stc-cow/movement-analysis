@@ -104,85 +104,50 @@ function parseCSVData(csvText: string) {
       continue;
     }
 
-    let row: any = {};
-
-    if (isNewStructure) {
-      // New structure (A-AE with 31 columns)
-      // Column E (index 4) contains Royal/EBU classification
-      row = {
-        cow_id: cells[0]?.trim() || "",
-        site_label: cells[1]?.trim() || "",
-        last_deploy_date: cells[2]?.trim() || "",
-        first_deploy_date: cells[3]?.trim() || "",
-        ebu_royal_flag: cells[4]?.trim() || "",
-        shelter_type: cells[5]?.trim() || "",
-        tower_type: cells[6]?.trim() || "Macro",
-        tower_system: cells[7]?.trim() || "",
-        tower_height: cells[8]?.trim() || "0",
-        network_technology: cells[9]?.trim() || "",
-        vehicle_make: cells[10]?.trim() || "",
-        vehicle_plate_number: cells[11]?.trim() || "",
-        moved_datetime: cells[12]?.trim() || "",
-        moved_month_year: cells[13]?.trim() || "",
-        reached_datetime: cells[14]?.trim() || "",
-        reached_month_year: cells[15]?.trim() || "",
-        from_location: cells[16]?.trim() || "",
-        from_sub_location: cells[17]?.trim() || "",
-        from_latitude: cells[18]?.trim() || "0",
-        from_longitude: cells[19]?.trim() || "0",
-        to_location: cells[20]?.trim() || "",
-        to_sub_location: cells[21]?.trim() || "",
-        to_latitude: cells[22]?.trim() || "0",
-        to_longitude: cells[23]?.trim() || "0",
-        distance_km: cells[24]?.trim() || "0",
-        movement_type: cells[25]?.trim() || "Zero",
-        region_from: cells[26]?.trim() || "CENTRAL",
-        region_to: cells[27]?.trim() || "CENTRAL",
-        vendor: cells[28]?.trim() || "Unknown",
-        installation_status: cells[29]?.trim() || "",
-        remarks: cells[30]?.trim() || "",
-      };
-    } else {
-      // Old structure - legacy column mapping for backwards compatibility
-      // A=cow, B=site, C=ebu_royal, D=shelter, E=tower_type, F=tower_system, G=tower_height, H=network
-      // I=vehicle_make, J=plate, K=moved_datetime, L=moved_month_year, M=reached_datetime, N=reached_month_year
-      // O=from_location, P=from_sub, Q=from_lat, R=from_lon, S=to_location, T=to_sub, U=to_lat, V=to_lon
-      // W=distance, X=movement_type, Y=region_from, Z=region_to, AA=vendor, AB=installation, AC=remarks
-      row = {
-        cow_id: cells[0]?.trim() || "",
-        site_label: cells[1]?.trim() || "",
-        ebu_royal_flag: cells[2]?.trim() || "",
-        shelter_type: cells[3]?.trim() || "",
-        tower_type: cells[4]?.trim() || "Macro",
-        tower_system: cells[5]?.trim() || "",
-        tower_height: cells[6]?.trim() || "0",
-        network_technology: cells[7]?.trim() || "",
-        vehicle_make: cells[8]?.trim() || "",
-        vehicle_plate_number: cells[9]?.trim() || "",
-        moved_datetime: cells[10]?.trim() || "",
-        moved_month_year: cells[11]?.trim() || "",
-        reached_datetime: cells[12]?.trim() || "",
-        reached_month_year: cells[13]?.trim() || "",
-        from_location: cells[14]?.trim() || "",
-        from_sub_location: cells[15]?.trim() || "",
-        from_latitude: cells[16]?.trim() || "0",
-        from_longitude: cells[17]?.trim() || "0",
-        to_location: cells[18]?.trim() || "",
-        to_sub_location: cells[19]?.trim() || "",
-        to_latitude: cells[20]?.trim() || "0",
-        to_longitude: cells[21]?.trim() || "0",
-        distance_km: cells[22]?.trim() || "0",
-        movement_type: cells[23]?.trim() || "Zero",
-        region_from: cells[24]?.trim() || "CENTRAL",
-        region_to: cells[25]?.trim() || "CENTRAL",
-        vendor: cells[26]?.trim() || "Unknown",
-        installation_status: cells[27]?.trim() || "",
-        remarks: cells[28]?.trim() || "",
-      };
-    }
+    // Map columns by position - handle both old and new structures
+    // Try to extract known columns flexibly
+    let row: any = {
+      cow_id: cells[0]?.trim() || "",
+      site_label: cells[1]?.trim() || "",
+      last_deploy_date: cells[2]?.trim() || cells[11]?.trim() || "",
+      first_deploy_date: cells[3]?.trim() || cells[10]?.trim() || "",
+      ebu_royal_flag: cells[4]?.trim() || cells[2]?.trim() || "",
+      shelter_type: cells[5]?.trim() || cells[3]?.trim() || "",
+      tower_type: cells[6]?.trim() || cells[4]?.trim() || "Macro",
+      tower_system: cells[7]?.trim() || cells[5]?.trim() || "",
+      tower_height: cells[8]?.trim() || cells[6]?.trim() || "0",
+      network_technology: cells[9]?.trim() || cells[7]?.trim() || "",
+      vehicle_make: cells[10]?.trim() || cells[8]?.trim() || "",
+      vehicle_plate_number: cells[11]?.trim() || cells[9]?.trim() || "",
+      moved_datetime: cells[12]?.trim() || cells[10]?.trim() || "",
+      moved_month_year: cells[13]?.trim() || cells[11]?.trim() || "",
+      reached_datetime: cells[14]?.trim() || cells[12]?.trim() || "",
+      reached_month_year: cells[15]?.trim() || cells[13]?.trim() || "",
+      from_location: cells[16]?.trim() || cells[14]?.trim() || "",
+      from_sub_location: cells[17]?.trim() || cells[15]?.trim() || "",
+      from_latitude: cells[18]?.trim() || cells[16]?.trim() || "0",
+      from_longitude: cells[19]?.trim() || cells[17]?.trim() || "0",
+      to_location: cells[20]?.trim() || cells[18]?.trim() || "",
+      to_sub_location: cells[21]?.trim() || cells[19]?.trim() || "",
+      to_latitude: cells[22]?.trim() || cells[20]?.trim() || "0",
+      to_longitude: cells[23]?.trim() || cells[21]?.trim() || "0",
+      distance_km: cells[24]?.trim() || cells[22]?.trim() || "0",
+      movement_type: cells[25]?.trim() || cells[23]?.trim() || "Zero",
+      region_from: cells[26]?.trim() || cells[24]?.trim() || "CENTRAL",
+      region_to: cells[27]?.trim() || cells[25]?.trim() || "CENTRAL",
+      vendor: cells[28]?.trim() || cells[26]?.trim() || "Unknown",
+      installation_status: cells[29]?.trim() || cells[27]?.trim() || "",
+      remarks: cells[30]?.trim() || cells[28]?.trim() || "",
+    };
 
     rows.push(row);
   }
+
+  if (rows.length === 0 && skippedCount > 0) {
+    console.warn(`⚠️  All ${skippedCount} data rows were skipped. Check column mapping.`);
+  }
+
+  console.log(`✓ Parsed ${rows.length} valid rows (${skippedCount} rows skipped)`);
   return rows;
 }
 
