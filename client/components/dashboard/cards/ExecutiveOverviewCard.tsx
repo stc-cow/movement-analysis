@@ -290,6 +290,36 @@ export function ExecutiveOverviewCard({
     ZTE: { color: "#00A500", bgColor: "#E8F5E8" },
   };
 
+  // Custom X-axis tick component with vendor logo
+  const VendorXAxisTick = (props: any) => {
+    const { x, y, payload } = props;
+    const vendorName = payload.value;
+    const vendorColor = VENDOR_COLORS[vendorName];
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <circle
+          cx="0"
+          cy="0"
+          r="8"
+          fill={vendorColor?.bgColor || "#f0f0f0"}
+          stroke={vendorColor?.color || "#999"}
+          strokeWidth="1"
+        />
+        <text
+          x="0"
+          y="3"
+          textAnchor="middle"
+          fontSize="7"
+          fontWeight="bold"
+          fill={vendorColor?.color || "#666"}
+        >
+          {vendorName.substring(0, 1)}
+        </text>
+      </g>
+    );
+  };
+
   function normalizeEventType(type: string | undefined): string {
     if (!type) return "Normal Coverage";
     const normalized = type.trim().toLowerCase();
