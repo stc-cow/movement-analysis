@@ -5,7 +5,7 @@ import { createServer } from "./server";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === "development" ? "/" : "/cmms-2Fanalysis/",
+  base: "/",
   server: {
     host: "::",
     port: 8080,
