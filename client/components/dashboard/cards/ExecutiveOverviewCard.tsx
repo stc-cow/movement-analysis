@@ -435,22 +435,22 @@ export function ExecutiveOverviewCard({
 
             {/* Top Vendor Chart */}
             <div
-              className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg border border-gray-200"
+              className="bg-white rounded-lg p-2 flex flex-col items-center justify-center shadow-sm border border-gray-200 overflow-hidden"
             >
-              <h3 className="text-gray-900 text-sm font-bold mb-3 text-center">
+              <h3 className="text-gray-900 text-xs font-bold mb-1 text-center">
                 Top Vendor
               </h3>
               {topVendor ? (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                <div className="w-full flex flex-col items-center justify-center gap-1">
                   {/* Vendor Logo Section */}
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg border-2 border-purple-600 flex items-center justify-center">
-                      <div className="text-sm font-bold text-purple-600 text-center px-2">
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-12 h-12 bg-gray-100 rounded border border-purple-600 flex items-center justify-center">
+                      <div className="text-xs font-bold text-purple-600 text-center px-1">
                         {topVendor.name}
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-xs font-semibold text-gray-900">
                         {topVendor.name}
                       </div>
                       <div className="text-xs text-gray-500">
@@ -461,7 +461,7 @@ export function ExecutiveOverviewCard({
 
                   {/* Column Chart */}
                   {vendorData.length > 0 && (
-                    <ResponsiveContainer width="100%" height={140}>
+                    <ResponsiveContainer width="100%" height={100}>
                       <BarChart
                         data={vendorData}
                         margin={{ top: 5, right: 10, left: 10, bottom: 20 }}
