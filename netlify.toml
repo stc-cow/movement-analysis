@@ -7,14 +7,22 @@
   node_bundler = "esbuild"
   timeout = 30
 
-# API routes redirect to serverless functions
+# API routes - these must come BEFORE the SPA routing catch-all
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-# SPA routing - redirect all non-existent routes to index.html for client-side routing
+# .netlify/functions direct access (for testing)
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = false
+
+# SPA routing - redirect all NON-FILE routes to index.html for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  conditions = { Role = ["role-404"] }
