@@ -326,7 +326,7 @@ export function ExecutiveOverviewCard({
           <div className="flex-1 min-w-xs flex items-center gap-3">
             <input
               type="range"
-              min="0"
+              min="-1"
               max={timelineMonths.length - 1}
               value={currentMonthIndex}
               onChange={(e) => {
@@ -336,9 +336,11 @@ export function ExecutiveOverviewCard({
               className="flex-1"
             />
             <span className="text-sm whitespace-nowrap">
-              {currentMonthIndex + 1} of {timelineMonths.length}
+              {currentMonthIndex === -1
+                ? "All (2021-2025)"
+                : `${currentMonthIndex + 1} of ${timelineMonths.length}`}
             </span>
-            {timelineMonths.length > 0 && (
+            {currentMonthIndex >= 0 && timelineMonths.length > 0 && (
               <span className="text-sm whitespace-nowrap">
                 {timelineMonths[currentMonthIndex]?.month}/{" "}
                 {timelineMonths[currentMonthIndex]?.year}
