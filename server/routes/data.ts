@@ -489,21 +489,21 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 };
 
 /**
- * Handler to fetch and parse "Never Moved COW" data from a separate subsheet
- * Column mapping for "Never Moved COW" sheet:
+ * Handler to fetch "Never Moved COW" data from Google Apps Script
+ * The script endpoint serves data with columns:
  * A: COW_ID, D: Region, E: District, F: City, H: Location
- * I: Latitude, J: Longitude, K: Status, L: First_Deploy_Date, M: Last_Deploy_Date
+ * I: Latitude, J: Longitude, K: Status, L: Last_Deploy_Date, M: First_Deploy_Date
  */
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
-    // GID for "Never Moved COW" subsheet - configurable via env var
-    const NEVER_MOVED_GID = process.env.NEVER_MOVED_COW_GID || "0";
+    // Google Apps Script endpoint for Never Moved COWs
+    const SCRIPT_URL = process.env.NEVER_MOVED_COW_SCRIPT_URL ||
+      "https://script.google.com/macros/s/AKfycbyP4BAqz11yoZpz2NA1OUCfYlw5mPcyk8rROrPoaBkWiv3M1dWN-6icFlp32bOu6apf/exec";
 
-    const url = `https://docs.google.com/spreadsheets/d/${ACTUAL_SHEET_ID}/export?format=csv&gid=${NEVER_MOVED_GID}`;
+    console.log(`Attempting to fetch "Never Moved COW" data from Apps Script: ${SCRIPT_URL}`);
 
-    console.log(`Attempting to fetch "Never Moved COW" data from: ${url}`);
-
-    const response = await fetch(url, {
+    const response = await fetch(SCRIPT_URL, {
+      method: "GET",
       headers: {
         "User-Agent": "Mozilla/5.0",
       },
@@ -511,69 +511,64 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
 
     if (!response.ok) {
       throw new Error(
-        `HTTP ${response.status}: Failed to fetch "Never Moved COW" sheet`,
+        `HTTP ${response.status}: Failed to fetch from Google Apps Script`,
       );
     }
 
-    const csvText = await response.text();
-    const lines = csvText.trim().split("\n");
+    const jsonData = await response.json();
 
-    if (lines.length < 2) {
-      throw new Error("No data found in Never Moved COW sheet");
+    // The script should return data in one of these formats:
+    // 1. { data: [...] } - array of cow objects
+    // 2. { cows: [...] } - array of cow objects
+    // 3. Direct array of cow objects
+
+    let neverMovedCows = [];
+
+    if (Array.isArray(jsonData)) {
+      neverMovedCows = jsonData;
+    } else if (Array.isArray(jsonData.data)) {
+      neverMovedCows = jsonData.data;
+    } else if (Array.isArray(jsonData.cows)) {
+      neverMovedCows = jsonData.cows;
+    } else {
+      throw new Error("Unexpected response format from Google Apps Script");
     }
 
-    const neverMovedCows: any[] = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const cells = parseCSVLine(lines[i]);
-
-      // Skip empty rows
-      if (!cells[0]?.trim()) continue;
-
-      const cowId = cells[0]?.trim() || "";
-      const region = cells[3]?.trim() || ""; // Column D
-      const district = cells[4]?.trim() || ""; // Column E
-      const city = cells[5]?.trim() || ""; // Column F
-      const location = cells[7]?.trim() || ""; // Column H
-      const latitude = parseFloat(cells[8]?.trim() || "0"); // Column I
-      const longitude = parseFloat(cells[9]?.trim() || "0"); // Column J
-      const status = (cells[10]?.trim() || "OFF-AIR").toUpperCase(); // Column K
-      const lastDeployDate = cells[11]?.trim() || ""; // Column L
-      const firstDeployDate = cells[12]?.trim() || ""; // Column M
-
-      // Calculate days on air (from initial deployment date)
-      let daysOnAir = 0;
-      if (firstDeployDate) {
-        const deployDate = new Date(firstDeployDate);
+    // Transform and normalize the data if needed
+    const normalizedCows = neverMovedCows.map((cow: any) => {
+      // Calculate days on air if not provided
+      let daysOnAir = cow.Days_On_Air || 0;
+      if (!daysOnAir && cow.First_Deploy_Date) {
+        const deployDate = new Date(cow.First_Deploy_Date);
         const today = new Date();
         daysOnAir = Math.floor(
           (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24),
         );
       }
 
-      neverMovedCows.push({
-        COW_ID: cowId,
-        Region: region,
-        District: district,
-        City: city,
-        Location: location,
-        Latitude: latitude,
-        Longitude: longitude,
-        Status: status === "ON-AIR" ? "ON-AIR" : "OFF-AIR",
-        First_Deploy_Date: firstDeployDate,
-        Last_Deploy_Date: lastDeployDate,
+      return {
+        COW_ID: cow.COW_ID || cow.cow_id || "",
+        Region: cow.Region || cow.region || "",
+        District: cow.District || cow.district || "",
+        City: cow.City || cow.city || "",
+        Location: cow.Location || cow.location || "",
+        Latitude: parseFloat(cow.Latitude || cow.latitude || "0"),
+        Longitude: parseFloat(cow.Longitude || cow.longitude || "0"),
+        Status: (cow.Status || cow.status || "OFF-AIR").toUpperCase() === "ON-AIR" ? "ON-AIR" : "OFF-AIR",
+        First_Deploy_Date: cow.First_Deploy_Date || cow.first_deploy_date || "",
+        Last_Deploy_Date: cow.Last_Deploy_Date || cow.last_deploy_date || "",
         Days_On_Air: daysOnAir,
-      });
-    }
+      };
+    });
 
     console.log(
-      `✓ Fetched ${neverMovedCows.length} Never Moved COWs from Google Sheet`,
+      `✓ Fetched ${normalizedCows.length} Never Moved COWs from Google Apps Script`,
     );
 
     const stats = {
-      total: neverMovedCows.length,
-      onAir: neverMovedCows.filter((c) => c.Status === "ON-AIR").length,
-      offAir: neverMovedCows.filter((c) => c.Status === "OFF-AIR").length,
+      total: normalizedCows.length,
+      onAir: normalizedCows.filter((c) => c.Status === "ON-AIR").length,
+      offAir: normalizedCows.filter((c) => c.Status === "OFF-AIR").length,
     };
 
     console.log(
@@ -581,16 +576,16 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
     );
 
     res.json({
-      cows: neverMovedCows,
+      cows: normalizedCows,
       stats,
-      gidUsed: NEVER_MOVED_GID,
+      source: "Google Apps Script",
     });
   } catch (error) {
     console.error("Error fetching Never Moved COW data:", error);
     res.status(500).json({
       error: "Failed to fetch Never Moved COW data",
       details: error instanceof Error ? error.message : "Unknown error",
-      hint: 'Please ensure the "Never Moved COW" subsheet GID is set in NEVER_MOVED_COW_GID environment variable',
+      hint: 'Please ensure the Google Apps Script endpoint is accessible and returning valid JSON',
     });
   }
 };
