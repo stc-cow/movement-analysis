@@ -661,6 +661,7 @@ const diagnosticHandler: RequestHandler = async (req, res) => {
 };
 
 router.get("/processed-data", processedDataHandler);
+router.get("/never-moved-cows", neverMovedCowHandler);
 router.get("/diagnostic", diagnosticHandler);
 
 export default router;
