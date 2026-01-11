@@ -327,6 +327,11 @@ export default function Dashboard() {
             locations={locations}
           />
         )}
+
+        {/* Never Moved COWs */}
+        {activeCard === "never-moved" && (
+          <NeverMovedCowCard neverMovedCows={neverMovedCows} />
+        )}
       </div>
     </div>
   );
