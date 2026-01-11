@@ -442,8 +442,18 @@ const processedDataHandler: RequestHandler = async (req, res) => {
       console.error("   1. Verify the Google Sheet is published to the web");
       console.error("   2. Check that the CSV URL is accessible in a browser");
       console.error("   3. Ensure the sheet contains data in the expected columns");
+      console.error("   4. If you see 'CSV_URLS is not defined', clear Netlify cache and redeploy");
       console.error("");
       throw new Error(errorMsg);
+    }
+
+    // Validate CSV data
+    if (csvData.length === 0) {
+      throw new Error("CSV data is empty");
+    }
+
+    if (csvData.length < 10) {
+      console.warn(`⚠️  CSV data is very small (${csvData.length} bytes) - may be incomplete`);
     }
 
     const rows = parseCSVData(csvData);
