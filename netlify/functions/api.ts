@@ -1,35 +1,39 @@
-import serverless from "serverless-http";
+import { Handler } from "@netlify/functions";
 import express from "express";
 import cors from "cors";
-import { handleDemo } from "../../server/routes/demo";
+import serverless from "serverless-http";
+import "dotenv/config";
+
+// Import routes directly
 import dataRoutes from "../../server/routes/data";
+import { handleDemo } from "../../server/routes/demo";
 
-// Create Express app directly instead of importing createServer
-// This ensures better compatibility with Netlify's esbuild bundler
-function createServerApp() {
-  const app = express();
+// Create Express app
+const app = express();
 
-  // Middleware
-  app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  // Example API routes
-  app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
-  });
+// Routes
+app.get("/api/ping", (_req, res) => {
+  const ping = process.env.PING_MESSAGE ?? "pong";
+  res.json({ message: ping });
+});
 
-  app.get("/api/demo", handleDemo);
+app.get("/api/demo", handleDemo);
 
-  // Data import routes
-  app.use("/api/data", dataRoutes);
+// Data routes
+app.use("/api/data", dataRoutes);
 
-  return app;
-}
+// Error handling
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error("Express error:", err);
+  res.status(500).json({ error: "Internal server error" });
+});
 
-const app = createServerApp();
-
+// Export handler with proper typing
 export const handler = serverless(app, {
   basePath: "/.netlify/functions/api",
-});
+}) as Handler;
