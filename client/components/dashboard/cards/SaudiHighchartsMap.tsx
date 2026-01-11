@@ -79,11 +79,17 @@ export function SaudiHighchartsMap({
 
   // Calculate total movements
   const totalMovements = useMemo(() => {
+    if (!regionMetrics || Object.keys(regionMetrics).length === 0) {
+      return 0;
+    }
     return Object.values(regionMetrics).reduce((sum, value) => sum + value, 0);
   }, [regionMetrics]);
 
   // Transform region metrics to Highcharts data format: [["sa-ri", 320], ["sa-mk", 180], ...]
   const chartData = useMemo(() => {
+    if (!regionMetrics || Object.keys(regionMetrics).length === 0) {
+      return [];
+    }
     return Object.entries(regionMetrics)
       .map(([regionName, value]) => {
         const hcKey = regionToHcKey[regionName];
