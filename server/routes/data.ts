@@ -397,63 +397,51 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     }
 
     let csvData: string | null = null;
-    let lastError: Error | null = null;
+    let fetchError: Error | null = null;
 
-    // Try each URL format with timeout protection
-    for (const url of CSV_URLS) {
-      try {
-        console.log(`Attempting to fetch from: ${url}`);
+    try {
+      console.log(`📥 Fetching Movement-data from published CSV...`);
 
-        // Create abort controller for timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
 
-        const response = await fetch(url, {
-          headers: {
-            "User-Agent": "Mozilla/5.0",
-          },
-          signal: controller.signal,
-        });
+      const response = await fetch(MOVEMENT_DATA_CSV_URL, {
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+        },
+        signal: controller.signal,
+      });
 
-        clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
 
-        if (response.ok) {
-          csvData = await response.text();
-          console.log(
-            `✓ Successfully fetched CSV data (${csvData.length} bytes)`,
-          );
-          break;
-        } else {
-          lastError = new Error(`HTTP ${response.status}`);
-          console.warn(`✗ URL failed with ${response.status}`);
-        }
-      } catch (e) {
-        lastError = e instanceof Error ? e : new Error(String(e));
-        // Only log abort errors as warnings, not as failures
-        if (lastError.message.includes("abort")) {
-          console.warn(`✗ URL fetch timed out (${FETCH_TIMEOUT}ms)`);
-        } else {
-          console.warn(`✗ URL fetch failed:`, lastError.message);
-        }
+      if (response.ok) {
+        csvData = await response.text();
+        console.log(
+          `✓ Successfully fetched CSV data (${csvData.length} bytes)`,
+        );
+      } else {
+        fetchError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        console.error(`✗ Failed to fetch CSV: ${response.status}`);
+      }
+    } catch (e) {
+      fetchError = e instanceof Error ? e : new Error(String(e));
+      if (fetchError.message.includes("abort")) {
+        console.warn(`⏱️  CSV fetch timed out (${FETCH_TIMEOUT}ms)`);
+      } else {
+        console.warn(`✗ CSV fetch failed: ${fetchError.message}`);
       }
     }
 
     if (!csvData) {
-      const errorMsg = `Failed to fetch from all URLs. Last error: ${lastError?.message || "Unknown"}`;
-      console.error("\n❌ GOOGLE SHEETS CONNECTION ERROR:");
-      console.error(`   Sheet ID: ${ACTUAL_SHEET_ID}`);
-      console.error(`   GID: ${GID}`);
-      console.error(`   Error: ${lastError?.message}`);
-      console.error("\n📋 TO FIX THIS:");
-      console.error("   1. Open your Google Sheet");
-      console.error("   2. Look at the URL in the address bar");
-      console.error("   3. Copy the ID after /spreadsheets/d/");
-      console.error(
-        "   4. Set it as an environment variable: GOOGLE_SHEET_ID=YOUR_ID",
-      );
-      console.error(
-        "   5. Or update the ACTUAL_SHEET_ID in server/routes/data.ts",
-      );
+      const errorMsg = `Failed to fetch Movement-data CSV: ${fetchError?.message || "Unknown error"}`;
+      console.error("\n❌ MOVEMENT DATA FETCH ERROR:");
+      console.error(`   CSV URL: ${MOVEMENT_DATA_CSV_URL}`);
+      console.error(`   Error: ${fetchError?.message}`);
+      console.error("\n📋 TROUBLESHOOTING:");
+      console.error("   1. Verify the Google Sheet is published to the web");
+      console.error("   2. Check that the CSV URL is accessible in a browser");
+      console.error("   3. Ensure the sheet contains data in the expected columns");
       console.error("");
       throw new Error(errorMsg);
     }
