@@ -268,6 +268,54 @@ export function ExecutiveOverviewCard({
     },
   ];
 
+  // Calculate event type data from current month movements
+  const EVENT_COLORS: Record<string, string> = {
+    Hajj: "#f59e0b",
+    Umrah: "#06b6d4",
+    Royal: "#8b5cf6",
+    "Mega Project": "#ec4899",
+    "National Event": "#10b981",
+    Seasonal: "#14b8a6",
+    Event: "#3b82f6",
+    "Normal Coverage": "#6b7280",
+  };
+
+  function normalizeEventType(type: string | undefined): string {
+    if (!type) return "Normal Coverage";
+    const normalized = type.trim().toLowerCase();
+    if (normalized.includes("hajj")) return "Hajj";
+    if (normalized.includes("umrah")) return "Umrah";
+    if (normalized.includes("royal")) return "Royal";
+    if (normalized.includes("mega")) return "Mega Project";
+    if (normalized.includes("national")) return "National Event";
+    if (normalized.includes("seasonal")) return "Seasonal";
+    if (normalized.includes("event")) return "Event";
+    if (normalized.includes("normal")) return "Normal Coverage";
+    return type;
+  }
+
+  const eventCounts: Record<string, number> = {};
+  currentMonth.movements.forEach((mov) => {
+    const fromEvent = normalizeEventType(mov.From_Sub_Location);
+    const toEvent = normalizeEventType(mov.To_Sub_Location);
+    const eventType = mov.From_Sub_Location ? fromEvent : toEvent;
+    eventCounts[eventType] = (eventCounts[eventType] || 0) + 1;
+  });
+
+  const eventData = Object.entries(eventCounts)
+    .filter(([_, count]) => count > 0)
+    .map(([type, count]) => ({
+      name: type,
+      value: count,
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  const eventDataWithPercentages = eventData.map((item) => ({
+    ...item,
+    percentage: ((item.value / totalCurrentMovements) * 100).toFixed(1),
+    displayName: `${item.name} (${((item.value / totalCurrentMovements) * 100).toFixed(1)}%)`,
+  }));
+
   return (
     <div className="h-full overflow-x-hidden flex flex-col bg-white">
       {/* Timeline Controls at Top */}
