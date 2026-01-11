@@ -542,9 +542,7 @@ function processData(rows: any[]) {
   if (warehouses.length > 0) {
     console.log(`   Warehouse details:`);
     warehouses.forEach((wh) => {
-      console.log(
-        `      ✓ ${wh.Location_Name} [${wh.Location_Type}]`,
-      );
+      console.log(`      ✓ ${wh.Location_Name} [${wh.Location_Type}]`);
     });
   }
 
