@@ -497,10 +497,12 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
     // Google Apps Script endpoint for Never Moved COWs
+    // Deployment ID: AKfycbyP4BAqz11yoZpz2NA1OUCfYlw5mPcyk8rROrPoaBkWiv3M1dWN-6icFlp32bOu6apf
     const SCRIPT_URL = process.env.NEVER_MOVED_COW_SCRIPT_URL ||
       "https://script.google.com/macros/s/AKfycbyP4BAqz11yoZpz2NA1OUCfYlw5mPcyk8rROrPoaBkWiv3M1dWN-6icFlp32bOu6apf/exec";
 
-    console.log(`Attempting to fetch "Never Moved COW" data from Apps Script: ${SCRIPT_URL}`);
+    console.log(`📡 Fetching Never Moved COWs from Google Apps Script...`);
+    console.log(`   URL: ${SCRIPT_URL}`);
 
     const response = await fetch(SCRIPT_URL, {
       method: "GET",
