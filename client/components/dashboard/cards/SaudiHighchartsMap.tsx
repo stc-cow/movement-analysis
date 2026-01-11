@@ -91,7 +91,7 @@ export function SaudiHighchartsMap({
 
   // Transform region metrics to Highcharts data format: [["sa-ri", 320], ["sa-mk", 180], ...]
   const chartData = useMemo(() => {
-    if (!regionMetrics || Object.keys(regionMetrics).length === 0) {
+    if (!regionMetrics || typeof regionMetrics !== 'object' || Object.keys(regionMetrics).length === 0) {
       return [];
     }
     return Object.entries(regionMetrics)
