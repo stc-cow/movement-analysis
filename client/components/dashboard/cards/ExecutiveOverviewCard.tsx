@@ -283,6 +283,16 @@ export function ExecutiveOverviewCard({
     "Normal Coverage": "#6b7280",
   };
 
+  // Vendor logos and branding
+  const VENDOR_LOGOS: Record<string, string> = {
+    Ericsson:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fce8a05f0444047fbab6b38351ba3e00b?format=webp&width=800",
+    Nokia:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F8b1d4da5de9a4830adc8ff8bb94f9384?format=webp&width=800",
+    Huawei:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F1d0933328ffa4621ac07c43c539a6656?format=webp&width=800",
+  };
+
   // Vendor branding colors
   const VENDOR_COLORS: Record<string, { color: string; bgColor: string }> = {
     Nokia: { color: "#124191", bgColor: "#E8F0FF" },
