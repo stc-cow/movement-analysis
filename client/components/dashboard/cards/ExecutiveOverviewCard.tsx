@@ -204,7 +204,7 @@ export function ExecutiveOverviewCard({
     (m) => m.EbuRoyalCategory === "NON EBU",
   ).length;
 
-  // Donut chart data for EBU Classification
+  // Donut chart data for EBU Classification (filter out zero values)
   const ebuChartData = [
     {
       name: "ROYAL",
@@ -221,7 +221,7 @@ export function ExecutiveOverviewCard({
       value: nonEbuCount,
       color: "#6b7280",
     },
-  ];
+  ].filter((item) => item.value > 0);
 
   const metrics = [
     {
