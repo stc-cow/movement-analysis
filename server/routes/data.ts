@@ -538,16 +538,16 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       const latitude = parseFloat(cells[8]?.trim() || "0"); // Column I
       const longitude = parseFloat(cells[9]?.trim() || "0"); // Column J
       const status = (cells[10]?.trim() || "OFF-AIR").toUpperCase(); // Column K
-      const firstDeployDate = cells[11]?.trim() || ""; // Column L
-      const lastDeployDate = cells[12]?.trim() || ""; // Column M
+      const lastDeployDate = cells[11]?.trim() || ""; // Column L
+      const firstDeployDate = cells[12]?.trim() || ""; // Column M
 
-      // Calculate days on air
+      // Calculate days on air (from initial deployment date)
       let daysOnAir = 0;
-      if (lastDeployDate) {
-        const lastDate = new Date(lastDeployDate);
+      if (firstDeployDate) {
+        const deployDate = new Date(firstDeployDate);
         const today = new Date();
         daysOnAir = Math.floor(
-          (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+          (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24),
         );
       }
 
