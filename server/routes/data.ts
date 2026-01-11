@@ -457,6 +457,7 @@ function processData(rows: any[]) {
       Is_Royal: isRoyal,
       Is_EBU: isEBU,
       EbuRoyalCategory: category,
+      Vendor: row.vendor || "Unknown",
     });
 
     // Add cow with asset information
