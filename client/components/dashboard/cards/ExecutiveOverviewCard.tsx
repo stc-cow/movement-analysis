@@ -447,14 +447,18 @@ export function ExecutiveOverviewCard({
               <ResponsiveContainer width="100%" height={130}>
                 <BarChart
                   data={vendorData}
-                  margin={{ top: 20, right: 5, left: 5, bottom: 5 }}
+                  margin={{ top: 30, right: 5, left: 5, bottom: 5 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="#e5e7eb"
                     vertical={false}
                   />
-                  <XAxis dataKey="name" hide={true} />
+                  <XAxis
+                    dataKey="name"
+                    tick={<VendorXAxisTick />}
+                    height={30}
+                  />
                   <YAxis fontSize={8} width={25} />
                   <Tooltip
                     contentStyle={{
