@@ -89,8 +89,8 @@ export function ExecutiveOverviewCard({
     
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
-      totalMovements: monthlyMovements.length,
-      totalDistanceKM: monthlyMovements.reduce(
+      totalMovements: currentMonthMovements.length,
+      totalDistanceKM: currentMonthMovements.reduce(
         (sum, m) => sum + (m.Distance_KM || 0),
         0
       ),
@@ -98,10 +98,10 @@ export function ExecutiveOverviewCard({
       staticCOWs: kpis.staticCOWs,
       avgMovesPerCOW:
         uniqueCows.size > 0
-          ? monthlyMovements.length / uniqueCows.size
+          ? currentMonthMovements.length / uniqueCows.size
           : 0,
     };
-  }, [monthlyMovements, kpis]);
+  }, [currentMonthMovements, kpis]);
 
   // Get static COWs data
   const staticCowsData = cowMetrics
