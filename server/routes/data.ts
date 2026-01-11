@@ -524,7 +524,9 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     let fetchError: Error | null = null;
 
     try {
-      console.log(`📥 Fetching Movement-data from published CSV...`);
+      console.log(`\n🚀 PROCESSING MOVEMENT DATA`);
+      console.log(`📥 CSV URL being used:`);
+      console.log(`   ${MOVEMENT_DATA_CSV_URL}`);
 
       // Create abort controller for timeout
       const controller = new AbortController();
