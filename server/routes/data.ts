@@ -364,6 +364,13 @@ function processData(rows: any[]) {
     }
   });
 
+  console.log(`📊 Processing complete:`);
+  console.log(`   Total input rows: ${rows.length}`);
+  console.log(`   Valid movements: ${movements.length}`);
+  console.log(`   Skipped (invalid): ${skippedCount}`);
+  console.log(`   Unique COWs: ${cowMap.size}`);
+  console.log(`   Unique locations: ${locationMap.size}`);
+
   return {
     movements: movements.sort(
       (a: any, b: any) =>
