@@ -58,9 +58,18 @@ const NEVER_MOVED_COW_CSV_URL =
  * Helper function to parse CSV from Google Sheets
  */
 function parseCSVData(csvText: string) {
+  // First, check if we got HTML error page instead of CSV
+  if (csvText.includes("<html") || csvText.includes("<HTML") || csvText.includes("<!DOCTYPE")) {
+    console.error("❌ RECEIVED HTML INSTEAD OF CSV!");
+    console.error("First 500 chars:", csvText.substring(0, 500));
+    throw new Error("Google Sheets returned HTML instead of CSV. The sheet may not be published or URL is incorrect.");
+  }
+
   const lines = csvText.trim().split("\n");
 
-  console.log(`📊 CSV has ${lines.length} total lines`);
+  console.log(`\n📊 CSV PARSING STARTED`);
+  console.log(`   Total lines: ${lines.length}`);
+  console.log(`   CSV size: ${csvText.length} bytes`);
 
   if (lines.length < 2) {
     console.warn("⚠️  CSV has fewer than 2 lines (header + data)");
@@ -70,34 +79,65 @@ function parseCSVData(csvText: string) {
   // Parse header row
   const headerLine = lines[0];
   const headerCells = parseCSVLine(headerLine);
-  console.log(`📋 Header row has ${headerCells.length} columns:`, headerCells.slice(0, 10).join(" | "));
+  console.log(`📋 HEADER ROW:`);
+  console.log(`   Total columns: ${headerCells.length}`);
+  console.log(`   Column names: ${headerCells.join(" | ")}`);
 
-  // Detect column structure based on header names and first data row
+  // Parse first few data rows for debugging
   const firstDataLine = lines[1];
   const firstDataCells = parseCSVLine(firstDataLine);
 
-  console.log(`📊 First data row has ${firstDataCells.length} cells (sample: "${firstDataCells[0]}", "${firstDataCells[1] || ''}", "${firstDataCells[2] || ''}")`);
+  console.log(`\n📍 FIRST 3 DATA ROWS:`);
+  for (let i = 1; i < Math.min(4, lines.length); i++) {
+    const cells = parseCSVLine(lines[i]);
+    console.log(`   Row ${i}: [${cells.slice(0, 5).map(c => `"${c}"`).join(", ")}...] (${cells.length} cells)`);
+  }
 
-  // Try to detect column positions by looking for key column names
-  const headerLower = headerCells.map(h => h.toLowerCase());
-  let fromLocationIdx = headerLower.findIndex(h => h.includes("from") && h.includes("location"));
-  let toLocationIdx = headerLower.findIndex(h => h.includes("to") && h.includes("location"));
-  let cowIdIdx = headerLower.findIndex(h => h.includes("cow") || h.includes("id"));
+  // Detect column positions by looking for key column names
+  const headerLower = headerCells.map((h, idx) => ({
+    original: h,
+    lower: h.toLowerCase(),
+    index: idx
+  }));
+
+  // Find critical columns
+  const fromLocationMatch = headerLower.find(h =>
+    h.lower.includes("from") && h.lower.includes("location")
+  );
+  const toLocationMatch = headerLower.find(h =>
+    h.lower.includes("to") && h.lower.includes("location")
+  );
+  const cowIdMatch = headerLower.find(h =>
+    h.lower === "cow" || h.lower === "cow_id" || h.lower === "cow id" || h.lower === "id" || h.lower === "a"
+  );
+
+  let fromLocationIdx = fromLocationMatch?.index ?? -1;
+  let toLocationIdx = toLocationMatch?.index ?? -1;
+  let cowIdIdx = cowIdMatch?.index ?? -1;
+
+  console.log(`\n🔍 COLUMN DETECTION:`, {
+    cowIdMatch: cowIdMatch?.original,
+    cowIdIdx,
+    fromLocationMatch: fromLocationMatch?.original,
+    fromLocationIdx,
+    toLocationMatch: toLocationMatch?.original,
+    toLocationIdx,
+    headerDetectionSuccess: fromLocationMatch !== undefined && toLocationMatch !== undefined,
+  });
 
   // Fallback to standard positions if not found in headers
-  if (fromLocationIdx < 0) fromLocationIdx = 16; // Standard: Q
-  if (toLocationIdx < 0) toLocationIdx = 20;    // Standard: U
-  if (cowIdIdx < 0) cowIdIdx = 0;               // Standard: A
-
-  const hasHeaderRow = headerCells.some(h => h.toLowerCase().includes("location"));
-
-  console.log(`🔍 Column detection:`, {
-    hasHeaderRow,
-    fromLocationIdx,
-    toLocationIdx,
-    cowIdIdx,
-    headerSample: headerCells.slice(0, 5),
-  });
+  if (fromLocationIdx < 0) {
+    console.warn(`   ⚠️  from_location not found in headers, using standard position 16 (Q)`);
+    fromLocationIdx = 16;
+  }
+  if (toLocationIdx < 0) {
+    console.warn(`   ⚠️  to_location not found in headers, using standard position 20 (U)`);
+    toLocationIdx = 20;
+  }
+  if (cowIdIdx < 0) {
+    console.warn(`   ⚠️  cow_id not found in headers, using standard position 0 (A)`);
+    cowIdIdx = 0;
+  }
 
   const rows = [];
   let skippedCount = 0;
