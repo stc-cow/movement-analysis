@@ -80,15 +80,23 @@ function parseCSVData(csvText: string) {
 
   // Try to detect column positions by looking for key column names
   const headerLower = headerCells.map(h => h.toLowerCase());
-  const fromLocationIdx = headerLower.findIndex(h => h.includes("from") && h.includes("location"));
-  const toLocationIdx = headerLower.findIndex(h => h.includes("to") && h.includes("location"));
-  const cowIdIdx = headerLower.findIndex(h => h.includes("cow") || h === "a");
+  let fromLocationIdx = headerLower.findIndex(h => h.includes("from") && h.includes("location"));
+  let toLocationIdx = headerLower.findIndex(h => h.includes("to") && h.includes("location"));
+  let cowIdIdx = headerLower.findIndex(h => h.includes("cow") || h.includes("id"));
+
+  // Fallback to standard positions if not found in headers
+  if (fromLocationIdx < 0) fromLocationIdx = 16; // Standard: Q
+  if (toLocationIdx < 0) toLocationIdx = 20;    // Standard: U
+  if (cowIdIdx < 0) cowIdIdx = 0;               // Standard: A
+
+  const hasHeaderRow = headerCells.some(h => h.toLowerCase().includes("location"));
 
   console.log(`🔍 Column detection:`, {
+    hasHeaderRow,
     fromLocationIdx,
     toLocationIdx,
     cowIdIdx,
-    headerSample: headerCells.slice(0, 10),
+    headerSample: headerCells.slice(0, 5),
   });
 
   const rows = [];
@@ -110,18 +118,25 @@ function parseCSVData(csvText: string) {
       continue;
     }
 
-    // Map columns by position - use detected indices if available, else fallback to standard positions
+    // Map columns by position using detected indices
     let row: any = {};
 
-    // If we detected header positions, use them; otherwise use standard column positions
-    if (fromLocationIdx >= 0 && toLocationIdx >= 0) {
-      // We have header names - use detected positions
-      console.log(`📍 Using detected header positions for row ${i}`);
+    // Always use the detected/fallback positions
+    if (i === 1) {
+      console.log(`📍 Row 1 sample (using indices: cow=${cowIdIdx}, from=${fromLocationIdx}, to=${toLocationIdx}):`, {
+        cow_id: cells[cowIdIdx]?.trim(),
+        from_location: cells[fromLocationIdx]?.trim(),
+        to_location: cells[toLocationIdx]?.trim(),
+      });
+    }
+
+    // Standard mapping for all rows
+    if (true) {
       row = {
-        cow_id: cells[cowIdIdx >= 0 ? cowIdIdx : 0]?.trim() || "",
+        cow_id: cells[cowIdIdx]?.trim() || "",
         from_location: cells[fromLocationIdx]?.trim() || "",
         to_location: cells[toLocationIdx]?.trim() || "",
-        // Other fields with standard fallback positions
+        // Other fields
         site_label: cells[1]?.trim() || "",
         last_deploy_date: cells[2]?.trim() || cells[11]?.trim() || "",
         first_deploy_date: cells[3]?.trim() || cells[10]?.trim() || "",
@@ -140,41 +155,6 @@ function parseCSVData(csvText: string) {
         from_sub_location: cells[17]?.trim() || cells[15]?.trim() || "",
         from_latitude: cells[18]?.trim() || cells[16]?.trim() || "0",
         from_longitude: cells[19]?.trim() || cells[17]?.trim() || "0",
-        to_sub_location: cells[21]?.trim() || cells[19]?.trim() || "",
-        to_latitude: cells[22]?.trim() || cells[20]?.trim() || "0",
-        to_longitude: cells[23]?.trim() || cells[21]?.trim() || "0",
-        distance_km: cells[24]?.trim() || cells[22]?.trim() || "0",
-        movement_type: cells[25]?.trim() || cells[23]?.trim() || "Zero",
-        region_from: cells[26]?.trim() || cells[24]?.trim() || "CENTRAL",
-        region_to: cells[27]?.trim() || cells[25]?.trim() || "CENTRAL",
-        vendor: cells[28]?.trim() || cells[26]?.trim() || "Unknown",
-        installation_status: cells[29]?.trim() || cells[27]?.trim() || "",
-        remarks: cells[30]?.trim() || cells[28]?.trim() || "",
-      };
-    } else {
-      // Use standard column positions (A-AE)
-      row = {
-        cow_id: cells[0]?.trim() || "",
-        site_label: cells[1]?.trim() || "",
-        last_deploy_date: cells[2]?.trim() || cells[11]?.trim() || "",
-        first_deploy_date: cells[3]?.trim() || cells[10]?.trim() || "",
-        ebu_royal_flag: cells[4]?.trim() || cells[2]?.trim() || "",
-        shelter_type: cells[5]?.trim() || cells[3]?.trim() || "",
-        tower_type: cells[6]?.trim() || cells[4]?.trim() || "Macro",
-        tower_system: cells[7]?.trim() || cells[5]?.trim() || "",
-        tower_height: cells[8]?.trim() || cells[6]?.trim() || "0",
-        network_technology: cells[9]?.trim() || cells[7]?.trim() || "",
-        vehicle_make: cells[10]?.trim() || cells[8]?.trim() || "",
-        vehicle_plate_number: cells[11]?.trim() || cells[9]?.trim() || "",
-        moved_datetime: cells[12]?.trim() || cells[10]?.trim() || "",
-        moved_month_year: cells[13]?.trim() || cells[11]?.trim() || "",
-        reached_datetime: cells[14]?.trim() || cells[12]?.trim() || "",
-        reached_month_year: cells[15]?.trim() || cells[13]?.trim() || "",
-        from_location: cells[16]?.trim() || cells[14]?.trim() || "",
-        from_sub_location: cells[17]?.trim() || cells[15]?.trim() || "",
-        from_latitude: cells[18]?.trim() || cells[16]?.trim() || "0",
-        from_longitude: cells[19]?.trim() || cells[17]?.trim() || "0",
-        to_location: cells[20]?.trim() || cells[18]?.trim() || "",
         to_sub_location: cells[21]?.trim() || cells[19]?.trim() || "",
         to_latitude: cells[22]?.trim() || cells[20]?.trim() || "0",
         to_longitude: cells[23]?.trim() || cells[21]?.trim() || "0",
