@@ -491,6 +491,7 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 /**
  * Handler to fetch "Never Moved COW" data from published Dashboard sheet CSV
  * Data source: Google Sheet "Dashboard" sheet (published to web as CSV)
+ * Dashboard GID: 1464106304
  * Column mapping (from screenshot):
  * A: COW ID
  * B: Region
@@ -505,9 +506,9 @@ const processedDataHandler: RequestHandler = async (req, res) => {
  */
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
-    // Published CSV URL for Dashboard sheet
+    // Published CSV URL for Dashboard sheet (GID: 1464106304)
     const CSV_URL = process.env.NEVER_MOVED_COW_CSV_URL ||
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1539310010&single=true&output=csv";
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv";
 
     console.log(`📡 Fetching Never Moved COWs from Dashboard sheet CSV...`);
 
