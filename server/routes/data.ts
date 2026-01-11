@@ -489,6 +489,113 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 };
 
 /**
+ * Handler to fetch and parse "Never Moved COW" data from a separate subsheet
+ * Column mapping for "Never Moved COW" sheet:
+ * A: COW_ID, D: Region, E: District, F: City, H: Location
+ * I: Latitude, J: Longitude, K: Status, L: First_Deploy_Date, M: Last_Deploy_Date
+ */
+const neverMovedCowHandler: RequestHandler = async (req, res) => {
+  try {
+    // GID for "Never Moved COW" subsheet - configurable via env var
+    const NEVER_MOVED_GID = process.env.NEVER_MOVED_COW_GID || "0";
+
+    const url = `https://docs.google.com/spreadsheets/d/${ACTUAL_SHEET_ID}/export?format=csv&gid=${NEVER_MOVED_GID}`;
+
+    console.log(`Attempting to fetch "Never Moved COW" data from: ${url}`);
+
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `HTTP ${response.status}: Failed to fetch "Never Moved COW" sheet`,
+      );
+    }
+
+    const csvText = await response.text();
+    const lines = csvText.trim().split("\n");
+
+    if (lines.length < 2) {
+      throw new Error("No data found in Never Moved COW sheet");
+    }
+
+    const neverMovedCows: any[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const cells = parseCSVLine(lines[i]);
+
+      // Skip empty rows
+      if (!cells[0]?.trim()) continue;
+
+      const cowId = cells[0]?.trim() || "";
+      const region = cells[3]?.trim() || ""; // Column D
+      const district = cells[4]?.trim() || ""; // Column E
+      const city = cells[5]?.trim() || ""; // Column F
+      const location = cells[7]?.trim() || ""; // Column H
+      const latitude = parseFloat(cells[8]?.trim() || "0"); // Column I
+      const longitude = parseFloat(cells[9]?.trim() || "0"); // Column J
+      const status = (cells[10]?.trim() || "OFF-AIR").toUpperCase(); // Column K
+      const firstDeployDate = cells[11]?.trim() || ""; // Column L
+      const lastDeployDate = cells[12]?.trim() || ""; // Column M
+
+      // Calculate days on air
+      let daysOnAir = 0;
+      if (lastDeployDate) {
+        const lastDate = new Date(lastDeployDate);
+        const today = new Date();
+        daysOnAir = Math.floor(
+          (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+        );
+      }
+
+      neverMovedCows.push({
+        COW_ID: cowId,
+        Region: region,
+        District: district,
+        City: city,
+        Location: location,
+        Latitude: latitude,
+        Longitude: longitude,
+        Status: status === "ON-AIR" ? "ON-AIR" : "OFF-AIR",
+        First_Deploy_Date: firstDeployDate,
+        Last_Deploy_Date: lastDeployDate,
+        Days_On_Air: daysOnAir,
+      });
+    }
+
+    console.log(
+      `✓ Fetched ${neverMovedCows.length} Never Moved COWs from Google Sheet`,
+    );
+
+    const stats = {
+      total: neverMovedCows.length,
+      onAir: neverMovedCows.filter((c) => c.Status === "ON-AIR").length,
+      offAir: neverMovedCows.filter((c) => c.Status === "OFF-AIR").length,
+    };
+
+    console.log(
+      `  ├─ ON-AIR: ${stats.onAir}, OFF-AIR: ${stats.offAir}`,
+    );
+
+    res.json({
+      cows: neverMovedCows,
+      stats,
+      gidUsed: NEVER_MOVED_GID,
+    });
+  } catch (error) {
+    console.error("Error fetching Never Moved COW data:", error);
+    res.status(500).json({
+      error: "Failed to fetch Never Moved COW data",
+      details: error instanceof Error ? error.message : "Unknown error",
+      hint: 'Please ensure the "Never Moved COW" subsheet GID is set in NEVER_MOVED_COW_GID environment variable',
+    });
+  }
+};
+
+/**
  * Diagnostic endpoint to test Google Sheet connectivity
  */
 const diagnosticHandler: RequestHandler = async (req, res) => {
