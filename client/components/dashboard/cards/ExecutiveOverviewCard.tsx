@@ -497,13 +497,13 @@ export function ExecutiveOverviewCard({
 
             {/* Movement Category by Event Type Donut Chart */}
             <div
-              className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg border border-gray-200"
+              className="bg-white rounded-lg p-2 flex flex-col items-center justify-center shadow-sm border border-gray-200 overflow-hidden"
             >
-              <h3 className="text-gray-900 text-sm font-bold mb-3 text-center">
+              <h3 className="text-gray-900 text-xs font-bold mb-1 text-center">
                 Movement Category (Event)
               </h3>
               {eventDataWithPercentages.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={160}>
                   <PieChart>
                     <Pie
                       data={eventDataWithPercentages}
