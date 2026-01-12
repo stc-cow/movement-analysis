@@ -130,40 +130,46 @@ export function WarehouseHubTimeCard({
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
             Off-Air Warehouse Aging
           </h3>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="name"
-                angle={-45}
-                textAnchor="end"
-                height={100}
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                }}
-                formatter={(value: number) => `${value} COWs`}
-              />
-              <Bar
-                dataKey="count"
-                fill={CHART_COLOR}
-                onClick={(state: any) => {
-                  if (state && state.name) {
-                    handleChartClick(state.name);
-                  }
-                }}
-                style={{ cursor: "pointer" }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          {chartData && chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis
+                  dataKey="name"
+                  angle={-45}
+                  textAnchor="end"
+                  height={100}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                  }}
+                  formatter={(value: number) => `${value} COWs`}
+                />
+                <Bar
+                  dataKey="count"
+                  fill={CHART_COLOR}
+                  onClick={(state: any) => {
+                    if (state && state.name) {
+                      handleChartClick(state.name);
+                    }
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center py-8 text-gray-400">
+              No Off-Air Warehouse data available
+            </div>
+          )}
         </div>
 
         {/* Off-Air Warehouse Aging Table */}
