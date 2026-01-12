@@ -139,13 +139,17 @@ function parseCSVData(csvText: string) {
   );
 
   // Use detected or fallback to positional indices
-  // Key insight: if headers don't match, use column positions A-U (0-20)
+  // WAREHOUSE ANALYSIS MAPPING (Correct columns):
+  // Column O (14): From Location (dispatch warehouse)
+  // Column U (20): To Location (receiving location)
+  // Column AA (26): Region From (dispatch region)
+  // Column AB (27): Region To (receiving region)
   const cowIdIdx = cowIdMatch?.index ?? 0; // Usually column A
-  const fromLocationIdx = fromLocationMatch?.index ?? 16; // Usually column Q
-  const toLocationIdx = toLocationMatch?.index ?? 20; // Usually column U
+  const fromLocationIdx = fromLocationMatch?.index ?? 14; // Column O: From Location
+  const toLocationIdx = toLocationMatch?.index ?? 20; // Column U: To Location
 
   console.log(
-    `\n✅ Using indices: cow=${cowIdIdx}, from=${fromLocationIdx}, to=${toLocationIdx}`,
+    `\n✅ Using indices: cow=${cowIdIdx}, from=${fromLocationIdx} (Column O), to=${toLocationIdx} (Column U)`,
   );
 
   // Parse rows
