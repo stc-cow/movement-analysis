@@ -42,7 +42,7 @@ jobs:
       - name: Prepare build for GitHub Pages
         run: |
           # Copy build artifacts to docs folder for GitHub Pages serving
-          rm -rf docs/assets docs/index.html docs/favicon.ico docs/migrate.html docs/placeholder.svg docs/robots.txt
+          rm -rf docs/assets docs/index.html docs/favicon.ico docs/placeholder.svg docs/robots.txt
           cp -r dist/spa/* docs/
 
       - name: Setup Pages
