@@ -598,10 +598,10 @@ export function ExecutiveOverviewCard({
               </div>
             </div>
 
-            {/* Movement Category (Event) Donut */}
+            {/* Movement Category (Event) - Movements by Event Type */}
             <div className="bg-white rounded-lg p-2 border border-gray-200 shadow-sm flex flex-col overflow-hidden">
               <h3 className="text-gray-900 text-xs font-bold text-center flex-shrink-0">
-                Movement Category (Event)
+                Movements by Event Type
               </h3>
               {eventDataWithPercentages.length > 0 ? (
                 <div className="flex-1 min-h-0 flex items-center justify-center">
@@ -611,9 +611,11 @@ export function ExecutiveOverviewCard({
                         data={eventDataWithPercentages}
                         cx="50%"
                         cy="50%"
-                        innerRadius={35}
-                        outerRadius={55}
-                        paddingAngle={1}
+                        labelLine={false}
+                        label={({ displayName }) => displayName}
+                        innerRadius={40}
+                        outerRadius={80}
+                        fill="#8884d8"
                         dataKey="value"
                       >
                         {eventDataWithPercentages.map((entry, index) => (
@@ -623,8 +625,15 @@ export function ExecutiveOverviewCard({
                           />
                         ))}
                       </Pie>
-                      <Legend
-                        wrapperStyle={{ fontSize: "10px", paddingTop: "4px" }}
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#ffffff",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: "8px",
+                        }}
+                        formatter={(value: number) =>
+                          `${value} movements (${((value / currentMonth.movements.length) * 100).toFixed(1)}%)`
+                        }
                       />
                     </PieChart>
                   </ResponsiveContainer>
