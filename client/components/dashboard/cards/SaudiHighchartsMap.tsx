@@ -101,10 +101,13 @@ function SaudiHighchartsMapComponent({
     }
     return Object.entries(regionMetrics)
       .map(([regionName, value]) => {
-        const hcKey = regionToHcKey[regionName];
-        if (!hcKey) {
-          console.warn(`No mapping found for region: ${regionName}`);
-          return null;
+        const hcKey = normalizeRegionName(regionName);
+        if (!hcKey || hcKey === "sa-ri") {
+          // If mapping failed (returns default "sa-ri"), check if we got useful data
+          if (!regionName.trim()) {
+            console.warn(`Empty region name found`);
+            return null;
+          }
         }
         return [hcKey, value] as [string, number];
       })
