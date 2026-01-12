@@ -252,7 +252,7 @@ export function ExecutiveOverviewCard({
     },
     {
       label: "High Moved COWs",
-      value: monthlyKpis.activeCOWs,
+      value: monthlyKpis.highMovedCows,
     },
     {
       label: "One Time Moved COWs",
