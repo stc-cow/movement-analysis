@@ -41,7 +41,6 @@ interface ExecutiveOverviewCardProps {
   cows: DimCow[];
   locations: DimLocation[];
   movements: CowMovementsFact[];
-  events: DimEvent[];
   cowMetrics: COWMetrics[];
 }
 
