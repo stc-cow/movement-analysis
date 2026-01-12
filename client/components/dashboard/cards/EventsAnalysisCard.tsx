@@ -92,7 +92,7 @@ export function EventsAnalysisCard({
     }));
 
   const distanceData = Object.entries(distanceByEvent)
-    .filter(([_, data]) => data.count > 0)
+    .filter(([type, data]) => data.count > 0 && type !== "Normal Coverage")
     .map(([type, data]) => ({
       type,
       avgDistance: Math.round((data.total / data.count) * 100) / 100,
