@@ -544,46 +544,26 @@ export function ExecutiveOverviewCard({
             ))}
           </div>
 
-          {/* Active Warehouse & One Time Moved COWs - Premium Card */}
-          <div className="grid grid-cols-2 gap-3 flex-shrink-0">
+          {/* Active Warehouse & One Time Moved COWs - Matching Total COWs Style */}
+          <div className="grid grid-cols-2 gap-2 flex-shrink-0">
             {/* One Time Moved COWs Card */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border-2 border-purple-200 shadow-md hover:shadow-lg transition-shadow">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-purple-600 text-xs font-bold uppercase tracking-wide mb-2">
-                    One Time Moved
-                  </p>
-                  <p className="text-purple-900 text-3xl font-bold">
-                    {monthlyKpis.staticCOWs}
-                  </p>
-                  <p className="text-purple-700 text-xs mt-2 font-medium">
-                    COWs
-                  </p>
-                </div>
-                <div className="text-purple-300 text-4xl opacity-50">
-                  📦
-                </div>
-              </div>
+            <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
+              <p className="text-gray-700 text-xs font-semibold uppercase tracking-wider">
+                One Time Moved COWs
+              </p>
+              <p className="text-gray-900 text-lg font-bold mt-1">
+                {monthlyKpis.staticCOWs}
+              </p>
             </div>
 
             {/* Active Warehouses Card */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-2 border-blue-200 shadow-md hover:shadow-lg transition-shadow">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-blue-600 text-xs font-bold uppercase tracking-wide mb-2">
-                    Active Warehouses
-                  </p>
-                  <p className="text-blue-900 text-3xl font-bold">
-                    {summaryStats[0]?.value || 0}
-                  </p>
-                  <p className="text-blue-700 text-xs mt-2 font-medium">
-                    Facilities
-                  </p>
-                </div>
-                <div className="text-blue-300 text-4xl opacity-50">
-                  🏢
-                </div>
-              </div>
+            <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
+              <p className="text-gray-700 text-xs font-semibold uppercase tracking-wider">
+                Active Warehouses
+              </p>
+              <p className="text-gray-900 text-lg font-bold mt-1">
+                {summaryStats[0]?.value || 0}
+              </p>
             </div>
           </div>
 
