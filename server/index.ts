@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import dataRoutes from "./routes/data";
-import migrateRoutes from "./routes/migrate-to-supabase";
 
 export function createServer() {
   const app = express();
@@ -23,9 +22,6 @@ export function createServer() {
 
   // Data import routes
   app.use("/api/data", dataRoutes);
-
-  // Migration routes (one-time use)
-  app.use("/api/migrate", migrateRoutes);
 
   return app;
 }
