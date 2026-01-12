@@ -100,6 +100,8 @@ export function generateTimelineMonths(
       toGovernorate: toLoc.Governorate,
       toLocationId: toLoc.Location_ID,
       fromLocationId: fromLoc.Location_ID,
+      fromSubLocation: mov.From_Sub_Location, // Column R: Event Type
+      toSubLocation: mov.To_Sub_Location, // Column V: Event Type
     };
 
     timeline.movements.push(mapLine);
