@@ -39,13 +39,28 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Copy build to docs for GitHub Pages
+        run: |
+          rm -rf docs/*
+          cp -r dist/spa/* docs/
+          # Preserve the .gitkeep or any important files if needed
+          git checkout docs/.gitkeep 2>/dev/null || true
+
+      - name: Commit and push build changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/
+          git diff --quiet && git diff --staged --quiet || git commit -m "Build: Update docs folder with latest build from dist/spa"
+          git push origin main
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "dist/spa"
+          path: "docs"
 
       - name: Deploy to GitHub Pages
         id: deployment
