@@ -229,32 +229,17 @@ export function ExecutiveOverviewCard({
     },
   ];
 
-  // Calculate Movement by Event Type data from Column R (From_Sub_Location)
-  // If From_Sub_Location is empty, fall back to To_Sub_Location
+  // Calculate Movement by Event Type data from Column R (fromSubLocation in MapLine)
+  // If fromSubLocation is empty, fall back to toSubLocation
   const eventTypeCounts: Record<string, number> = {};
-  const debugEventTypes: Set<string> = new Set();
 
-  currentMonth.movements.forEach((mov) => {
-    // Try From_Sub_Location first, then To_Sub_Location, default to "Other"
-    const rawValue = mov.From_Sub_Location?.trim() || mov.To_Sub_Location?.trim() || "Other";
+  currentMonth.movements.forEach((mov: any) => {
+    // MapLine objects have fromSubLocation/toSubLocation (camelCase)
+    // Try fromSubLocation first, then toSubLocation, default to "Other"
+    const rawValue = mov.fromSubLocation?.trim() || mov.toSubLocation?.trim() || "Other";
     const eventType = rawValue.length > 0 ? rawValue : "Other";
-    debugEventTypes.add(`FROM=${mov.From_Sub_Location}|TO=${mov.To_Sub_Location}|RESULT=${eventType}`);
     eventTypeCounts[eventType] = (eventTypeCounts[eventType] || 0) + 1;
   });
-
-  // Debug log for first render of the month
-  if (currentMonthIndex >= 0 && currentMonth.movements.length > 0) {
-    const firstMov = currentMonth.movements[0];
-    console.debug(`[ExecutiveOverviewCard] Month ${currentMonthIndex} Event Type Breakdown:`, {
-      totalMovements: currentMonth.movements.length,
-      eventTypeCounts,
-      firstMovement: {
-        From_Sub_Location: firstMov?.From_Sub_Location,
-        To_Sub_Location: firstMov?.To_Sub_Location,
-      },
-      debugSample: Array.from(debugEventTypes).slice(0, 10),
-    });
-  }
 
   const totalEventTypeMovements = currentMonth.movements.length;
   const movementByEventTypeData = Object.entries(eventTypeCounts)
