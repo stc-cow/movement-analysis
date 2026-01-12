@@ -57,7 +57,10 @@ export function ExecutiveOverviewCard({
   const playIndexRef = useRef(0);
 
   // Generate timeline from Saudi map data
+  // Add a guard to prevent expensive recalculation if arrays are the same reference
   const timelineMonths = useMemo(() => {
+    if (!movements || movements.length === 0) return [];
+    console.debug(`[Timeline] Generating timeline for ${movements.length} movements`);
     return generateTimelineMonths(movements, cows, locations);
   }, [movements, cows, locations]);
 
