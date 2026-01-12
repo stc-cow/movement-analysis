@@ -103,7 +103,21 @@ export const hcKeyToRegionName: Record<string, string> = {
   "sa-qs": "Qassim",
 };
 
-// Map region names to hc-key format for Highcharts
+// Map region/governorate names to hc-key format for Highcharts
 export function normalizeRegionName(region: string): string {
-  return regionToHcKey[region] || "sa-ri"; // Default to Riyadh if not found
+  // Trim whitespace and try to find exact match first
+  const trimmed = region?.trim() || "";
+  if (regionToHcKey[trimmed]) {
+    return regionToHcKey[trimmed];
+  }
+
+  // Try case-insensitive match if exact match failed
+  const uppercase = trimmed.toUpperCase();
+  for (const [key, value] of Object.entries(regionToHcKey)) {
+    if (key.toUpperCase() === uppercase) {
+      return value;
+    }
+  }
+
+  return "sa-ri"; // Default to Riyadh if not found
 }
