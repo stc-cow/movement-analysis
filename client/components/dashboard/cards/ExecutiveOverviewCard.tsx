@@ -251,7 +251,7 @@ export function ExecutiveOverviewCard({
       }),
     },
     {
-      label: "High Moved COWs",
+      label: "More Than Two Times Move",
       value: monthlyKpis.highMovedCows,
     },
     {
