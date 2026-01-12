@@ -229,6 +229,31 @@ export function ExecutiveOverviewCard({
     },
   ];
 
+  // Calculate Movement by Event Type data from Column R (From_Sub_Location)
+  const eventTypeCounts: Record<string, number> = {};
+  currentMonth.movements.forEach((mov) => {
+    const eventType = (mov.From_Sub_Location || "Other").trim();
+    eventTypeCounts[eventType] = (eventTypeCounts[eventType] || 0) + 1;
+  });
+
+  const totalEventTypeMovements = currentMonth.movements.length;
+  const movementByEventTypeData = Object.entries(eventTypeCounts)
+    .map(([type, count]) => ({
+      name: type,
+      value: count,
+      percentage: ((count / (totalEventTypeMovements || 1)) * 100).toFixed(1),
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  // Color mapping for event types
+  const EVENT_TYPE_COLOR_MAP: Record<string, string> = {
+    Event: "#3b82f6",      // Blue
+    Other: "#6b7280",      // Gray
+    "Mega project": "#ec4899", // Pink
+    Royal: "#8b5cf6",      // Purple
+    WH: "#10b981",         // Green
+  };
+
   // Calculate EBU Classification data
   const totalCurrentMovements = currentMonth.movements.length;
 
