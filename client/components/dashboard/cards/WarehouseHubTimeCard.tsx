@@ -55,57 +55,18 @@ export function WarehouseHubTimeCard({
     );
   }, [tableData, cowIdFilter]);
 
-  // Filter buckets based on filtered COWs
-  const filteredBuckets = useMemo(() => {
-    if (!cowIdFilter.trim()) return buckets;
-
-    const lowerFilter = cowIdFilter.toLowerCase();
-    const filteredCowIds = new Set(
-      tableData
-        .filter((row) => row.cowId.toLowerCase().includes(lowerFilter))
-        .map((row) => row.cowId),
-    );
-
-    return buckets.map((bucket) => {
-      let filteredCount = 0;
-      cowAgingMap.forEach((months, cowId) => {
-        if (!filteredCowIds.has(cowId)) return;
-
-        if (
-          (bucket.bucket === "0-3 Months" && months <= 3) ||
-          (bucket.bucket === "4-6 Months" && months > 3 && months <= 6) ||
-          (bucket.bucket === "7-9 Months" && months > 6 && months <= 9) ||
-          (bucket.bucket === "10-12 Months" && months > 9 && months <= 12) ||
-          (bucket.bucket === "More than 12 Months" && months > 12)
-        ) {
-          filteredCount++;
-        }
-      });
-      return { ...bucket, count: filteredCount };
-    });
-  }, [buckets, cowIdFilter, tableData, cowAgingMap]);
-
-  // Chart data
-  const chartData = filteredBuckets.map((b) => ({
+  // Chart data - ALWAYS shows ALL COWs in their buckets (never filtered)
+  const chartData = buckets.map((b) => ({
     name: b.bucket,
     count: b.count,
   }));
 
-  // Handle chart bar click
+  // Handle chart bar click - finds first COW in bucket from ALL COWs
   const handleChartClick = (bucketName: string) => {
-    // Find first COW in this bucket (for demo)
     let targetCowId: string | null = null;
-
-    const lowerFilter = cowIdFilter.toLowerCase();
-    const filteredCowIds = new Set(
-      tableData
-        .filter((row) => row.cowId.toLowerCase().includes(lowerFilter))
-        .map((row) => row.cowId),
-    );
 
     cowAgingMap.forEach((months, cowId) => {
       if (targetCowId) return;
-      if (!filteredCowIds.has(cowId)) return;
 
       if (
         (bucketName === "0-3 Months" && months <= 3) ||
