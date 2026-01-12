@@ -123,13 +123,13 @@ export function WarehouseIntelligenceCard({
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
         {/* Top Dispatch Warehouses */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200/60 dark:border-gray-700/40 shadow-lg p-4 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex-shrink-0">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200/60 dark:border-gray-700/40 shadow-lg p-3 sm:p-4 overflow-hidden flex flex-col">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
             Top Dispatch Warehouses
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart
               data={topOutgoing.map((m) => ({
                 name: m!.Location_Name.replace(/WH|Warehouse/gi, "").trim(),
