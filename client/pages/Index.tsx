@@ -109,6 +109,21 @@ export default function Dashboard() {
     movements: [],
   };
 
+  // Debug: Log API response data
+  useEffect(() => {
+    if (rawMovements && rawMovements.length > 0) {
+      const apiSum = rawMovements.reduce((sum, m) => sum + (m.Distance_KM || 0), 0);
+      console.debug(
+        `[API Data] Loaded ${rawMovements.length} movements. Sum of Distance_KM: ${apiSum.toFixed(2)} KM`,
+      );
+      if (rawMovements.length > 0) {
+        console.debug(
+          `[API Sample] First movement Distance_KM: ${rawMovements[0].Distance_KM}`,
+        );
+      }
+    }
+  }, [rawMovements]);
+
   // Enrich movements with classification
   const enrichedMovements = useMemo(
     () => enrichMovements(rawMovements, locations),
