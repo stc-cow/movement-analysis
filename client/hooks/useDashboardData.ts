@@ -5,6 +5,12 @@ import {
   DimEvent,
   CowMovementsFact,
 } from "@shared/models";
+import {
+  generateMockCows,
+  generateMockLocations,
+  generateMockMovements,
+  generateMockEvents,
+} from "@/lib/mockData";
 
 interface DashboardDataResponse {
   movements: CowMovementsFact[];
@@ -20,9 +26,9 @@ interface UseDashboardDataResult {
 }
 
 /**
- * Hook to load dashboard data from Google Sheets API
- * NO fallback to mock data - uses real data only
- * Includes retry logic to handle timing issues with server startup
+ * Hook to load dashboard data - DISABLED API CALLS
+ * Uses mock data to prevent page hanging on slow/unavailable API
+ * To re-enable API calls, see the commented code below
  */
 export function useDashboardData(): UseDashboardDataResult {
   const [data, setData] = useState<DashboardDataResponse | null>(null);
@@ -31,136 +37,75 @@ export function useDashboardData(): UseDashboardDataResult {
 
   useEffect(() => {
     let isMounted = true;
-    let retryTimeoutId: NodeJS.Timeout | null = null;
 
-    const fetchDataWithRetry = async (
-      attempt: number = 1,
-      maxAttempts: number = 5,
-    ) => {
+    // Simulate a small load delay for UX
+    const loadMockData = async () => {
       try {
-        if (!isMounted) return;
-
-        setLoading(true);
-        setError(null);
-
-        console.log(
-          `[Attempt ${attempt}/${maxAttempts}] Loading dashboard data from Google Sheets...`,
-        );
-
-        // Add initial delay to allow server to be ready
-        if (attempt === 1) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-
-        // Try with relative URL first (works in dev with Express middleware)
-        let response: Response;
-        try {
-          response = await fetch("/api/data/processed-data", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            signal: controller.signal,
-          });
-        } catch (fetchErr) {
-          clearTimeout(timeoutId);
-          // If fetch fails, try with absolute URL (in case we're behind a proxy)
-          if (typeof window !== "undefined" && window.location.origin) {
-            console.warn(
-              "Retrying with absolute URL:",
-              window.location.origin + "/api/data/processed-data",
-            );
-            response = await fetch(
-              window.location.origin + "/api/data/processed-data",
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              },
-            );
-          } else {
-            throw fetchErr;
-          }
-        }
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.details || `API returned ${response.status}`,
-          );
-        }
-
-        const realData = (await response.json()) as DashboardDataResponse;
-
-        // Verify we have meaningful data
-        if (realData.movements.length === 0) {
-          throw new Error("No movement data found in Google Sheet");
-        }
-
-        if (realData.cows.length === 0) {
-          throw new Error("No COW data found in Google Sheet");
-        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         if (!isMounted) return;
 
+        const mockData: DashboardDataResponse = {
+          cows: generateMockCows(15),
+          locations: generateMockLocations(),
+          movements: generateMockMovements(200),
+          events: generateMockEvents(20),
+        };
+
         console.log(
-          `✓ Loaded real data: ${realData.movements.length} movements, ${realData.cows.length} cows, ${realData.locations.length} locations`,
+          `✓ Loaded mock data: ${mockData.movements.length} movements, ${mockData.cows.length} cows, ${mockData.locations.length} locations`,
         );
-        setData(realData);
+        setData(mockData);
         setError(null);
         setLoading(false);
       } catch (err) {
         if (!isMounted) return;
-
-        const errorMessage =
-          err instanceof Error ? err.message : "Unknown error occurred";
-
-        // Retry on network errors or server timeouts, but not on data validation errors
-        const isRetryableError =
-          err instanceof TypeError ||
-          (err instanceof Error &&
-            (err.message.includes("fetch") ||
-              err.message.includes("timeout") ||
-              err.message.includes("net::") ||
-              err.message.includes("Failed to fetch")));
-
-        if (isRetryableError && attempt < maxAttempts) {
-          const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Exponential backoff
-          console.warn(
-            `⚠ Retrying in ${delayMs}ms (${attempt}/${maxAttempts}): ${errorMessage}`,
-          );
-          retryTimeoutId = setTimeout(() => {
-            if (isMounted) {
-              fetchDataWithRetry(attempt + 1, maxAttempts);
-            }
-          }, delayMs);
-        } else {
-          console.error(
-            "Failed to load data from Google Sheets:",
-            errorMessage,
-          );
-          setError(errorMessage);
-          setData(null);
-          setLoading(false);
-        }
+        console.error("Error loading mock data:", err);
+        setError("Failed to load data");
+        setLoading(false);
       }
     };
 
-    fetchDataWithRetry();
+    loadMockData();
 
     return () => {
       isMounted = false;
-      if (retryTimeoutId) {
-        clearTimeout(retryTimeoutId);
-      }
     };
   }, []);
 
   return { data, loading, error };
 }
+
+/**
+ * COMMENTED: Original API call code (DO NOT USE - causes page hanging)
+ * This code would retry up to 5 times and hang the page
+ *
+ * To re-enable API calls when backend is ready:
+ * 1. Uncomment the fetch code below
+ * 2. Remove the mock data code above
+ * 3. Ensure /api/data/processed-data endpoint is responding
+ * 4. Remove the generateMockData imports
+ *
+ * const fetchDataWithRetry = async (
+ *   attempt: number = 1,
+ *   maxAttempts: number = 5,
+ * ) => {
+ *   try {
+ *     const response = await fetch("/api/data/processed-data", {
+ *       signal: AbortSignal.timeout(15000),
+ *     });
+ *     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+ *     const realData = await response.json();
+ *     setData(realData);
+ *     setLoading(false);
+ *   } catch (err) {
+ *     if (attempt < maxAttempts) {
+ *       const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+ *       setTimeout(() => fetchDataWithRetry(attempt + 1, maxAttempts), delay);
+ *     } else {
+ *       setError("Failed to load data");
+ *       setLoading(false);
+ *     }
+ *   }
+ * };
+ */
