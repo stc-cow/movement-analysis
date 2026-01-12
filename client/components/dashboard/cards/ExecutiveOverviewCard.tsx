@@ -254,10 +254,6 @@ export function ExecutiveOverviewCard({
       label: "One Time Moved COWs",
       value: monthlyKpis.staticCOWs,
     },
-    {
-      label: "Avg Moves/COW",
-      value: monthlyKpis.avgMovesPerCOW.toFixed(1),
-    },
   ];
 
   const summaryStats = [
