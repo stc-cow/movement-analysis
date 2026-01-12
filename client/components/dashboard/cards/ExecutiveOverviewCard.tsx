@@ -316,10 +316,8 @@ export function ExecutiveOverviewCard({
   const VENDOR_LOGOS: Record<string, string> = {
     Ericsson:
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'%3E%3Crect fill='%23E8F2FF' width='100' height='50'/%3E%3Ctext x='50' y='35' font-family='Arial' font-size='20' font-weight='bold' fill='%23002E5C' text-anchor='middle'%3EEricsson%3C/text%3E%3C/svg%3E",
-    Nokia:
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'%3E%3Crect fill='%23E8F0FF' width='100' height='50'/%3E%3Ctext x='50' y='35' font-family='Arial' font-size='20' font-weight='bold' fill='%23124191' text-anchor='middle'%3ENokia%3C/text%3E%3C/svg%3E",
-    Huawei:
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'%3E%3Crect fill='%23FFE8E8' width='100' height='50'/%3E%3Ctext x='50' y='35' font-family='Arial' font-size='20' font-weight='bold' fill='%23FF0000' text-anchor='middle'%3EHuawei%3C/text%3E%3C/svg%3E",
+    Nokia: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F678f82bc9d334b3994979166456b650d?format=webp&width=800",
+    Huawei: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fd1ba7c0e87ca426ba5edf2584d5648dd?format=webp&width=800",
   };
 
   // Vendor branding colors
