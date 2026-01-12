@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 import { RequestHandler } from "express";
-import { fetchFromSupabase, isSupabaseConfigured } from "../lib/supabase-client";
 
 const router = Router();
 
