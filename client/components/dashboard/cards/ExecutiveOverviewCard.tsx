@@ -290,11 +290,11 @@ export function ExecutiveOverviewCard({
   // Vendor logos and branding
   const VENDOR_LOGOS: Record<string, string> = {
     Ericsson:
-      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fce8a05f0444047fbab6b38351ba3e00b?format=webp&width=800",
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23002E5C' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E",
     Nokia:
-      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F8b1d4da5de9a4830adc8ff8bb94f9384?format=webp&width=800",
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23124191' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E",
     Huawei:
-      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F1d0933328ffa4621ac07c43c539a6656?format=webp&width=800",
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23FF0000' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E",
   };
 
   // Vendor branding colors
