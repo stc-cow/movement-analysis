@@ -144,11 +144,19 @@ export function ExecutiveOverviewCard({
   const monthlyKpis = useMemo(() => {
     const uniqueCows = new Set(currentMonth.movements.map((m) => m.COW_ID));
 
+    // Count COWs with 2+ movements (High Moved COWs)
+    const cowFrequency: Record<string, number> = {};
+    currentMonth.movements.forEach((m) => {
+      cowFrequency[m.COW_ID] = (cowFrequency[m.COW_ID] || 0) + 1;
+    });
+    const highMovedCows = Object.values(cowFrequency).filter(count => count >= 2).length;
+
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
       totalMovements: currentMonth.movements.length,
       totalDistanceKM: currentMonth.totalDistance,
       activeCOWs: uniqueCows.size,
+      highMovedCows: highMovedCows,
       staticCOWs: kpis.staticCOWs,
       avgMovesPerCOW:
         uniqueCows.size > 0
