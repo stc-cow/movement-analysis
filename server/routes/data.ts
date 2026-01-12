@@ -719,10 +719,16 @@ const processedDataHandler: RequestHandler = async (req, res) => {
       );
     }
 
-    // Cache the result to reduce API calls on Netlify
-    setCached(cacheKey, processedData, CACHE_TTL);
+    // Add totalDistanceKM to the response
+    const responseData = {
+      ...processedData,
+      totalDistanceKM: totalDistance,
+    };
 
-    res.json(processedData);
+    // Cache the result to reduce API calls on Netlify
+    setCached(cacheKey, responseData, CACHE_TTL);
+
+    res.json(responseData);
   } catch (error) {
     console.error("Error processing Google Sheet data:", error);
     res.status(500).json({
