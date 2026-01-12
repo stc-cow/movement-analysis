@@ -24,11 +24,6 @@ export const DASHBOARD_CARDS: CardTab[] = [
     description: "Static Deployments & Status",
   },
   {
-    id: "regions",
-    label: "Region Analysis",
-    description: "Cross-Region Matrix",
-  },
-  {
     id: "warehouse",
     label: "Warehouse Analysis",
     description: "Dispatch & Receive",
