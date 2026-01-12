@@ -230,22 +230,29 @@ export function ExecutiveOverviewCard({
   ];
 
   // Calculate Movement by Event Type data from Column R (From_Sub_Location)
+  // If From_Sub_Location is empty, fall back to To_Sub_Location
   const eventTypeCounts: Record<string, number> = {};
   const debugEventTypes: Set<string> = new Set();
+
   currentMonth.movements.forEach((mov) => {
-    const rawValue = mov.From_Sub_Location;
-    const eventType = (rawValue && rawValue.trim()) || "Other";
-    debugEventTypes.add(`${rawValue}|${eventType}`);
+    // Try From_Sub_Location first, then To_Sub_Location, default to "Other"
+    const rawValue = mov.From_Sub_Location?.trim() || mov.To_Sub_Location?.trim() || "Other";
+    const eventType = rawValue.length > 0 ? rawValue : "Other";
+    debugEventTypes.add(`FROM=${mov.From_Sub_Location}|TO=${mov.To_Sub_Location}|RESULT=${eventType}`);
     eventTypeCounts[eventType] = (eventTypeCounts[eventType] || 0) + 1;
   });
 
   // Debug log for first render of the month
   if (currentMonthIndex >= 0 && currentMonth.movements.length > 0) {
-    console.debug(`[ExecutiveOverviewCard] Month ${currentMonthIndex}:`, {
+    const firstMov = currentMonth.movements[0];
+    console.debug(`[ExecutiveOverviewCard] Month ${currentMonthIndex} Event Type Breakdown:`, {
       totalMovements: currentMonth.movements.length,
       eventTypeCounts,
-      debugSample: Array.from(debugEventTypes).slice(0, 20),
-      firstMovementFromSubLoc: currentMonth.movements[0]?.From_Sub_Location,
+      firstMovement: {
+        From_Sub_Location: firstMov?.From_Sub_Location,
+        To_Sub_Location: firstMov?.To_Sub_Location,
+      },
+      debugSample: Array.from(debugEventTypes).slice(0, 10),
     });
   }
 
