@@ -11,6 +11,8 @@ export interface MapLine {
   date: string;
   fromRegion: string; // Origin region (from coordinates)
   toRegion: string; // Destination region (to coordinates)
+  fromGovernorate?: string; // Origin governorate (Column AD)
+  toGovernorate?: string; // Destination governorate (Column AD)
   toLocationId: string; // Destination location ID
   fromLocationId: string; // Origin location ID
 }
