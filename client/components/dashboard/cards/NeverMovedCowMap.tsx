@@ -105,8 +105,16 @@ export function NeverMovedCowMap({ cows, onCowSelected }: NeverMovedCowMapProps)
             <p class="text-xs text-gray-600">
               Days: ${cow.Days_On_Air} days
             </p>
+            <p class="text-xs text-gray-600 mt-2">
+              Vendor: ${cow.Vendor}
+            </p>
           </div>
         `);
+
+        // Add click handler to show full details
+        marker.on("click", () => {
+          onCowSelected?.(cow);
+        });
 
         marker.addTo(group);
         markersRef.current.push(marker);
