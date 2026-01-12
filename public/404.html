@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stc COW Analysis</title>
+    <script>
+      const redirectTo = new URL(window.location.href);
+      const segments = redirectTo.pathname.split("/").filter(Boolean);
+      redirectTo.pathname = segments.length > 0 ? `/${segments[0]}/` : "/";
+      window.location.replace(redirectTo.toString());
+    </script>
+  </head>
+  <body></body>
+</html>
