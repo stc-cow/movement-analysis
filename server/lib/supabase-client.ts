@@ -1,26 +1,58 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.SUPABASE_URL || "";
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+let supabaseServerInstance: any = null;
+let supabasePublicInstance: any = null;
+let initialized = false;
 
-if (!supabaseUrl) {
-  console.error("❌ SUPABASE_URL not set");
+function initializeClients() {
+  if (initialized) return;
+  initialized = true;
+
+  const supabaseUrl = process.env.SUPABASE_URL || "";
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+
+  if (!supabaseUrl) {
+    console.error("❌ SUPABASE_URL not set");
+  }
+
+  if (!supabaseAnonKey) {
+    console.error("❌ SUPABASE_ANON_KEY not set");
+  }
+
+  // Client for server-side queries (service role - can do everything)
+  if (supabaseServiceKey && supabaseUrl) {
+    try {
+      supabaseServerInstance = createClient(supabaseUrl, supabaseServiceKey);
+    } catch (error) {
+      console.error("❌ Failed to initialize Supabase server client:", error);
+    }
+  }
+
+  // Client for public queries (anon key - RLS enforced)
+  if (supabaseAnonKey && supabaseUrl) {
+    try {
+      supabasePublicInstance = createClient(supabaseUrl, supabaseAnonKey);
+    } catch (error) {
+      console.error("❌ Failed to initialize Supabase public client:", error);
+    }
+  }
 }
 
-if (!supabaseAnonKey) {
-  console.error("❌ SUPABASE_ANON_KEY not set");
+// Lazy getters
+export function getSupabaseServer() {
+  initializeClients();
+  return supabaseServerInstance;
 }
 
-// Client for server-side queries (service role - can do everything)
-export const supabaseServer = supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+export function getSupabasePublic() {
+  initializeClients();
+  return supabasePublicInstance;
+}
 
-// Client for public queries (anon key - RLS enforced)
-export const supabasePublic = supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+// For backward compatibility
+export const supabaseServer = null;
+export const supabasePublic = null;
 
 export function isSupabaseConfigured(): boolean {
   return !!(supabaseUrl && supabaseAnonKey);
