@@ -228,30 +228,41 @@ export function NeverMovedCowCard({ neverMovedCows }: NeverMovedCowCardProps) {
         </Card>
       </div>
 
-      {/* Right Panel: Detailed Table */}
+      {/* Right Panel: Map */}
       <div className="flex flex-col rounded-lg overflow-hidden border bg-white">
-        <div className="p-4 border-b bg-gray-50 flex-shrink-0">
-          <h3 className="font-semibold text-gray-900">Never Moved COWs Details</h3>
+        <div className="p-4 border-b bg-gray-50">
+          <h3 className="font-semibold text-gray-900">Location Map</h3>
           <p className="text-xs text-gray-600 mt-1">
-            Complete information for {filteredCows.length} COWs
+            Click on a COW to view its details ({filteredCows.length} COWs)
           </p>
         </div>
-        <div className="flex-1 overflow-auto">
-          <Table className="text-sm">
-            <TableHeader className="sticky top-0 bg-gray-50">
-              <TableRow>
-                <TableHead className="font-semibold">COW ID</TableHead>
-                <TableHead className="font-semibold">1st Deploy Date</TableHead>
-                <TableHead className="font-semibold">Last Deploy Date</TableHead>
-                <TableHead className="font-semibold">Vendor</TableHead>
-                <TableHead className="font-semibold">Region</TableHead>
-                <TableHead className="font-semibold">Location</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCows.length > 0 ? (
-                filteredCows.map((cow) => (
+        <NeverMovedCowMap cows={filteredCows} />
+      </div>
+
+      {/* Details Panel - Shows selected COW info from map click */}
+      {selectedStatus === "ALL" && filteredCows.length > 0 && (
+        <div className="rounded-lg overflow-hidden border bg-white">
+          <div className="p-4 border-b bg-gray-50">
+            <h3 className="font-semibold text-gray-900">COW Details Table</h3>
+            <p className="text-xs text-gray-600 mt-1">
+              All {filteredCows.length} COWs information
+            </p>
+          </div>
+          <div className="overflow-auto max-h-96">
+            <Table className="text-sm">
+              <TableHeader className="sticky top-0 bg-gray-50">
+                <TableRow>
+                  <TableHead className="font-semibold">COW ID</TableHead>
+                  <TableHead className="font-semibold">1st Deploy</TableHead>
+                  <TableHead className="font-semibold">Last Deploy</TableHead>
+                  <TableHead className="font-semibold">Vendor</TableHead>
+                  <TableHead className="font-semibold">Region</TableHead>
+                  <TableHead className="font-semibold">Location</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCows.map((cow) => (
                   <TableRow key={cow.COW_ID} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-blue-600">
                       {cow.COW_ID}
@@ -283,21 +294,12 @@ export function NeverMovedCowCard({ neverMovedCows }: NeverMovedCowCardProps) {
                       </Badge>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center text-gray-500 py-8"
-                  >
-                    No COWs match the selected status
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
