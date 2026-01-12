@@ -93,9 +93,14 @@ export function WarehouseIntelligenceCard({
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200/60 dark:border-gray-700/40 shadow-lg overflow-hidden">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Warehouse Locations
-            </h3>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Warehouse Locations
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Dispatch (From Location) and Receiving (To Location) by Region
+              </p>
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setSelectedRegion(undefined)}
