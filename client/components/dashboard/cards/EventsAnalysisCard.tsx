@@ -214,14 +214,14 @@ export function EventsAnalysisCard({
             </div>
           </div>
           {topEventType && (
-            <div className="p-3 sm:p-4 bg-purple-50 dark:bg-purple-950 rounded border border-purple-200 dark:border-purple-700 min-h-20 sm:min-h-24">
-              <div className="text-xs font-medium text-purple-600 dark:text-purple-400 mb-2">
+            <div className="p-2 sm:p-3 bg-purple-50 dark:bg-purple-950 rounded border border-purple-200 dark:border-purple-700">
+              <div className="text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">
                 Most Common Event
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-purple-900 dark:text-purple-100">
+              <div className="text-lg sm:text-xl font-bold text-purple-900 dark:text-purple-100">
                 {topEventType.value}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+              <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 {topEventType.name}
               </div>
             </div>
