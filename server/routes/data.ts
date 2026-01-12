@@ -762,7 +762,8 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
     // Check cache first
-    const cacheKey = "never-moved-cows";
+    // Add version to cache key to bust old cached values
+    const cacheKey = "never-moved-cows-v2";
     const cachedData = getCached(cacheKey);
     if (cachedData) {
       console.log(`✓ Serving cached data for never-moved-cows`);
