@@ -131,7 +131,9 @@ export function COWOffAirDetailsModal({
                         <TableCell className="py-3">
                           {stay.idleStartDate}
                         </TableCell>
-                        <TableCell className="py-3">{stay.idleEndDate}</TableCell>
+                        <TableCell className="py-3">
+                          {stay.idleEndDate}
+                        </TableCell>
                         <TableCell className="text-right py-3 font-semibold">
                           {stay.idleDays}
                         </TableCell>
@@ -139,7 +141,10 @@ export function COWOffAirDetailsModal({
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="py-4 text-center text-gray-400">
+                      <TableCell
+                        colSpan={5}
+                        className="py-4 text-center text-gray-400"
+                      >
                         No off-air warehouse stays available
                       </TableCell>
                     </TableRow>

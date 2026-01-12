@@ -565,7 +565,12 @@ export function getWarehousesHighestTotalStay(
 // ============================================================================
 
 export interface OffAirAgingBucket {
-  bucket: "0-3 Months" | "4-6 Months" | "7-9 Months" | "10-12 Months" | "More than 12 Months";
+  bucket:
+    | "0-3 Months"
+    | "4-6 Months"
+    | "7-9 Months"
+    | "10-12 Months"
+    | "More than 12 Months";
   count: number; // Count of unique COW IDs
 }
 
@@ -683,7 +688,11 @@ export function calculateOffAirWarehouseAging(
 
   // STEP 4: Create aging buckets (convert days to months: ÷ 30)
   const bucketCounts = new Map<
-    "0-3 Months" | "4-6 Months" | "7-9 Months" | "10-12 Months" | "More than 12 Months",
+    | "0-3 Months"
+    | "4-6 Months"
+    | "7-9 Months"
+    | "10-12 Months"
+    | "More than 12 Months",
     Set<string>
   >();
   bucketCounts.set("0-3 Months", new Set());
@@ -849,7 +858,8 @@ export function getCOWOffAirAgingDetails(
 
   const avgIdleDays =
     cowOffAirMovements.length > 1
-      ? Math.round((totalIdleDays / (cowOffAirMovements.length - 1)) * 100) / 100
+      ? Math.round((totalIdleDays / (cowOffAirMovements.length - 1)) * 100) /
+        100
       : 0;
 
   return {
