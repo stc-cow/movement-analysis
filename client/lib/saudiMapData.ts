@@ -94,6 +94,8 @@ export function generateTimelineMonths(
       date: mov.Moved_DateTime.split("T")[0],
       fromRegion: fromLoc.Region,
       toRegion: toLoc.Region,
+      fromGovernorate: fromLoc.Governorate,
+      toGovernorate: toLoc.Governorate,
       toLocationId: toLoc.Location_ID,
       fromLocationId: fromLoc.Location_ID,
     };
