@@ -296,7 +296,6 @@ export default function Dashboard() {
             cows={cows}
             locations={locations}
             movements={filteredMovements}
-            events={events}
             cowMetrics={cowMetrics}
           />
         )}
