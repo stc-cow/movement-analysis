@@ -598,88 +598,36 @@ export function ExecutiveOverviewCard({
             </div>
           </div>
 
-          {/* Donut Charts - Side by Side */}
-          <div className="grid grid-cols-2 gap-2 flex-1 min-h-0">
-            {/* Movement Classification Donut */}
-            <div className="bg-white rounded-lg p-2 border border-gray-200 shadow-sm flex flex-col overflow-hidden">
-              <h3 className="text-gray-900 text-xs font-bold text-center flex-shrink-0">
-                Movement Classification
-              </h3>
-              <div className="flex-1 min-h-0 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={movementChartData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={35}
-                      outerRadius={55}
-                      paddingAngle={1}
-                      dataKey="value"
-                      labelLine={false}
-                      label={({ name, percentage }) =>
-                        `${name} (${percentage}%)`
-                      }
-                    >
-                      {movementChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Legend
-                      wrapperStyle={{ fontSize: "10px", paddingTop: "4px" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Movement by Event Type (Column A: Movement Count vs Column R: Event Type) */}
-            <div className="bg-white rounded-lg p-2 border border-gray-200 shadow-sm flex flex-col overflow-hidden">
-              <h3 className="text-gray-900 text-xs font-bold text-center flex-shrink-0">
-                Movements by Event Type
-              </h3>
-              {movementByEventsData.length > 0 ? (
-                <div className="flex-1 min-h-0 flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={movementByEventsData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percentage }) =>
-                          `${name} (${percentage}%)`
-                        }
-                        innerRadius={40}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {movementByEventsData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={EVENT_TYPE_COLORS[entry.name] || "#6b7280"}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "#ffffff",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "8px",
-                        }}
-                        formatter={(value: number, name, props) =>
-                          `${value} movements (${props.payload.percentage}%)`
-                        }
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <div className="flex-1 flex items-center justify-center text-gray-400 text-xs">
-                  No event data
-                </div>
-              )}
+          {/* Movement Classification Donut */}
+          <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm flex flex-col overflow-hidden flex-1 min-h-0">
+            <h3 className="text-gray-900 text-sm font-bold text-center flex-shrink-0">
+              Movement Classification
+            </h3>
+            <div className="flex-1 min-h-0 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={movementChartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={35}
+                    outerRadius={55}
+                    paddingAngle={1}
+                    dataKey="value"
+                    labelLine={false}
+                    label={({ name, percentage }) =>
+                      `${name} (${percentage}%)`
+                    }
+                  >
+                    {movementChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend
+                    wrapperStyle={{ fontSize: "10px", paddingTop: "4px" }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
