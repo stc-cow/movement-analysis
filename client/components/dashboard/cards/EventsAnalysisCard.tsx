@@ -227,14 +227,14 @@ export function EventsAnalysisCard({
             </div>
           )}
           {topDistance && (
-            <div className="p-3 sm:p-4 bg-green-50 dark:bg-green-950 rounded border border-green-200 dark:border-green-700 min-h-20 sm:min-h-24">
-              <div className="text-xs font-medium text-green-600 dark:text-green-400 mb-2">
+            <div className="p-2 sm:p-3 bg-green-50 dark:bg-green-950 rounded border border-green-200 dark:border-green-700">
+              <div className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">
                 Longest Avg Distance
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-green-900 dark:text-green-100">
+              <div className="text-lg sm:text-xl font-bold text-green-900 dark:text-green-100">
                 {topDistance.avgDistance.toFixed(0)}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+              <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 {topDistance.type} (KM)
               </div>
             </div>
