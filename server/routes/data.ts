@@ -849,14 +849,44 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       }
 
       // Extract Never Moved COW data
-      const neverMovedCow = {
-        cow_id: cowId,
-        onair_status: cells[ONAIR_STATUS_IDX]?.trim() || "OFF-AIR",
-        latitude: parseFloat(cells[LATITUDE_IDX]?.trim() || "0") || 0,
-        longitude: parseFloat(cells[LONGITUDE_IDX]?.trim() || "0") || 0,
-        last_deploying_date: cells[LAST_DEPLOY_IDX]?.trim() || "",
-        first_deploying_date: cells[FIRST_DEPLOY_IDX]?.trim() || "",
-        vendor: cells[VENDOR_IDX]?.trim() || "Unknown",
+      const onairStatus = cells[ONAIR_STATUS_IDX]?.trim() || "OFF-AIR";
+      const lastDeployDate = cells[LAST_DEPLOY_IDX]?.trim() || "";
+      const firstDeployDate = cells[FIRST_DEPLOY_IDX]?.trim() || "";
+
+      // Calculate Days_On_Air
+      let daysOnAir = 0;
+      if (firstDeployDate) {
+        try {
+          const deployDate = new Date(firstDeployDate);
+          const today = new Date();
+          if (!isNaN(deployDate.getTime())) {
+            daysOnAir = Math.floor(
+              (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24)
+            );
+          }
+        } catch (e) {
+          daysOnAir = 0;
+        }
+      }
+
+      // Normalize status
+      const status = onairStatus.toUpperCase() === "ON-AIR" || onairStatus === "1"
+        ? "ON-AIR"
+        : "OFF-AIR";
+
+      const neverMovedCow: any = {
+        COW_ID: cowId,
+        Region: "Unknown", // Not available in specified columns
+        District: "Unknown", // Not available in specified columns
+        City: "Unknown", // Not available in specified columns
+        Location: "Never Moved Location",
+        Latitude: parseFloat(cells[LATITUDE_IDX]?.trim() || "0") || 0,
+        Longitude: parseFloat(cells[LONGITUDE_IDX]?.trim() || "0") || 0,
+        Status: status,
+        Last_Deploy_Date: lastDeployDate || new Date().toISOString().split("T")[0],
+        First_Deploy_Date: firstDeployDate || new Date().toISOString().split("T")[0],
+        Days_On_Air: daysOnAir,
+        Vendor: cells[VENDOR_IDX]?.trim() || "Unknown",
       };
 
       neverMovedCows.push(neverMovedCow);
@@ -864,8 +894,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       // Log first 3 rows for debugging
       if (neverMovedCows.length <= 3) {
         console.log(`   Row ${i}: ${cowId}`);
-        console.log(`      Onair: ${neverMovedCow.onair_status}`);
-        console.log(`      Lat/Lng: ${neverMovedCow.latitude}, ${neverMovedCow.longitude}`);
+        console.log(`      Status: ${neverMovedCow.Status}`);
+        console.log(`      Lat/Lng: ${neverMovedCow.Latitude}, ${neverMovedCow.Longitude}`);
+        console.log(`      Days On Air: ${daysOnAir}`);
       }
     }
 
