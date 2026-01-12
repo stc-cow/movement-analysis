@@ -3,17 +3,30 @@ import { createClient } from "@supabase/supabase-js";
 
 const router = Router();
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || "";
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+// Lazy Supabase client initialization
+let supabaseClient: any = null;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error("❌ Missing Supabase credentials for migration");
-} else {
-  console.log("✓ Supabase migration service initialized");
+function getSupabaseClient() {
+  if (supabaseClient) return supabaseClient;
+
+  const supabaseUrl = process.env.SUPABASE_URL || "";
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error("❌ Missing Supabase credentials for migration");
+    return null;
+  }
+
+  try {
+    supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+    console.log("✓ Supabase migration service initialized");
+  } catch (error) {
+    console.error("❌ Failed to initialize Supabase client:", error);
+    return null;
+  }
+
+  return supabaseClient;
 }
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 /**
  * POST /api/migrate/import-google-sheets
