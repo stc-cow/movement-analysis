@@ -34,17 +34,38 @@ export default function Dashboard() {
   const [neverMovedCows, setNeverMovedCows] = useState<NeverMovedCow[]>([]);
   const [neverMovedLoading, setNeverMovedLoading] = useState(false);
 
-  // Never-moved COWs API call DISABLED - was causing page hanging
-  // Replace with mock data or empty array
+  // Fetch "Never Moved COWs" data - single request, no retries
   useEffect(() => {
-    // Simulated delay for smooth UX
-    const timer = setTimeout(() => {
-      // For now, set to empty array (no never-moved cows in demo)
-      setNeverMovedCows([]);
-      setNeverMovedLoading(false);
-    }, 300);
+    const fetchNeverMovedCows = async () => {
+      try {
+        setNeverMovedLoading(true);
 
-    return () => clearTimeout(timer);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+
+        const response = await fetch("/api/data/never-moved-cows", {
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setNeverMovedCows(result.cows || []);
+        console.log(`✓ Loaded ${result.cows?.length || 0} Never Moved COWs`);
+        setNeverMovedLoading(false);
+      } catch (err) {
+        console.warn("Never-moved COWs fetch failed:", err);
+        // Don't error out - just leave empty
+        setNeverMovedCows([]);
+        setNeverMovedLoading(false);
+      }
+    };
+
+    fetchNeverMovedCows();
   }, []);
 
   // Initialize with empty data and update when data loads
