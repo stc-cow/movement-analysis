@@ -289,7 +289,7 @@ export function SaudiHighchartsMap({
       </h3>
 
       {/* Map Container with Overlays */}
-      <div className="flex-1 min-h-96 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 relative">
+      <div className="flex-1 min-h-[600px] rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 relative">
         <HighchartsReact
           key="saudi-map"
           highcharts={Highcharts}
