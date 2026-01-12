@@ -5,7 +5,7 @@ const router = Router();
 
 /**
  * Simple in-memory cache with TTL to prevent repeated Google Sheets fetches
- * This reduces load on Netlify serverless functions and improves response times
+ * This reduces API calls and improves response times
  */
 interface CacheEntry {
   data: any;
