@@ -154,12 +154,6 @@ export function ExecutiveOverviewCard({
     const totalDistanceForDisplay =
       currentMonthIndex === -1 ? kpis.totalDistanceKM : currentMonth.totalDistance;
 
-    if (currentMonthIndex === -1) {
-      console.debug(
-        `[KPI Debug] currentMonthIndex=${currentMonthIndex}, kpis.totalDistanceKM=${kpis.totalDistanceKM}, currentMonth.totalDistance=${currentMonth.totalDistance}`,
-      );
-    }
-
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
       totalMovements: currentMonth.movements.length,
