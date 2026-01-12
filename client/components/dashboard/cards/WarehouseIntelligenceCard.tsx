@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/table";
 import { CowMovementsFact, DimLocation } from "@shared/models";
 import { calculateWarehouseMetrics } from "@/lib/analytics";
-import { WarehouseLocationMap } from "./WarehouseLocationMap";
 
 interface WarehouseIntelligenceCardProps {
   movements: CowMovementsFact[];
