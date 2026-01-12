@@ -404,3 +404,140 @@ export function calculateKPIs(
     avgMovesPerCOW,
   };
 }
+
+// Calculate warehouse hub time - stay duration at each warehouse
+export function calculateWarehouseHubTime(
+  movements: CowMovementsFact[],
+  locations: DimLocation[],
+): WarehouseHubTimeData[] {
+  const hubTimes: WarehouseHubTimeData[] = [];
+  const locMap = new Map(locations.map((l) => [l.Location_ID, l]));
+
+  // Group movements by COW ID
+  const movementsByCow = new Map<string, CowMovementsFact[]>();
+  movements.forEach((mov) => {
+    if (!movementsByCow.has(mov.COW_ID)) {
+      movementsByCow.set(mov.COW_ID, []);
+    }
+    movementsByCow.get(mov.COW_ID)!.push(mov);
+  });
+
+  // For each COW, sort by Moved_DateTime and calculate stay durations
+  movementsByCow.forEach((cowMovements, cowId) => {
+    // Sort by Moved_DateTime to get chronological order
+    const sorted = [...cowMovements].sort(
+      (a, b) =>
+        new Date(a.Moved_DateTime).getTime() -
+        new Date(b.Moved_DateTime).getTime(),
+    );
+
+    // Calculate stay duration for each movement (except the last)
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const currentMovement = sorted[i];
+      const nextMovement = sorted[i + 1];
+
+      // The warehouse where COW stayed is the To_Location of current movement
+      const warehouseId = currentMovement.To_Location_ID;
+      const warehouse = locMap.get(warehouseId);
+
+      if (warehouse) {
+        // Calculate stay duration: from Reached_DateTime to next Moved_DateTime
+        const arrivalTime = new Date(currentMovement.Reached_DateTime).getTime();
+        const departureTime = new Date(nextMovement.Moved_DateTime).getTime();
+        const stayDays = (departureTime - arrivalTime) / (1000 * 60 * 60 * 24);
+
+        // Only record positive stays
+        if (stayDays > 0) {
+          hubTimes.push({
+            cowId,
+            warehouseName: warehouse.Location_Name,
+            stayDays: Math.round(stayDays * 100) / 100,
+            arrivalDate: currentMovement.Reached_DateTime.split("T")[0],
+            departureDate: nextMovement.Moved_DateTime.split("T")[0],
+          });
+        }
+      }
+    }
+  });
+
+  return hubTimes;
+}
+
+// Get top COWs by total stay days
+export function getTopCowsByStayDays(
+  hubTimes: WarehouseHubTimeData[],
+  limit: number = 10,
+): COWStayDays[] {
+  const cowTotals = new Map<string, number>();
+
+  hubTimes.forEach((ht) => {
+    cowTotals.set(
+      ht.cowId,
+      (cowTotals.get(ht.cowId) || 0) + ht.stayDays,
+    );
+  });
+
+  return Array.from(cowTotals.entries())
+    .map(([cowId, totalStayDays]) => ({
+      cowId,
+      totalStayDays: Math.round(totalStayDays * 100) / 100,
+    }))
+    .sort((a, b) => b.totalStayDays - a.totalStayDays)
+    .slice(0, limit);
+}
+
+// Get average stay days per warehouse
+export function getAverageStayPerWarehouse(
+  hubTimes: WarehouseHubTimeData[],
+): WarehouseAvgStay[] {
+  const warehouseStats = new Map<
+    string,
+    { totalStayDays: number; stayCount: number }
+  >();
+
+  hubTimes.forEach((ht) => {
+    if (!warehouseStats.has(ht.warehouseName)) {
+      warehouseStats.set(ht.warehouseName, {
+        totalStayDays: 0,
+        stayCount: 0,
+      });
+    }
+
+    const stats = warehouseStats.get(ht.warehouseName)!;
+    stats.totalStayDays += ht.stayDays;
+    stats.stayCount += 1;
+  });
+
+  return Array.from(warehouseStats.entries())
+    .map(([warehouseName, stats]) => ({
+      warehouseName,
+      avgStayDays:
+        Math.round((stats.totalStayDays / stats.stayCount) * 100) / 100,
+      totalStayDays: Math.round(stats.totalStayDays * 100) / 100,
+      stayCount: stats.stayCount,
+    }))
+    .sort((a, b) => b.avgStayDays - a.avgStayDays);
+}
+
+// Get warehouses with highest total stay days
+export function getWarehousesHighestTotalStay(
+  hubTimes: WarehouseHubTimeData[],
+  limit: number = 10,
+): WarehouseTotalStay[] {
+  const warehouseTotals = new Map<string, number>();
+
+  hubTimes.forEach((ht) => {
+    warehouseTotals.set(
+      ht.warehouseName,
+      (warehouseTotals.get(ht.warehouseName) || 0) + ht.stayDays,
+    );
+  });
+
+  return Array.from(warehouseTotals.entries())
+    .map(([warehouseName, totalStayDays]) => ({
+      warehouseName,
+      totalStayDays: Math.round(totalStayDays * 100) / 100,
+    }))
+    .sort((a, b) => b.totalStayDays - a.totalStayDays)
+    .slice(0, limit);
+}
