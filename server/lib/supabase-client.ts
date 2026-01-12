@@ -72,11 +72,11 @@ export async function fetchFromSupabase() {
     // Fetch all data in parallel
     const [movementsRes, cowsRes, locationsRes, eventsRes, neverMovedRes] =
       await Promise.all([
-        supabaseServer.from("movement_data").select("*"),
-        supabaseServer.from("dim_cow").select("*"),
-        supabaseServer.from("dim_location").select("*"),
-        supabaseServer.from("dim_event").select("*"),
-        supabaseServer.from("never_moved_cow").select("*"),
+        client.from("movement_data").select("*"),
+        client.from("dim_cow").select("*"),
+        client.from("dim_location").select("*"),
+        client.from("dim_event").select("*"),
+        client.from("never_moved_cow").select("*"),
       ]);
 
     // Check for errors
