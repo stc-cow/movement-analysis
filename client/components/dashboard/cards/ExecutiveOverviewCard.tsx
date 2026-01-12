@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, memo, useCallback } from "react";
 import {
   DimCow,
   DimLocation,
+  DimEvent,
   CowMovementsFact,
   COWMetrics,
 } from "@shared/models";
