@@ -94,9 +94,9 @@ export function WarehouseIntelligenceCard({
   );
 
   return (
-    <div className="h-full overflow-y-auto flex flex-col gap-4 p-4">
+    <div className="h-full overflow-y-auto flex flex-col gap-4 p-3 sm:p-4">
       {/* Region Filter */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setSelectedRegion(undefined)}
           className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
