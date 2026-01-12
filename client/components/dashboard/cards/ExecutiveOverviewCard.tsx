@@ -331,37 +331,27 @@ export function ExecutiveOverviewCard({
     ZTE: { color: "#00A500", bgColor: "#E8F5E8" },
   };
 
-  // Custom X-axis tick component with vendor logo
+  // Custom X-axis tick component with vendor logo image
   const VendorXAxisTick = (props: any) => {
     const { x, y, payload } = props;
     const vendorName = payload.value;
-    const vendorColor = VENDOR_COLORS[vendorName];
-    const bgColor = vendorColor?.bgColor || "#f0f0f0";
-    const textColor = vendorColor?.color || "#666";
+    const logoUrl = VENDOR_LOGOS[vendorName];
+
+    if (!logoUrl) return null;
 
     return (
-      <g transform={`translate(${x},${y})`}>
-        <rect
-          x="-10"
-          y="-10"
-          width="20"
-          height="20"
-          rx="3"
-          fill={bgColor}
-          stroke={textColor}
-          strokeWidth="1.5"
+      <foreignObject x={x - 25} y={y} width="50" height="24">
+        <img
+          src={logoUrl}
+          alt={vendorName}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            borderRadius: "2px",
+          }}
         />
-        <text
-          x="0"
-          y="5"
-          textAnchor="middle"
-          fontSize="10"
-          fontWeight="bold"
-          fill={textColor}
-        >
-          {vendorName.substring(0, 1).toUpperCase()}
-        </text>
-      </g>
+      </foreignObject>
     );
   };
 
