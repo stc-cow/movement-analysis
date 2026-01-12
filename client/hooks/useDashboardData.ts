@@ -45,11 +45,20 @@ export function useDashboardData(): UseDashboardDataResult {
 
         if (!isMounted) return;
 
+        const cows = generateMockCows(15);
+        const locations = generateMockLocations();
+        const events = generateMockEvents();
+
         const mockData: DashboardDataResponse = {
-          cows: generateMockCows(15),
-          locations: generateMockLocations(),
-          movements: generateMockMovements(200),
-          events: generateMockEvents(20),
+          cows,
+          locations,
+          events,
+          movements: generateMockMovements(
+            cows.map((c) => c.COW_ID),
+            locations.map((l) => l.Location_ID),
+            events.map((e) => e.Event_ID),
+            200,
+          ),
         };
 
         console.log(
