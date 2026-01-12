@@ -595,10 +595,19 @@ export function calculateOffAirWarehouseAging(
 } {
   const locMap = new Map(locations.map((l) => [l.Location_ID, l]));
 
+  console.log("🔍 calculateOffAirWarehouseAging START");
+  console.log("  Total movements received:", movements.length);
+  if (movements.length > 0) {
+    console.log("  Sample movement:", movements[0]);
+    console.log("  Has Movement_Type?:", "Movement_Type" in movements[0]);
+    console.log("  Movement_Type value:", movements[0].Movement_Type);
+  }
+
   // STEP 1: Filter ONLY rows where Column Z = "Half" OR "Zero"
   const offAirMovements = movements.filter(
     (mov) => mov.Movement_Type === "Half" || mov.Movement_Type === "Zero",
   );
+  console.log("  Off-air movements (Half/Zero):", offAirMovements.length);
 
   // STEP 2: Group movements by COW ID and sort by Moved_DateTime
   const movementsByCow = new Map<string, CowMovementsFact[]>();
