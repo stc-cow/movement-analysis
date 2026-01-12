@@ -318,6 +318,14 @@ export default function Dashboard() {
           />
         )}
 
+        {/* Warehouse Hub Time */}
+        {activeCard === "warehouse-hub-time" && (
+          <WarehouseHubTimeCard
+            movements={filteredMovements}
+            locations={locations}
+          />
+        )}
+
         {/* COW Utilization */}
         {activeCard === "utilization" && (
           <COWUtilizationCard cowMetrics={cowMetrics} />
