@@ -939,8 +939,8 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       const neverMovedCow: any = {
         COW_ID: cowId,
         Region: cells[REGION_IDX]?.trim() || "Unknown",
-        District: "Unknown",
-        City: "Unknown",
+        District: cells[DISTRICT_IDX]?.trim() || "Unknown",
+        City: cells[CITY_IDX]?.trim() || "Unknown",
         Location: cells[LOCATION_IDX]?.trim() || "Unknown",
         Latitude: parseFloat(cells[LATITUDE_IDX]?.trim() || "0") || 0,
         Longitude: parseFloat(cells[LONGITUDE_IDX]?.trim() || "0") || 0,
