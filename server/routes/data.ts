@@ -571,7 +571,7 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     // Check cache first - reduces load on APIs
     const cacheKey = "processed-data";
     const cachedData = getCached(cacheKey);
-    if (cachedData) {
+    if (cachedData && process.env.NODE_ENV !== "development") {
       console.log(`✓ Serving cached data for processed-data`);
       return res.json(cachedData);
     }
