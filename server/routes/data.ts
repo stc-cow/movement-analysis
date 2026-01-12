@@ -568,10 +568,11 @@ function processData(rows: any[]) {
  */
 const processedDataHandler: RequestHandler = async (req, res) => {
   try {
-    // Check cache first - reduces load on APIs
+    // Check cache first - reduces load on APIs (skip in dev to ensure fresh data)
     const cacheKey = "processed-data";
-    const cachedData = getCached(cacheKey);
-    if (cachedData && process.env.NODE_ENV !== "development") {
+    const shouldUseCache = process.env.NODE_ENV === "production";
+    const cachedData = shouldUseCache ? getCached(cacheKey) : null;
+    if (cachedData) {
       console.log(`✓ Serving cached data for processed-data`);
       return res.json(cachedData);
     }
