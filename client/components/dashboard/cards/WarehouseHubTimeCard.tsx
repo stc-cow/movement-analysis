@@ -129,50 +129,52 @@ export function WarehouseHubTimeCard({
         </div>
 
         {/* Off-Air Warehouse Aging Chart */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4 overflow-hidden flex flex-col h-80 sm:h-96">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4 overflow-hidden flex flex-col min-h-80 sm:min-h-96">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
             Off-Air Warehouse Aging
           </h3>
-          {hasChartData ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={chartData}
-                margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis
-                  dataKey="name"
-                  angle={-45}
-                  textAnchor="end"
-                  height={100}
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value: number) => `${value} COWs`}
-                />
-                <Bar
-                  dataKey="count"
-                  fill={CHART_COLOR}
-                  onClick={(state: any) => {
-                    if (state && state.name) {
-                      handleChartClick(state.name);
-                    }
-                  }}
-                  style={{ cursor: "pointer" }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex items-center justify-center py-8 text-gray-400">
-              No Off-Air Warehouse data available
-            </div>
-          )}
+          <div className="flex-1 w-full" style={{ minHeight: "300px" }}>
+            {hasChartData ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis
+                    dataKey="name"
+                    angle={-45}
+                    textAnchor="end"
+                    height={100}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                    }}
+                    formatter={(value: number) => `${value} COWs`}
+                  />
+                  <Bar
+                    dataKey="count"
+                    fill={CHART_COLOR}
+                    onClick={(state: any) => {
+                      if (state && state.name) {
+                        handleChartClick(state.name);
+                      }
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-400">
+                No Off-Air Warehouse data available
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Off-Air Warehouse Aging Table */}
