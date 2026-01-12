@@ -10,3 +10,4 @@ export { EventsAnalysisCard } from "./EventsAnalysisCard";
 export { RoyalEBUAnalysisCard } from "./RoyalEBUAnalysisCard";
 export { DistanceCostProxyCard } from "./DistanceCostProxyCard";
 export { AIReadinessCard } from "./AIReadinessCard";
+export { WarehouseHubTimeCard } from "./WarehouseHubTimeCard";
