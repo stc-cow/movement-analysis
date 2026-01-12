@@ -734,20 +734,17 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 };
 
 /**
- * Handler to fetch "Never Moved COW" data from published Dashboard sheet CSV
- * Data source: Google Sheet "Dashboard" sheet (published to web as CSV)
- * Dashboard GID: 1464106304
- * Column mapping (from screenshot):
- * A: COW ID
- * B: Region
- * C: District
- * D: City
- * E: Location
- * F: Latitude
- * G: Longitude
- * H: Status
- * I: Last Deploying Date
- * J: First Deploying Date
+ * Handler to fetch "Never Moved COW" data from the same Google Sheet
+ * Column mapping for Never Moved COWs:
+ * AF (Index 31): COW ID
+ * AP (Index 41): Onair status
+ * AN (Index 39): Latitude
+ * AO (Index 40): Longitude
+ * AQ (Index 42): Last Deploying Date
+ * AR (Index 43): 1st Deploying Date
+ * AS (Index 44): Vendor
+ *
+ * Filter rule: Skip rows where column AF (index 31) is blank
  */
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
@@ -759,14 +756,146 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       return res.json(cachedData);
     }
 
-    console.log(`ℹ️  Never Moved COWs endpoint - returning empty data (single sheet mode)`);
+    console.log(`\n🚀 PROCESSING NEVER MOVED COWS DATA`);
+    console.log(`📥 CSV URL: ${MOVEMENT_DATA_CSV_URL}`);
 
-    // Return empty data by default (not fetching a separate sheet)
+    // Fetch CSV data
+    let csvData: string | null = null;
+    let fetchError: Error | null = null;
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+      const response = await fetch(MOVEMENT_DATA_CSV_URL, {
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        csvData = await response.text();
+        console.log(`✓ Successfully fetched CSV data (${csvData.length} bytes)`);
+      } else {
+        fetchError = new Error(
+          `HTTP ${response.status}: ${response.statusText}`,
+        );
+        console.error(`✗ Failed to fetch CSV: ${response.status}`);
+      }
+    } catch (e) {
+      fetchError = e instanceof Error ? e : new Error(String(e));
+      if (fetchError.message.includes("abort")) {
+        console.warn(`⏱️  CSV fetch timed out (${FETCH_TIMEOUT}ms)`);
+      } else {
+        console.warn(`✗ CSV fetch failed: ${fetchError.message}`);
+      }
+    }
+
+    if (!csvData) {
+      throw new Error(
+        `Failed to fetch CSV: ${fetchError?.message || "Unknown error"}`,
+      );
+    }
+
+    // Parse CSV
+    const lines = csvData.trim().split("\n");
+
+    if (lines.length < 2) {
+      throw new Error("CSV has no data rows");
+    }
+
+    // Parse header to understand structure
+    const headerLine = lines[0];
+    const headerCells = parseCSVLine(headerLine);
+
+    console.log(`\n📋 CSV Structure:`);
+    console.log(`   Total columns: ${headerCells.length}`);
+    console.log(`   Sample columns for Never Moved COWs:`);
+    console.log(`      [31] AF = "${headerCells[31] || "MISSING"}" (COW ID)`);
+    console.log(`      [39] AN = "${headerCells[39] || "MISSING"}" (Latitude)`);
+    console.log(`      [40] AO = "${headerCells[40] || "MISSING"}" (Longitude)`);
+    console.log(`      [41] AP = "${headerCells[41] || "MISSING"}" (Onair status)`);
+    console.log(`      [42] AQ = "${headerCells[42] || "MISSING"}" (Last Deploying Date)`);
+    console.log(`      [43] AR = "${headerCells[43] || "MISSING"}" (1st Deploying Date)`);
+    console.log(`      [44] AS = "${headerCells[44] || "MISSING"}" (Vendor)`);
+
+    // Column indices for Never Moved COWs
+    const COW_ID_IDX = 31; // AF
+    const LATITUDE_IDX = 39; // AN
+    const LONGITUDE_IDX = 40; // AO
+    const ONAIR_STATUS_IDX = 41; // AP
+    const LAST_DEPLOY_IDX = 42; // AQ
+    const FIRST_DEPLOY_IDX = 43; // AR
+    const VENDOR_IDX = 44; // AS
+
+    // Parse Never Moved COWs data
+    const neverMovedCows: any[] = [];
+    let skippedCount = 0;
+
+    console.log(`\n🔄 Parsing Never Moved COWs data:`);
+
+    for (let i = 1; i < lines.length; i++) {
+      const cells = parseCSVLine(lines[i]);
+
+      // Skip rows where COW ID (column AF / index 31) is blank
+      const cowId = cells[COW_ID_IDX]?.trim();
+
+      if (!cowId) {
+        skippedCount++;
+        continue;
+      }
+
+      // Extract Never Moved COW data
+      const neverMovedCow = {
+        cow_id: cowId,
+        onair_status: cells[ONAIR_STATUS_IDX]?.trim() || "OFF-AIR",
+        latitude: parseFloat(cells[LATITUDE_IDX]?.trim() || "0") || 0,
+        longitude: parseFloat(cells[LONGITUDE_IDX]?.trim() || "0") || 0,
+        last_deploying_date: cells[LAST_DEPLOY_IDX]?.trim() || "",
+        first_deploying_date: cells[FIRST_DEPLOY_IDX]?.trim() || "",
+        vendor: cells[VENDOR_IDX]?.trim() || "Unknown",
+      };
+
+      neverMovedCows.push(neverMovedCow);
+
+      // Log first 3 rows for debugging
+      if (neverMovedCows.length <= 3) {
+        console.log(`   Row ${i}: ${cowId}`);
+        console.log(`      Onair: ${neverMovedCow.onair_status}`);
+        console.log(`      Lat/Lng: ${neverMovedCow.latitude}, ${neverMovedCow.longitude}`);
+      }
+    }
+
+    console.log(`\n📊 Parsing Summary:`);
+    console.log(`   ✓ Valid Never Moved COWs: ${neverMovedCows.length}`);
+    console.log(`   ✗ Skipped (blank COW ID): ${skippedCount}`);
+
+    // Calculate statistics
+    const onAirCount = neverMovedCows.filter(
+      (cow) => cow.onair_status?.toUpperCase() === "ON-AIR" || cow.onair_status === "1"
+    ).length;
+    const offAirCount = neverMovedCows.length - onAirCount;
+    const onAirPercentage =
+      neverMovedCows.length > 0
+        ? ((onAirCount / neverMovedCows.length) * 100).toFixed(2)
+        : 0;
+
     const responseData = {
-      cows: [],
-      stats: { total: 0, onAir: 0, offAir: 0 },
-      source: "Single Sheet Mode - No separate never-moved data",
+      cows: neverMovedCows,
+      stats: {
+        total: neverMovedCows.length,
+        onAir: onAirCount,
+        offAir: offAirCount,
+        onAirPercentage: parseFloat(onAirPercentage as string),
+      },
+      source: "Single Sheet Mode - Never Moved COWs",
     };
+
+    console.log(`   ON-AIR: ${onAirCount} (${onAirPercentage}%)`);
+    console.log(`   OFF-AIR: ${offAirCount}`);
 
     // Cache the result
     setCached(cacheKey, responseData, CACHE_TTL);
@@ -779,8 +908,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
     // Return empty data to prevent app crash
     const responseData = {
       cows: [],
-      stats: { total: 0, onAir: 0, offAir: 0 },
+      stats: { total: 0, onAir: 0, offAir: 0, onAirPercentage: 0 },
       source: "Error - returning empty data",
+      error: errorMsg,
     };
 
     res.json(responseData);
