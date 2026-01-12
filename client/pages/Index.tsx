@@ -8,6 +8,7 @@ import { StaticCowMapCard } from "@/components/dashboard/cards/StaticCowMapCard"
 import { NeverMovedCowCard } from "@/components/dashboard/cards/NeverMovedCowCard";
 import { RegionAnalysisCard } from "@/components/dashboard/cards/RegionAnalysisCard";
 import { WarehouseIntelligenceCard } from "@/components/dashboard/cards/WarehouseIntelligenceCard";
+import { WarehouseHubTimeCard } from "@/components/dashboard/cards/WarehouseHubTimeCard";
 import { COWUtilizationCard } from "@/components/dashboard/cards/COWUtilizationCard";
 import { EventsAnalysisCard } from "@/components/dashboard/cards/EventsAnalysisCard";
 import { RoyalEBUAnalysisCard } from "@/components/dashboard/cards/RoyalEBUAnalysisCard";
