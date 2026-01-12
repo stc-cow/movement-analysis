@@ -204,8 +204,8 @@ export function WarehouseIntelligenceCard({
       </div>
 
       {/* Warehouse Details Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200/60 dark:border-gray-700/40 shadow-lg p-4 overflow-hidden flex flex-col">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200/60 dark:border-gray-700/40 shadow-lg p-3 sm:p-4 overflow-hidden flex flex-col">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
           📊 Warehouse Analytics
         </h3>
         <div className="overflow-x-auto">
