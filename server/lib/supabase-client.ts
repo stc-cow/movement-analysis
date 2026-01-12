@@ -55,11 +55,14 @@ export const supabaseServer = null;
 export const supabasePublic = null;
 
 export function isSupabaseConfigured(): boolean {
+  const supabaseUrl = process.env.SUPABASE_URL || "";
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
   return !!(supabaseUrl && supabaseAnonKey);
 }
 
 export async function fetchFromSupabase() {
-  if (!supabaseServer) {
+  const client = getSupabaseServer();
+  if (!client) {
     throw new Error("Supabase server client not configured");
   }
 
