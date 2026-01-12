@@ -255,26 +255,6 @@ export function ExecutiveOverviewCard({
     },
   ];
 
-  // Calculate event type data from current month movements
-  const EVENT_COLORS: Record<string, string> = {
-    Hajj: "#f59e0b",
-    Umrah: "#06b6d4",
-    Royal: "#8b5cf6",
-    "Mega Project": "#ec4899",
-    "National Event": "#10b981",
-    Seasonal: "#14b8a6",
-    Event: "#3b82f6",
-    "Normal Coverage": "#6b7280",
-  };
-
-  // Movement type colors (Full/Half/Zero)
-  const MOVEMENT_TYPE_COLORS: Record<string, string> = {
-    Full: "#10b981", // Green - Full movement
-    Half: "#f59e0b", // Amber - Half movement
-    Zero: "#ef4444", // Red - Zero movement
-    Unknown: "#6b7280", // Gray - Unknown
-  };
-
   // Vendor logos and branding
   const VENDOR_LOGOS: Record<string, string> = {
     Ericsson:
