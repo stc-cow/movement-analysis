@@ -41,6 +41,7 @@ export function WarehouseHubTimeCard({
   const [selectedCowForModal, setSelectedCowForModal] = useState<string | null>(
     null,
   );
+  const [forceRender, setForceRender] = useState(false);
 
   // Calculate off-air warehouse aging data (memoized to prevent unnecessary recalculations)
   const { buckets, tableData, cowAgingMap } = useMemo(
