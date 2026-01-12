@@ -336,8 +336,7 @@ function SaudiHighchartsMapComponent({
 }
 
 // Export memoized version to prevent unnecessary re-renders
-import React from "react";
-export const SaudiHighchartsMap = React.memo(SaudiHighchartsMapComponent, (prev, next) => {
+export const SaudiHighchartsMap = memo(SaudiHighchartsMapComponent, (prev, next) => {
   // Custom comparison: only re-render if region metrics or max metric actually changed
   const regionsEqual = JSON.stringify(prev.regionMetrics) === JSON.stringify(next.regionMetrics);
   const maxEqual = prev.maxMetric === next.maxMetric;
