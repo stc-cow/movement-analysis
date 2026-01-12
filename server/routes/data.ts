@@ -726,11 +726,18 @@ const processedDataHandler: RequestHandler = async (req, res) => {
       totalDistanceKM: totalDistance,
     };
 
-    // Log the exact value being returned
+    // Log the exact value being returned with detailed breakdown
     console.log(`\n🎯 FINAL RESPONSE DATA:`);
     console.log(`   ✓ totalDistanceKM: ${totalDistance}`);
     console.log(`   ✓ movements.length: ${processedData.movements.length}`);
+    console.log(`   ✓ Average distance per movement: ${(totalDistance / processedData.movements.length).toFixed(2)} KM`);
     console.log(`   ✓ Cache key: ${cacheKey}`);
+
+    // Sample check - show first 5 movements
+    console.log(`\n📍 First 5 movements distance values:`);
+    for (let i = 0; i < Math.min(5, processedData.movements.length); i++) {
+      console.log(`      Movement ${i + 1}: ${processedData.movements[i].Distance_KM} KM`);
+    }
 
     // Cache the result to reduce API calls on Netlify
     setCached(cacheKey, responseData, CACHE_TTL);
