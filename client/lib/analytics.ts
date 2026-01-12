@@ -66,49 +66,21 @@ export function enrichMovements(
   locations: DimLocation[],
 ): CowMovementsFact[] {
   const locMap = new Map(locations.map((l) => [l.Location_ID, l]));
-  let preservedCount = 0;
-  let calculatedCount = 0;
 
-  const enriched = movements.map((mov) => {
-    const fromLoc = locMap.get(mov.From_Location_ID);
-    const toLoc = locMap.get(mov.To_Location_ID);
-
+  return movements.map((mov) => {
     // Use the original Movement_Type from Google Sheet if available
     // Otherwise, classify based on location types
     const movementType = mov.Movement_Type || classifyMovement(mov, locMap);
 
-    // Use the Distance_KM from Column Y (Google Sheet) - this is the source of truth
-    // Only calculate from coordinates if Distance_KM is missing (0 or undefined)
-    let distance: number;
-    if (mov.Distance_KM && mov.Distance_KM > 0) {
-      distance = mov.Distance_KM;
-      preservedCount++;
-    } else if (fromLoc && toLoc) {
-      distance = calculateDistance(
-        fromLoc.Latitude,
-        fromLoc.Longitude,
-        toLoc.Latitude,
-        toLoc.Longitude,
-      );
-      calculatedCount++;
-    } else {
-      distance = 0;
-    }
-
+    // IMPORTANT: Always use the Distance_KM from Column Y (Google Sheet) as the source of truth
+    // This is the value that matches the user's expected sum
+    // Do NOT recalculate from coordinates - use API value directly
     return {
       ...mov,
       Movement_Type: movementType,
-      Distance_KM: distance,
+      // Keep the Distance_KM from the API exactly as-is
     };
   });
-
-  if (enriched.length > 0 && preservedCount + calculatedCount > 0) {
-    console.debug(
-      `[enrichMovements] Processed ${enriched.length} movements: ${preservedCount} preserved from API, ${calculatedCount} calculated from coordinates`,
-    );
-  }
-
-  return enriched;
 }
 
 // Calculate COW metrics
