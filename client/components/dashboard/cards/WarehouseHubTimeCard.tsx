@@ -32,18 +32,12 @@ export function WarehouseHubTimeCard({
 
   // Get analytics data
   const topCows = getTopCowsByStayDays(hubTimes, 10);
-  const avgStayPerWarehouse = getAverageStayPerWarehouse(hubTimes);
   const topWarehouses = getWarehousesHighestTotalStay(hubTimes, 10);
 
   // Chart data
   const cowsData = topCows.map((item) => ({
     name: item.cowId,
     "Stay Days": item.totalStayDays,
-  }));
-
-  const warehouseAvgData = avgStayPerWarehouse.map((item) => ({
-    name: item.warehouseName,
-    "Avg Days": item.avgStayDays,
   }));
 
   const warehouseTotalData = topWarehouses.map((item) => ({
