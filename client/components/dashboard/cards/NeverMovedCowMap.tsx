@@ -85,35 +85,18 @@ export function NeverMovedCowMap({ cows, onCowSelected }: NeverMovedCowMapProps)
           icon: createIcon(cow.Status),
         });
 
-        marker.bindPopup(`
-          <div class="p-2 text-sm">
-            <p class="font-semibold">${cow.COW_ID}</p>
-            <p class="text-xs text-gray-600">${cow.Location}</p>
-            <p class="text-xs text-gray-500">${cow.Region}, ${cow.District}, ${cow.City}</p>
-            <p class="mt-2">
-              <span class="inline-block px-2 py-1 rounded text-xs font-medium ${
-                cow.Status === "ON-AIR"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-              }">
-                ${cow.Status}
-              </span>
-            </p>
-            <p class="text-xs text-gray-600 mt-1">
-              Last Deploy: ${new Date(cow.Last_Deploy_Date).toLocaleDateString()}
-            </p>
-            <p class="text-xs text-gray-600">
-              Days: ${cow.Days_On_Air} days
-            </p>
-            <p class="text-xs text-gray-600 mt-2">
-              Vendor: ${cow.Vendor}
-            </p>
-          </div>
-        `);
-
         // Add click handler to show full details
         marker.on("click", () => {
           onCowSelected?.(cow);
+        });
+
+        // Set cursor to pointer on hover to indicate clickability
+        marker.on("mouseover", function () {
+          this.setOpacity(0.8);
+        });
+
+        marker.on("mouseout", function () {
+          this.setOpacity(1);
         });
 
         marker.addTo(group);
