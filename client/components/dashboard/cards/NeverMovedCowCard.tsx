@@ -238,7 +238,7 @@ export function NeverMovedCowCard({ neverMovedCows }: NeverMovedCowCardProps) {
         createPortal(
           <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
-            style={{ zIndex: 999999 }}
+            style={{ zIndex: 2147483647 }}
           >
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
               {/* Modal Header */}
