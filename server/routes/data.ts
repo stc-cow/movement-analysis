@@ -250,7 +250,7 @@ function parseCSVData(csvText: string) {
       region_from: cells[26]?.trim() || cells[24]?.trim() || "CENTRAL",
       region_to: cells[27]?.trim() || cells[25]?.trim() || "CENTRAL",
       vendor: cells[28]?.trim() || cells[26]?.trim() || "Unknown",
-      installation_status: cells[29]?.trim() || cells[27]?.trim() || "",
+      governorate: cells[29]?.trim() || cells[27]?.trim() || "", // Column AD: Official governorate administrative region
       remarks: cells[30]?.trim() || cells[28]?.trim() || "",
     };
 
