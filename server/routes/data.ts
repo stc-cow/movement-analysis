@@ -229,7 +229,7 @@ function parseCSVData(csvText: string) {
       moved_month_year: cells[13]?.trim() || cells[11]?.trim() || "",
       reached_datetime: cells[14]?.trim() || cells[12]?.trim() || "",
       reached_month_year: cells[15]?.trim() || cells[13]?.trim() || "",
-      from_sub_location: cells[17]?.trim() || cells[15]?.trim() || "",
+      from_sub_location: cells[17]?.trim() || "", // Column R: From Sub Location (Event Type)
       from_latitude: cells[18]?.trim() || cells[16]?.trim() || "0",
       from_longitude: cells[19]?.trim() || cells[17]?.trim() || "0",
       to_sub_location: cells[21]?.trim() || cells[19]?.trim() || "",
