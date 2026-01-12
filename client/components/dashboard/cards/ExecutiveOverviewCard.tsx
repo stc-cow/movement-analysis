@@ -654,6 +654,13 @@ export function ExecutiveOverviewCard({
         </div>
       </div>
 
+      {/* Data Range Footer */}
+      <div className="flex-shrink-0 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border-t border-gray-200 dark:border-gray-700 px-6 py-3">
+        <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+          Analysis applied on Movement data from Jan 2021 to Oct 2025
+        </p>
+      </div>
+
       {/* Static COWs Modal */}
       {showStaticCowsModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
