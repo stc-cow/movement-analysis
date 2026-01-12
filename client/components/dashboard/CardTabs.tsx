@@ -34,6 +34,11 @@ export const DASHBOARD_CARDS: CardTab[] = [
     description: "Dispatch & Receive",
   },
   {
+    id: "warehouse-hub-time",
+    label: "Warehouse Hub Time",
+    description: "COW Stay Duration Analysis",
+  },
+  {
     id: "utilization",
     label: "COW Utilization",
     description: "Usage Metrics",
