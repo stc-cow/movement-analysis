@@ -5,8 +5,7 @@ import { createServer } from "./server";
 
 // https://vitejs.dev/config/
 const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1];
-const base =
-  process.env.GITHUB_PAGES && repoName ? `/${repoName}/` : "/";
+const base = process.env.GITHUB_PAGES && repoName ? `/${repoName}/` : "/";
 
 export default defineConfig(({ mode }) => ({
   // For GitHub Pages: if deployed to https://username.github.io/repo-name/

@@ -36,7 +36,10 @@ export default function Dashboard() {
 
   // Fetch "Never Moved COWs" data
   useEffect(() => {
-    const fetchNeverMovedCows = async (attempt: number = 1, maxAttempts: number = 3) => {
+    const fetchNeverMovedCows = async (
+      attempt: number = 1,
+      maxAttempts: number = 3,
+    ) => {
       try {
         setNeverMovedLoading(true);
 
@@ -58,7 +61,7 @@ export default function Dashboard() {
           // Try with absolute URL if relative URL fails
           if (typeof window !== "undefined" && window.location.origin) {
             response = await fetch(
-              window.location.origin + "/api/data/never-moved-cows"
+              window.location.origin + "/api/data/never-moved-cows",
             );
           } else {
             throw fetchErr;
