@@ -13,7 +13,8 @@ interface SaudiHighchartsMapProps {
 let geoDataCache: any = null;
 let geoDataPromise: Promise<any> | null = null;
 
-export function SaudiHighchartsMap({
+// Memoize the component to prevent unnecessary re-renders when parent updates but props haven't changed
+function SaudiHighchartsMapComponent({
   regionMetrics,
   maxMetric,
   title = "Movements by Region",
