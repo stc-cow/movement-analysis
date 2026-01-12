@@ -133,7 +133,7 @@ export function WarehouseHubTimeCard({
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
             Off-Air Warehouse Aging
           </h3>
-          {chartData && chartData.length > 0 ? (
+          {hasChartData ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={chartData}
