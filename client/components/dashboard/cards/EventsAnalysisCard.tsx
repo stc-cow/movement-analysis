@@ -270,15 +270,15 @@ export function EventsAnalysisCard({
                 }}
               >
                 <div
-                  className="text-base sm:text-lg font-bold"
+                  className="text-sm sm:text-base font-bold"
                   style={{ color: EVENT_COLORS[name] || "#6b7280" }}
                 >
                   {value}
                 </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                   {name}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-gray-500 mt-0.5">
                   {((value / totalMovements) * 100).toFixed(1)}%
                 </div>
               </div>
