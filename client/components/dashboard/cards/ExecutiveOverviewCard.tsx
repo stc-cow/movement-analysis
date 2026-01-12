@@ -340,15 +340,15 @@ export function ExecutiveOverviewCard({
     return type;
   }
 
-  const eventCounts: Record<string, number> = {};
+  // Count movements by Movement Type (column R)
+  const movementTypeCounts: Record<string, number> = {};
   currentMonth.movements.forEach((mov) => {
-    const fromEvent = normalizeEventType(mov.From_Sub_Location);
-    const toEvent = normalizeEventType(mov.To_Sub_Location);
-    const eventType = mov.From_Sub_Location ? fromEvent : toEvent;
-    eventCounts[eventType] = (eventCounts[eventType] || 0) + 1;
+    const movType = mov.Movement_Type || "Unknown";
+    movementTypeCounts[movType] = (movementTypeCounts[movType] || 0) + 1;
   });
 
-  const eventData = Object.entries(eventCounts)
+  // Sort by count descending
+  const movementTypeData = Object.entries(movementTypeCounts)
     .filter(([_, count]) => count > 0)
     .map(([type, count]) => ({
       name: type,
@@ -356,7 +356,8 @@ export function ExecutiveOverviewCard({
     }))
     .sort((a, b) => b.value - a.value);
 
-  const eventDataWithPercentages = eventData.map((item) => ({
+  // Add percentages for display
+  const movementTypeDataWithPercentages = movementTypeData.map((item) => ({
     ...item,
     percentage: ((item.value / totalCurrentMovements) * 100).toFixed(1),
     displayName: `${item.name} (${((item.value / totalCurrentMovements) * 100).toFixed(1)}%)`,
