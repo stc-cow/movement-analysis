@@ -271,39 +271,30 @@ export function ExecutiveOverviewCard({
     },
   ];
 
-  // Calculate Movement by Events data (Column A: COW IDs vs Column R: Movement Types)
+  // Calculate Movement by Event Type data - using same logic as Events Analysis card
+  // Groups by event type and counts movements per event type
   const movementByEventsData = useMemo(() => {
-    // Count unique COWs per movement type
-    const cowsByType: Record<string, Set<string>> = {
-      Full: new Set(),
-      Half: new Set(),
-      Zero: new Set(),
-      Unknown: new Set(),
-    };
+    const eventCounts: Record<string, number> = {};
 
     currentMonth.movements.forEach((mov) => {
-      const movType = mov.Movement_Type || "Unknown";
-      const key = (movType.charAt(0).toUpperCase() +
-        movType.slice(1).toLowerCase()) as keyof typeof cowsByType;
-      if (cowsByType[key]) {
-        cowsByType[key].add(mov.COW_ID);
-      } else {
-        cowsByType["Unknown"].add(mov.COW_ID);
-      }
+      // Use From_Sub_Location (event type at source), fallback to To_Sub_Location
+      const fromEvent = normalizeEventType(mov.From_Sub_Location);
+      const toEvent = normalizeEventType(mov.To_Sub_Location);
+      const eventType = mov.From_Sub_Location ? fromEvent : toEvent;
+
+      // Count movements per event type
+      eventCounts[eventType] = (eventCounts[eventType] || 0) + 1;
     });
 
-    // Convert to chart data
-    return Object.entries(cowsByType)
-      .filter(([_, cowSet]) => cowSet.size > 0)
-      .map(([type, cowSet]) => ({
+    const totalMovements = currentMonth.movements.length;
+
+    // Convert to chart data with percentages
+    return Object.entries(eventCounts)
+      .filter(([_, count]) => count > 0)
+      .map(([type, count]) => ({
         name: type,
-        value: cowSet.size, // Number of COWs with this type
-        cowCount: cowSet.size,
-        percentage: (
-          (cowSet.size /
-            (new Set(currentMonth.movements.map((m) => m.COW_ID)).size || 1)) *
-          100
-        ).toFixed(1),
+        value: count,
+        percentage: ((count / (totalMovements || 1)) * 100).toFixed(1),
       }))
       .sort((a, b) => b.value - a.value);
   }, [currentMonth.movements]);
