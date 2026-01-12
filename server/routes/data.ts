@@ -549,7 +549,7 @@ function processData(rows: any[]) {
 }
 
 /**
- * Fetch and process data from Supabase (primary) or Google Sheets (fallback)
+ * Fetch and process data from Google Sheets (single source of truth)
  */
 const processedDataHandler: RequestHandler = async (req, res) => {
   try {
