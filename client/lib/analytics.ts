@@ -599,9 +599,6 @@ export function calculateOffAirWarehouseAging(
   const offAirMovements = movements.filter(
     (mov) => mov.Movement_Type === "Half" || mov.Movement_Type === "Zero",
   );
-  console.log("calculateOffAirWarehouseAging - Total movements:", movements.length);
-  console.log("calculateOffAirWarehouseAging - Off-air movements (Half/Zero):", offAirMovements.length);
-  console.log("calculateOffAirWarehouseAging - Sample off-air movement:", offAirMovements[0]);
 
   // STEP 2: Group movements by COW ID and sort by Moved_DateTime
   const movementsByCow = new Map<string, CowMovementsFact[]>();
