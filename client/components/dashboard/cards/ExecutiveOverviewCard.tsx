@@ -149,10 +149,15 @@ export function ExecutiveOverviewCard({
     // Count COWs with 2+ movements (High Moved COWs)
     const highMovedCows = 2450;
 
+    // Use API's totalDistanceKM for "All" view (currentMonthIndex === -1) which is the accurate sum of Column Y
+    // For individual months, use the timeline's aggregated distance
+    const totalDistanceForDisplay =
+      currentMonthIndex === -1 ? kpis.totalDistanceKM : currentMonth.totalDistance;
+
     return {
       totalCOWs: Math.max(kpis.totalCOWs, uniqueCows.size || kpis.totalCOWs),
       totalMovements: currentMonth.movements.length,
-      totalDistanceKM: currentMonth.totalDistance,
+      totalDistanceKM: totalDistanceForDisplay,
       activeCOWs: uniqueCows.size,
       highMovedCows: highMovedCows,
       staticCOWs: kpis.staticCOWs,
@@ -161,7 +166,7 @@ export function ExecutiveOverviewCard({
           ? currentMonth.movements.length / uniqueCows.size
           : 0,
     };
-  }, [currentMonth, kpis]);
+  }, [currentMonth, kpis, currentMonthIndex]);
 
   // Get static COWs data
   const staticCowsData = cowMetrics
