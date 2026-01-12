@@ -40,12 +40,9 @@ function setCached(key: string, data: any, ttlSeconds: number = 300): void {
 const FETCH_TIMEOUT = 20000; // 20 seconds - safe for Netlify 30s limit
 const CACHE_TTL = 300; // 5 minutes cache for data endpoints
 
-// Google Sheet Configuration - Published CSV URL
+// Google Sheet Configuration - Published CSV URL (Single Sheet)
 const MOVEMENT_DATA_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1539310010&single=true&output=csv";
-
-const NEVER_MOVED_COW_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1464106304&single=true&output=csv";
 
 /**
  * ENHANCED CSV PARSER WITH DETAILED DEBUGGING
