@@ -273,6 +273,14 @@ export function ExecutiveOverviewCard({
     "Normal Coverage": "#6b7280",
   };
 
+  // Movement type colors (Full/Half/Zero)
+  const MOVEMENT_TYPE_COLORS: Record<string, string> = {
+    Full: "#10b981", // Green - Full movement
+    Half: "#f59e0b", // Amber - Half movement
+    Zero: "#ef4444", // Red - Zero movement
+    Unknown: "#6b7280", // Gray - Unknown
+  };
+
   // Vendor logos and branding
   const VENDOR_LOGOS: Record<string, string> = {
     Ericsson:
