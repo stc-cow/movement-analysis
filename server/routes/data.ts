@@ -861,6 +861,8 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
     console.log(`   Sample columns for Never Moved COWs:`);
     console.log(`      [31] AF = "${headerCells[31] || "MISSING"}" (COW ID)`);
     console.log(`      [34] AI = "${headerCells[34] || "MISSING"}" (Region)`);
+    console.log(`      [35] AJ = "${headerCells[35] || "MISSING"}" (District)`);
+    console.log(`      [36] AK = "${headerCells[36] || "MISSING"}" (City)`);
     console.log(`      [38] AM = "${headerCells[38] || "MISSING"}" (Location)`);
     console.log(`      [39] AN = "${headerCells[39] || "MISSING"}" (Latitude)`);
     console.log(
@@ -880,6 +882,8 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
     // Column indices for Never Moved COWs
     const COW_ID_IDX = 31; // AF
     const REGION_IDX = 34; // AI
+    const DISTRICT_IDX = 35; // AJ
+    const CITY_IDX = 36; // AK
     const LOCATION_IDX = 38; // AM
     const LATITUDE_IDX = 39; // AN
     const LONGITUDE_IDX = 40; // AO
