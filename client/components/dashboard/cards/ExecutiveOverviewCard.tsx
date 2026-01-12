@@ -60,7 +60,9 @@ export function ExecutiveOverviewCard({
   // Add a guard to prevent expensive recalculation if arrays are the same reference
   const timelineMonths = useMemo(() => {
     if (!movements || movements.length === 0) return [];
-    console.debug(`[Timeline] Generating timeline for ${movements.length} movements`);
+    console.debug(
+      `[Timeline] Generating timeline for ${movements.length} movements`,
+    );
     return generateTimelineMonths(movements, cows, locations);
   }, [movements, cows, locations]);
 
@@ -418,9 +420,7 @@ export function ExecutiveOverviewCard({
               <h3 className="text-gray-900 text-sm font-bold">Top Vendor</h3>
               {topVendor && (
                 <div className="flex items-center gap-2">
-                  <div
-                    className="w-12 h-10 rounded-lg border border-gray-300 flex items-center justify-center bg-white overflow-hidden"
-                  >
+                  <div className="w-12 h-10 rounded-lg border border-gray-300 flex items-center justify-center bg-white overflow-hidden">
                     {VENDOR_LOGOS[topVendor.name] ? (
                       <img
                         src={VENDOR_LOGOS[topVendor.name]}

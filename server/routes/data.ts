@@ -696,7 +696,10 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     ).length;
 
     // Calculate total distance from Column Y
-    const totalDistance = processedData.movements.reduce((sum, mov) => sum + (mov.Distance_KM || 0), 0);
+    const totalDistance = processedData.movements.reduce(
+      (sum, mov) => sum + (mov.Distance_KM || 0),
+      0,
+    );
 
     console.log(
       `✓ Processed ${processedData.movements.length} movements, ${processedData.cows.length} cows, ${processedData.locations.length} locations`,
@@ -730,13 +733,17 @@ const processedDataHandler: RequestHandler = async (req, res) => {
     console.log(`\n🎯 FINAL RESPONSE DATA:`);
     console.log(`   ✓ totalDistanceKM: ${totalDistance}`);
     console.log(`   ✓ movements.length: ${processedData.movements.length}`);
-    console.log(`   ✓ Average distance per movement: ${(totalDistance / processedData.movements.length).toFixed(2)} KM`);
+    console.log(
+      `   ✓ Average distance per movement: ${(totalDistance / processedData.movements.length).toFixed(2)} KM`,
+    );
     console.log(`   ✓ Cache key: ${cacheKey}`);
 
     // Sample check - show first 5 movements
     console.log(`\n📍 First 5 movements distance values:`);
     for (let i = 0; i < Math.min(5, processedData.movements.length); i++) {
-      console.log(`      Movement ${i + 1}: ${processedData.movements[i].Distance_KM} KM`);
+      console.log(
+        `      Movement ${i + 1}: ${processedData.movements[i].Distance_KM} KM`,
+      );
     }
 
     // Cache the result to reduce API calls on Netlify
@@ -799,7 +806,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
 
       if (response.ok) {
         csvData = await response.text();
-        console.log(`✓ Successfully fetched CSV data (${csvData.length} bytes)`);
+        console.log(
+          `✓ Successfully fetched CSV data (${csvData.length} bytes)`,
+        );
       } else {
         fetchError = new Error(
           `HTTP ${response.status}: ${response.statusText}`,
@@ -837,10 +846,18 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
     console.log(`   Sample columns for Never Moved COWs:`);
     console.log(`      [31] AF = "${headerCells[31] || "MISSING"}" (COW ID)`);
     console.log(`      [39] AN = "${headerCells[39] || "MISSING"}" (Latitude)`);
-    console.log(`      [40] AO = "${headerCells[40] || "MISSING"}" (Longitude)`);
-    console.log(`      [41] AP = "${headerCells[41] || "MISSING"}" (Onair status)`);
-    console.log(`      [42] AQ = "${headerCells[42] || "MISSING"}" (Last Deploying Date)`);
-    console.log(`      [43] AR = "${headerCells[43] || "MISSING"}" (1st Deploying Date)`);
+    console.log(
+      `      [40] AO = "${headerCells[40] || "MISSING"}" (Longitude)`,
+    );
+    console.log(
+      `      [41] AP = "${headerCells[41] || "MISSING"}" (Onair status)`,
+    );
+    console.log(
+      `      [42] AQ = "${headerCells[42] || "MISSING"}" (Last Deploying Date)`,
+    );
+    console.log(
+      `      [43] AR = "${headerCells[43] || "MISSING"}" (1st Deploying Date)`,
+    );
     console.log(`      [44] AS = "${headerCells[44] || "MISSING"}" (Vendor)`);
 
     // Column indices for Never Moved COWs
@@ -882,7 +899,7 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
           const today = new Date();
           if (!isNaN(deployDate.getTime())) {
             daysOnAir = Math.floor(
-              (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24)
+              (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24),
             );
           }
         } catch (e) {
@@ -891,9 +908,10 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       }
 
       // Normalize status
-      const status = onairStatus.toUpperCase() === "ON-AIR" || onairStatus === "1"
-        ? "ON-AIR"
-        : "OFF-AIR";
+      const status =
+        onairStatus.toUpperCase() === "ON-AIR" || onairStatus === "1"
+          ? "ON-AIR"
+          : "OFF-AIR";
 
       const neverMovedCow: any = {
         COW_ID: cowId,
@@ -904,8 +922,10 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
         Latitude: parseFloat(cells[LATITUDE_IDX]?.trim() || "0") || 0,
         Longitude: parseFloat(cells[LONGITUDE_IDX]?.trim() || "0") || 0,
         Status: status,
-        Last_Deploy_Date: lastDeployDate || new Date().toISOString().split("T")[0],
-        First_Deploy_Date: firstDeployDate || new Date().toISOString().split("T")[0],
+        Last_Deploy_Date:
+          lastDeployDate || new Date().toISOString().split("T")[0],
+        First_Deploy_Date:
+          firstDeployDate || new Date().toISOString().split("T")[0],
         Days_On_Air: daysOnAir,
         Vendor: cells[VENDOR_IDX]?.trim() || "Unknown",
       };
@@ -916,7 +936,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       if (neverMovedCows.length <= 3) {
         console.log(`   Row ${i}: ${cowId}`);
         console.log(`      Status: ${neverMovedCow.Status}`);
-        console.log(`      Lat/Lng: ${neverMovedCow.Latitude}, ${neverMovedCow.Longitude}`);
+        console.log(
+          `      Lat/Lng: ${neverMovedCow.Latitude}, ${neverMovedCow.Longitude}`,
+        );
         console.log(`      Days On Air: ${daysOnAir}`);
       }
     }
@@ -927,7 +949,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
 
     // Calculate statistics
     const onAirCount = neverMovedCows.filter(
-      (cow) => cow.onair_status?.toUpperCase() === "ON-AIR" || cow.onair_status === "1"
+      (cow) =>
+        cow.onair_status?.toUpperCase() === "ON-AIR" ||
+        cow.onair_status === "1",
     ).length;
     const offAirCount = neverMovedCows.length - onAirCount;
     const onAirPercentage =
