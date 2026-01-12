@@ -1,0 +1,14 @@
+{
+  "buildCommand": "pnpm install && pnpm run build:client",
+  "outputDirectory": "dist/spa",
+  "installCommand": "pnpm install",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "routes": [
+    {
+      "src": "^/(.*)$",
+      "dest": "/index.html"
+    }
+  ]
+}
