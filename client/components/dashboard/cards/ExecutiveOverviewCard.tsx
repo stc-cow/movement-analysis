@@ -250,10 +250,6 @@ export function ExecutiveOverviewCard({
       label: "More Than Two Times Move",
       value: monthlyKpis.highMovedCows,
     },
-    {
-      label: "One Time Moved COWs",
-      value: monthlyKpis.staticCOWs,
-    },
   ];
 
   const summaryStats = [
