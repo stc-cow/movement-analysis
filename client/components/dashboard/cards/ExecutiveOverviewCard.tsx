@@ -328,29 +328,6 @@ export function ExecutiveOverviewCard({
     );
   };
 
-  // Count movements by Movement Type (column R - Full/Half/Zero)
-  const movementTypeCounts: Record<string, number> = {};
-  currentMonth.movements.forEach((mov) => {
-    const movType = mov.Movement_Type || "Unknown";
-    movementTypeCounts[movType] = (movementTypeCounts[movType] || 0) + 1;
-  });
-
-  // Sort by count descending
-  const movementTypeData = Object.entries(movementTypeCounts)
-    .filter(([_, count]) => count > 0)
-    .map(([type, count]) => ({
-      name: type,
-      value: count,
-    }))
-    .sort((a, b) => b.value - a.value);
-
-  // Add percentages for display
-  const movementTypeDataWithPercentages = movementTypeData.map((item) => ({
-    ...item,
-    percentage: ((item.value / totalCurrentMovements) * 100).toFixed(1),
-    displayName: `${item.name} (${((item.value / totalCurrentMovements) * 100).toFixed(1)}%)`,
-  }));
-
   return (
     <div className="h-full overflow-x-hidden flex flex-col bg-white">
       {/* Timeline Controls at Top */}
