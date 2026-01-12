@@ -343,13 +343,14 @@ export function ExecutiveOverviewCard({
 
     return (
       <g transform={`translate(${x},${y})`}>
+        <rect x="-26" y="-11" width="52" height="22" rx="3" fill={bgColor} />
         <image
           x="-24"
           y="-10"
           width="48"
           height="20"
-          href={logoUrl}
-          preserveAspectRatio="xMidYMid slice"
+          xlinkHref={logoUrl}
+          preserveAspectRatio="xMidYMid meet"
         />
       </g>
     );
