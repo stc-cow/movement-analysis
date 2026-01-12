@@ -130,15 +130,16 @@ export interface DashboardData {
 // Never Moved COW: Static COW that never moved
 export interface NeverMovedCow {
   COW_ID: string; // Column A
-  Region: string; // Column D
+  Region: string; // Column AI
   District: string; // Column E
   City: string; // Column F
-  Location: string; // Column H
+  Location: string; // Column AM
   Latitude: number; // Column I
   Longitude: number; // Column J
   Status: "ON-AIR" | "OFF-AIR"; // Column K
-  Last_Deploy_Date: string; // ISO date - Column L
-  First_Deploy_Date: string; // ISO date - Column M
+  Last_Deploy_Date: string; // ISO date - Column AQ
+  First_Deploy_Date: string; // ISO date - Column AR
+  Vendor: string; // Column AS
   Days_On_Air?: number; // Calculated: days from First_Deploy_Date to today (Static Duration)
 }
 
