@@ -47,16 +47,13 @@ export function COWOffAirDetailsModal({
 }: COWOffAirDetailsModalProps) {
   // Prepare chart data: idle days grouped by warehouse
   const warehouseChartData = Array.from(
-    stays.reduce(
-      (acc, stay) => {
-        const key = stay.toWarehouse;
-        const existing = acc.get(key) || { warehouse: key, "Idle Days": 0 };
-        existing["Idle Days"] += stay.idleDays;
-        acc.set(key, existing);
-        return acc;
-      },
-      new Map<string, { warehouse: string; "Idle Days": number }>(),
-    ),
+    stays.reduce((acc, stay) => {
+      const key = stay.toWarehouse;
+      const existing = acc.get(key) || { warehouse: key, "Idle Days": 0 };
+      existing["Idle Days"] += stay.idleDays;
+      acc.set(key, existing);
+      return acc;
+    }, new Map<string, { warehouse: string; "Idle Days": number }>()),
   )
     .map(([, data]) => data)
     .sort((a, b) => b["Idle Days"] - a["Idle Days"]);

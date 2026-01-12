@@ -108,10 +108,14 @@ export function WarehouseHubTimeCard({
                 <input
                   type="checkbox"
                   checked={selectedCowIds.includes(cowId)}
-                  onChange={(e) => handleCowFilterChange(cowId, e.target.checked)}
+                  onChange={(e) =>
+                    handleCowFilterChange(cowId, e.target.checked)
+                  }
                   className="w-4 h-4 rounded border-gray-300"
                 />
-                <span className="text-gray-700 dark:text-gray-300">{cowId}</span>
+                <span className="text-gray-700 dark:text-gray-300">
+                  {cowId}
+                </span>
               </label>
             ))}
             {allCowIds.length > 15 && (
@@ -160,7 +164,10 @@ export function WarehouseHubTimeCard({
             <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               {filteredHubTimes.length > 0
                 ? Math.round(
-                    (filteredHubTimes.reduce((sum, ht) => sum + ht.stayDays, 0) /
+                    (filteredHubTimes.reduce(
+                      (sum, ht) => sum + ht.stayDays,
+                      0,
+                    ) /
                       filteredHubTimes.length) *
                       100,
                   ) / 100

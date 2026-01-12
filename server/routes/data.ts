@@ -391,8 +391,9 @@ function processData(rows: any[]) {
 
     // Check event type distribution
     const eventTypes: Record<string, number> = {};
-    rows.slice(0, 100).forEach(row => {
-      const type = row.from_sub_location?.trim() || row.to_sub_location?.trim() || "EMPTY";
+    rows.slice(0, 100).forEach((row) => {
+      const type =
+        row.from_sub_location?.trim() || row.to_sub_location?.trim() || "EMPTY";
       eventTypes[type] = (eventTypes[type] || 0) + 1;
     });
     console.log(`📊 Event Type sample (first 100 rows):`, eventTypes);

@@ -452,7 +452,9 @@ export function calculateWarehouseHubTime(
 
       if (warehouse) {
         // Calculate stay duration: from Reached_DateTime to next Moved_DateTime
-        const arrivalTime = new Date(currentMovement.Reached_DateTime).getTime();
+        const arrivalTime = new Date(
+          currentMovement.Reached_DateTime,
+        ).getTime();
         const departureTime = new Date(nextMovement.Moved_DateTime).getTime();
         const stayDays = (departureTime - arrivalTime) / (1000 * 60 * 60 * 24);
 
@@ -481,10 +483,7 @@ export function getTopCowsByStayDays(
   const cowTotals = new Map<string, number>();
 
   hubTimes.forEach((ht) => {
-    cowTotals.set(
-      ht.cowId,
-      (cowTotals.get(ht.cowId) || 0) + ht.stayDays,
-    );
+    cowTotals.set(ht.cowId, (cowTotals.get(ht.cowId) || 0) + ht.stayDays);
   });
 
   return Array.from(cowTotals.entries())

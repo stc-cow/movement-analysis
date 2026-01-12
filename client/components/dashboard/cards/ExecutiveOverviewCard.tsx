@@ -236,7 +236,8 @@ export function ExecutiveOverviewCard({
   currentMonth.movements.forEach((mov: any) => {
     // MapLine objects have fromSubLocation/toSubLocation (camelCase)
     // Try fromSubLocation first, then toSubLocation, default to "Other"
-    const rawValue = mov.fromSubLocation?.trim() || mov.toSubLocation?.trim() || "Other";
+    const rawValue =
+      mov.fromSubLocation?.trim() || mov.toSubLocation?.trim() || "Other";
     const eventType = rawValue.length > 0 ? rawValue : "Other";
     eventTypeCounts[eventType] = (eventTypeCounts[eventType] || 0) + 1;
   });
@@ -252,11 +253,11 @@ export function ExecutiveOverviewCard({
 
   // Color mapping for event types
   const EVENT_TYPE_COLOR_MAP: Record<string, string> = {
-    Event: "#3b82f6",      // Blue
-    Other: "#6b7280",      // Gray
+    Event: "#3b82f6", // Blue
+    Other: "#6b7280", // Gray
     "Mega project": "#ec4899", // Pink
-    Royal: "#8b5cf6",      // Purple
-    WH: "#10b981",         // Green
+    Royal: "#8b5cf6", // Purple
+    WH: "#10b981", // Green
   };
 
   // Calculate EBU Classification data
@@ -316,8 +317,10 @@ export function ExecutiveOverviewCard({
   const VENDOR_LOGOS: Record<string, string> = {
     Ericsson:
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'%3E%3Crect fill='%23E8F2FF' width='100' height='50'/%3E%3Ctext x='50' y='35' font-family='Arial' font-size='20' font-weight='bold' fill='%23002E5C' text-anchor='middle'%3EEricsson%3C/text%3E%3C/svg%3E",
-    Nokia: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F678f82bc9d334b3994979166456b650d?format=webp&width=800",
-    Huawei: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fd1ba7c0e87ca426ba5edf2584d5648dd?format=webp&width=800",
+    Nokia:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F678f82bc9d334b3994979166456b650d?format=webp&width=800",
+    Huawei:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fd1ba7c0e87ca426ba5edf2584d5648dd?format=webp&width=800",
   };
 
   // Vendor branding colors
@@ -578,7 +581,9 @@ export function ExecutiveOverviewCard({
                       paddingAngle={1}
                       dataKey="value"
                       labelLine={false}
-                      label={({ name, percentage }) => `${name} (${percentage}%)`}
+                      label={({ name, percentage }) =>
+                        `${name} (${percentage}%)`
+                      }
                     >
                       {movementChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -617,9 +622,7 @@ export function ExecutiveOverviewCard({
                         {movementByEventTypeData.map((entry, index) => (
                           <Cell
                             key={`event-type-${index}`}
-                            fill={
-                              EVENT_TYPE_COLOR_MAP[entry.name] || "#a855f7"
-                            }
+                            fill={EVENT_TYPE_COLOR_MAP[entry.name] || "#a855f7"}
                           />
                         ))}
                       </Pie>
