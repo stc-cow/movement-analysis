@@ -417,6 +417,12 @@ const handler: Handler = async () => {
       if (m.Vendor) vendorSet.add(m.Vendor);
     });
 
+    // Log vendor map for debugging
+    const cowVendorSample = Array.from(cowVendorMap.entries()).slice(0, 10);
+    console.log(`Sample COW vendors: ${JSON.stringify(cowVendorSample)}`);
+    console.log(`Total unique vendors: ${vendorSet.size}, values: ${Array.from(vendorSet).join(", ")}`);
+    console.log(`Total COWs with vendor map: ${cowVendorMap.size}`);
+
     const responseData = {
       movements,
       cows: Array.from(cowSet).map((id) => ({
