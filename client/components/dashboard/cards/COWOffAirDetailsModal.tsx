@@ -37,6 +37,17 @@ export function COWOffAirDetailsModal({
   topOffAirWarehouse,
   stays,
 }: COWOffAirDetailsModalProps) {
+  // Set up table sorting
+  const {
+    sortedData: sortedStays,
+    setSortColumn,
+    getSortIndicator,
+  } = useSortableTable({
+    data: stays,
+    initialSortColumn: "idleDays",
+    initialSortDirection: "desc",
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
