@@ -24,44 +24,68 @@ interface TopEventsMovementCardProps {
   movements: CowMovementsFact[];
 }
 
-// Logo mapping for top events
+// Logo mapping for top events - match by lowercase for flexibility
 const EVENT_LOGOS: Record<string, { name: string; emoji: string; color: string }> = {
-  "Riyadh Season": {
+  "riyadh season": {
     name: "Riyadh Season",
     emoji: "🎪",
     color: "#9f1d20",
   },
-  "Jeddah Season": {
+  "jeddah season": {
     name: "Jeddah Season",
     emoji: "🌊",
     color: "#00a9d5",
   },
-  Hajj: {
+  hajj: {
     name: "Hajj",
     emoji: "⛩️",
     color: "#1f4788",
   },
-  "Formula 1 Saudi Arabian Grand Prix": {
+  "formula 1": {
     name: "Formula 1",
     emoji: "🏎️",
     color: "#e3000f",
   },
-  "ABB FIA Formula E World Championship": {
+  "formula e": {
     name: "Formula E",
     emoji: "⚡",
     color: "#1a5c7a",
   },
-  "MDLBEAST Festival": {
+  mdlbeast: {
     name: "MDLBEAST",
     emoji: "🎵",
     color: "#000000",
   },
-  "FIFA World Cup": {
+  "fifa world cup": {
     name: "FIFA World Cup",
     emoji: "⚽",
     color: "#003366",
   },
 };
+
+// Helper function to find matching logo for an event
+function getLogoForEvent(eventName: string): { name: string; emoji: string; color: string } {
+  const eventLower = eventName.toLowerCase();
+
+  // First try exact match
+  if (EVENT_LOGOS[eventLower]) {
+    return EVENT_LOGOS[eventLower];
+  }
+
+  // Then try substring matching
+  for (const [key, logo] of Object.entries(EVENT_LOGOS)) {
+    if (eventLower.includes(key) || key.includes(eventLower)) {
+      return logo;
+    }
+  }
+
+  // Default fallback
+  return {
+    name: eventName,
+    emoji: "📍",
+    color: "#6366f1",
+  };
+}
 
 // Bar colors for chart
 const BAR_COLORS = [
