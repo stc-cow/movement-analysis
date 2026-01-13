@@ -58,9 +58,13 @@ interface Movement {
   COW_ID: string;
   From_Location_ID: string;
   To_Location_ID: string;
+  Moved_DateTime?: string;
+  Reached_DateTime?: string;
   Movement_Type?: string;
   Distance_KM?: number;
   Top_Event?: string;
+  From_Sub_Location?: string;
+  To_Sub_Location?: string;
   [key: string]: unknown;
 }
 
