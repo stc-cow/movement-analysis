@@ -10,7 +10,7 @@ import {
   Cell,
 } from "recharts";
 import { CowMovementsFact } from "@shared/models";
-import { calculateTopEvents, TopEventData } from "@/lib/analytics";
+import { calculateTopEvents, calculateAllEventsTotalMovements, TopEventData } from "@/lib/analytics";
 import {
   Table,
   TableBody,
