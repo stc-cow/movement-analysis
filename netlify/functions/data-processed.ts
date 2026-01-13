@@ -144,22 +144,20 @@ function parseCSVData(csvText: unknown): Movement[] {
       (h) => h.lower === "top events",
     )?.index;
 
-    // Find datetime columns (typically columns L and N: "Moved Date/Time" and "Reached Date/Time")
-    const movedDateTimeIdx =
-      headerLower.find(
-        (h) =>
-          h.lower.includes("moved") &&
-          h.lower.includes("date") &&
-          h.lower.includes("time"),
-      )?.index ?? 12;
+    // Find datetime columns (typically columns L[12] and N[14]: "Moved Date/Time" and "Reached Date/Time")
+    const movedDateTimeMatch = headerLower.find(
+      (h) =>
+        h.lower.includes("moved") && h.lower.includes("date") &&
+        h.lower.includes("time"),
+    );
+    const movedDateTimeIdx = movedDateTimeMatch?.index ?? 12;
 
-    const reachedDateTimeIdx =
-      headerLower.find(
-        (h) =>
-          h.lower.includes("reached") &&
-          h.lower.includes("date") &&
-          h.lower.includes("time"),
-      )?.index ?? 14;
+    const reachedDateTimeMatch = headerLower.find(
+      (h) =>
+        h.lower.includes("reached") && h.lower.includes("date") &&
+        h.lower.includes("time"),
+    );
+    const reachedDateTimeIdx = reachedDateTimeMatch?.index ?? 14;
 
     // Find sub-location columns
     const fromSubLocIdx = headerLower.find(
