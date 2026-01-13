@@ -90,14 +90,13 @@ const handler: Handler = async () => {
       };
     }
 
-    // Track COWs with movements
+    // Track COWs with movements (from movement section - column 0)
     const cowsWithMovements = new Set<string>();
     
-    // Extract static COW data with coordinates
-    const staticCowData = new Map<
-      string,
-      { latitude: number; longitude: number }
-    >();
+    // Extract static COW data (from static section - columns 31+)
+    const staticCowData = new Map<string, Record<string, unknown>>();
+
+    console.log("Processing CSV for never-moved COWs...");
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i]?.trim();
@@ -105,30 +104,56 @@ const handler: Handler = async () => {
 
       const cells = parseCSVLine(line);
       
-      // Column 0: Movement COW ID - track all COWs with movement records
+      // Column 0: Movement COW ID - track all COWs that have movement records
       const movementCowId = cells[0]?.trim();
       if (movementCowId) {
         cowsWithMovements.add(movementCowId);
       }
 
-      // Columns 31-46: Static COW data (same row)
-      // Column 31: Static COW ID
-      // Column 39: Latitude (in static section)
-      // Column 40: Longitude (in static section)
+      // Columns 31-46: Static COW data (embedded in same row as movement data)
+      // Column 31: COW_ID (static)
+      // Column 34: Region (AI)
+      // Column 35: District (AJ)
+      // Column 36: City (AK)
+      // Column 38: Location (AM)
+      // Column 39: Latitude (AN)
+      // Column 40: Longitude (AO)
+      // Column 41: Status (AP - ON-AIR/OFF-AIR)
+      // Column 42: Last_Deploy_Date (AQ)
+      // Column 43: First_Deploy_Date (AR)
+      // Column 44: Vendor (AS)
       const staticCowId = cells[31]?.trim();
       
       if (staticCowId) {
-        // Extract coordinates from static COW section
-        if (cells[39] && cells[40]) {
-          const lat = parseFloat(cells[39].trim());
-          const lon = parseFloat(cells[40].trim());
+        // Store the first complete record found for this COW
+        if (!staticCowData.has(staticCowId)) {
+          const cowRecord: Record<string, unknown> = {
+            COW_ID: staticCowId,
+          };
 
-          if (!isNaN(lat) && !isNaN(lon)) {
-            // Store the first valid coordinates found for this COW
-            if (!staticCowData.has(staticCowId)) {
-              staticCowData.set(staticCowId, { latitude: lat, longitude: lon });
-            }
+          // Extract all available fields from static section
+          if (cells[34]) cowRecord.Region = cells[34].trim();
+          if (cells[35]) cowRecord.District = cells[35].trim();
+          if (cells[36]) cowRecord.City = cells[36].trim();
+          if (cells[38]) cowRecord.Location = cells[38].trim();
+          
+          // Coordinates - ESSENTIAL for mapping
+          if (cells[39]) {
+            const lat = parseFloat(cells[39].trim());
+            if (!isNaN(lat)) cowRecord.Latitude = lat;
           }
+          if (cells[40]) {
+            const lon = parseFloat(cells[40].trim());
+            if (!isNaN(lon)) cowRecord.Longitude = lon;
+          }
+          
+          // Status and deployment dates
+          if (cells[41]) cowRecord.Status = cells[41].trim();
+          if (cells[42]) cowRecord.Last_Deploy_Date = cells[42].trim();
+          if (cells[43]) cowRecord.First_Deploy_Date = cells[43].trim();
+          if (cells[44]) cowRecord.Vendor = cells[44].trim();
+
+          staticCowData.set(staticCowId, cowRecord);
         }
       }
     }
@@ -136,15 +161,15 @@ const handler: Handler = async () => {
     // Find never-moved cows: Static COWs that DON'T appear in movement data
     const neverMovedCows = Array.from(staticCowData.entries())
       .filter(([cowId]) => !cowsWithMovements.has(cowId))
-      .map(([cowId, coords]) => ({
-        COW_ID: cowId,
-        Latitude: coords.latitude,
-        Longitude: coords.longitude,
-      }));
+      .map(([, cowData]) => cowData);
 
-    console.log(`Found ${cowsWithMovements.size} COWs with movements`);
-    console.log(`Found ${staticCowData.size} static COWs`);
-    console.log(`Found ${neverMovedCows.length} never-moved COWs`);
+    console.log(`✓ Found ${cowsWithMovements.size} COWs with movements`);
+    console.log(`✓ Found ${staticCowData.size} total static COWs`);
+    console.log(`✓ Found ${neverMovedCows.length} never-moved COWs`);
+    
+    if (neverMovedCows.length > 0) {
+      console.log(`✓ Sample never-moved COW: ${JSON.stringify(neverMovedCows[0])}`);
+    }
 
     const responseData = {
       cows: neverMovedCows,
