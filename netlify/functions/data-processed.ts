@@ -1,14 +1,14 @@
 import { Handler } from "@netlify/functions";
 
 interface CacheEntry {
-  data: any;
+  data: unknown;
   timestamp: number;
   ttl: number;
 }
 
 const cache = new Map<string, CacheEntry>();
 
-function getCached(key: string): any | null {
+function getCached(key: string): unknown | null {
   const entry = cache.get(key);
   if (!entry) return null;
 
@@ -21,7 +21,7 @@ function getCached(key: string): any | null {
   return entry.data;
 }
 
-function setCached(key: string, data: any, ttlSeconds: number = 300): void {
+function setCached(key: string, data: unknown, ttlSeconds: number = 300): void {
   cache.set(key, {
     data,
     timestamp: Date.now(),
