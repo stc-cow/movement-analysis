@@ -35,8 +35,7 @@ export function WarehouseHubTimeCard({
   movements,
   locations,
 }: WarehouseHubTimeCardProps) {
-  // State for filter and modal
-  const [cowIdFilter, setCowIdFilter] = useState<string>("");
+  // State for modal
   const [selectedCowForModal, setSelectedCowForModal] = useState<string | null>(
     null,
   );
