@@ -136,8 +136,9 @@ function parseCSVData(csvText: unknown): Movement[] {
         h.lower === "distance (km)",
     )?.index;
 
-    const topEventIdx = headerLower.find((h) => h.lower === "top events")
-      ?.index;
+    const topEventIdx = headerLower.find(
+      (h) => h.lower === "top events",
+    )?.index;
 
     const movements: Movement[] = [];
 
@@ -262,7 +263,10 @@ const handler: Handler = async () => {
         Event_ID: id,
         Event_Name: id,
       })),
-      totalDistanceKM: movements.reduce((sum, m) => sum + (m.Distance_KM || 0), 0),
+      totalDistanceKM: movements.reduce(
+        (sum, m) => sum + (m.Distance_KM || 0),
+        0,
+      ),
       timestamp: new Date().toISOString(),
     };
 
