@@ -205,10 +205,18 @@ export function NeverMovedCowCard({ neverMovedCows }: NeverMovedCowCardProps) {
       </div>
 
       {/* Right Panel: Map */}
-      <div className="flex flex-col rounded-lg overflow-hidden border bg-white">
-        <div className="p-4 border-b bg-gray-50">
-          <h3 className="font-semibold text-gray-900">Location Map</h3>
-          <p className="text-xs text-gray-600 mt-1">
+      <div
+        className="flex flex-col rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800"
+        style={{
+          borderTopWidth: "4px",
+          borderTopColor: KPI_CARD_COLORS[3],
+        }}
+      >
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-700">
+          <h3 className="font-semibold text-gray-900 dark:text-white">
+            Location Map
+          </h3>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
             Click on a COW marker to view full details ({neverMovedCows.length}{" "}
             COWs)
           </p>
