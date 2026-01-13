@@ -286,15 +286,23 @@ const handler: Handler = async (event, context) => {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "public, max-age=300",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(responseData),
     };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error in data-processed function:", errorMessage);
+
     return {
       statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify({
         error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        message: errorMessage,
       }),
     };
   }
