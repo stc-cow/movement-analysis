@@ -93,7 +93,9 @@ export function generateTimelineMonths(
       movementType: mov.Movement_Type || "Zero",
       vendor: cow.Vendor,
       month: monthKey,
-      date: mov.Moved_DateTime ? mov.Moved_DateTime.split("T")[0] : new Date().toISOString().split("T")[0],
+      date: mov.Moved_DateTime
+        ? mov.Moved_DateTime.split("T")[0]
+        : new Date().toISOString().split("T")[0],
       fromRegion: fromLoc.Region,
       toRegion: toLoc.Region,
       fromGovernorate: fromLoc.Governorate,

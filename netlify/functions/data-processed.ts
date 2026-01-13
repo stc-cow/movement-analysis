@@ -148,14 +148,16 @@ function parseCSVData(csvText: unknown): Movement[] {
     // Find datetime columns (typically columns L[12] and N[14]: "Moved Date/Time" and "Reached Date/Time")
     const movedDateTimeMatch = headerLower.find(
       (h) =>
-        h.lower.includes("moved") && h.lower.includes("date") &&
+        h.lower.includes("moved") &&
+        h.lower.includes("date") &&
         h.lower.includes("time"),
     );
     const movedDateTimeIdx = movedDateTimeMatch?.index ?? 12;
 
     const reachedDateTimeMatch = headerLower.find(
       (h) =>
-        h.lower.includes("reached") && h.lower.includes("date") &&
+        h.lower.includes("reached") &&
+        h.lower.includes("date") &&
         h.lower.includes("time"),
     );
     const reachedDateTimeIdx = reachedDateTimeMatch?.index ?? 14;
@@ -188,8 +190,10 @@ function parseCSVData(csvText: unknown): Movement[] {
       if (!cowId) continue;
 
       // Ensure required datetime fields exist
-      const movedDt = cells[movedDateTimeIdx]?.trim() || new Date().toISOString();
-      const reachedDt = cells[reachedDateTimeIdx]?.trim() || new Date().toISOString();
+      const movedDt =
+        cells[movedDateTimeIdx]?.trim() || new Date().toISOString();
+      const reachedDt =
+        cells[reachedDateTimeIdx]?.trim() || new Date().toISOString();
 
       const movement: Movement = {
         SN: serialNumber++,
