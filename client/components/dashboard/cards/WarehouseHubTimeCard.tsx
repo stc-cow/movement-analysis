@@ -273,22 +273,34 @@ export function WarehouseHubTimeCard({
               <Table className="text-sm">
                 <TableHeader>
                   <TableRow className="bg-gray-50 dark:bg-gray-900">
-                    <TableHead className="text-left py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
-                      COW ID
+                    <TableHead
+                      className="text-left py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                      onClick={() => setSortColumn("cowId")}
+                    >
+                      COW ID{getSortIndicator("cowId")}
                     </TableHead>
-                    <TableHead className="text-center py-3">
-                      Total Movement Times
+                    <TableHead
+                      className="text-center py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                      onClick={() => setSortColumn("totalMovementTimes")}
+                    >
+                      Total Movement Times{getSortIndicator("totalMovementTimes")}
                     </TableHead>
-                    <TableHead className="text-center py-3">
-                      Average Off-Air Idle Days
+                    <TableHead
+                      className="text-center py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                      onClick={() => setSortColumn("avgOffAirIdleDays")}
+                    >
+                      Average Off-Air Idle Days{getSortIndicator("avgOffAirIdleDays")}
                     </TableHead>
-                    <TableHead className="text-left py-3">
-                      Top Off-Air Warehouse
+                    <TableHead
+                      className="text-left py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                      onClick={() => setSortColumn("topOffAirWarehouse")}
+                    >
+                      Top Off-Air Warehouse{getSortIndicator("topOffAirWarehouse")}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {tableData.map((row) => (
+                  {sortedTableData.map((row) => (
                     <TableRow
                       key={row.cowId}
                       onClick={() => handleTableRowClick(row.cowId)}
