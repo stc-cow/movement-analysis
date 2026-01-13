@@ -135,20 +135,19 @@ export default function Dashboard() {
     [enrichedMovements],
   );
 
-  const vendors = useMemo(
-    () => {
-      const allVendors = Array.from(new Set(cows.map((c) => c.Vendor)));
-      const nonUnknownVendors = allVendors
-        .filter((v) => v && v !== "Unknown")
-        .sort();
+  const vendors = useMemo(() => {
+    const allVendors = Array.from(new Set(cows.map((c) => c.Vendor)));
+    const nonUnknownVendors = allVendors
+      .filter((v) => v && v !== "Unknown")
+      .sort();
 
-      // Debug logging
-      console.debug(`[Vendors] Total cows: ${cows.length}, All unique vendors: ${JSON.stringify(allVendors)}, Non-unknown: ${JSON.stringify(nonUnknownVendors)}`);
+    // Debug logging
+    console.debug(
+      `[Vendors] Total cows: ${cows.length}, All unique vendors: ${JSON.stringify(allVendors)}, Non-unknown: ${JSON.stringify(nonUnknownVendors)}`,
+    );
 
-      return nonUnknownVendors;
-    },
-    [cows],
-  );
+    return nonUnknownVendors;
+  }, [cows]);
 
   // Show loading state
   if (loading) {

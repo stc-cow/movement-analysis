@@ -286,11 +286,14 @@ function parseCSVData(csvText: unknown): Movement[] {
     console.log(`Parsed ${movements.length} movements from CSV`);
 
     // Log vendor extraction debug info
-    const vendorSample = movements.slice(0, 5).map(m => ({
+    const vendorSample = movements.slice(0, 5).map((m) => ({
       COW_ID: m.COW_ID,
       Vendor: m.Vendor,
     }));
-    console.log(`Sample movements with vendor data:`, JSON.stringify(vendorSample, null, 2));
+    console.log(
+      `Sample movements with vendor data:`,
+      JSON.stringify(vendorSample, null, 2),
+    );
 
     return movements;
   } catch (error) {
@@ -424,7 +427,9 @@ const handler: Handler = async () => {
     // Log vendor map for debugging
     const cowVendorSample = Array.from(cowVendorMap.entries()).slice(0, 10);
     console.log(`Sample COW vendors: ${JSON.stringify(cowVendorSample)}`);
-    console.log(`Total unique vendors: ${vendorSet.size}, values: ${Array.from(vendorSet).join(", ")}`);
+    console.log(
+      `Total unique vendors: ${vendorSet.size}, values: ${Array.from(vendorSet).join(", ")}`,
+    );
     console.log(`Total COWs with vendor map: ${cowVendorMap.size}`);
 
     const responseData = {
