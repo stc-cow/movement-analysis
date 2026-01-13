@@ -289,33 +289,9 @@ export function SaudiHighchartsMap({
       </h3>
 
       {/* Map Container with Overlays */}
-      <div className="flex-1 min-h-[600px] rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 relative">
-        <HighchartsReact
-          key="saudi-map"
-          highcharts={Highcharts}
-          constructorType="mapChart"
-          options={options}
-          onLoad={(chart) => {
-            chartRef.current = chart;
-          }}
-          containerProps={{
-            style: { width: "100%", height: "100%" },
-          }}
-          immutable={false}
-        />
-
-        {/* Bottom Left: Total Movements */}
-        <div className="absolute bottom-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg">
-          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Total Movements
-          </p>
-          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-            {totalMovements}
-          </p>
-        </div>
-
-        {/* Bottom Right: Color Intensity Scale */}
-        <div className="absolute bottom-4 right-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-3 shadow-lg">
+      <div className="flex-1 min-h-[380px] rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-slate-700 relative">
+        {/* Top: Color Intensity Scale Legend */}
+        <div className="absolute top-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-3 shadow-lg z-10">
           <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
             Movements
           </p>
@@ -331,6 +307,30 @@ export function SaudiHighchartsMap({
               <span>8</span>
             </div>
           </div>
+        </div>
+
+        <HighchartsReact
+          key="saudi-map"
+          highcharts={Highcharts}
+          constructorType="mapChart"
+          options={options}
+          onLoad={(chart) => {
+            chartRef.current = chart;
+          }}
+          containerProps={{
+            style: { width: "100%", height: "100%" },
+          }}
+          immutable={false}
+        />
+
+        {/* Bottom Left: Total Movements */}
+        <div className="absolute bottom-4 left-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 shadow-lg z-10">
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            Total Movements
+          </p>
+          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            {totalMovements}
+          </p>
         </div>
       </div>
     </div>
