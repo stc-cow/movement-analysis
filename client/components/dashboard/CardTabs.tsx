@@ -48,6 +48,11 @@ export const DASHBOARD_CARDS: CardTab[] = [
     label: "Royal / EBU",
     description: "VIP Deployments",
   },
+  {
+    id: "top-events",
+    label: "Top Events Movement",
+    description: "Major Event Deployments",
+  },
 ];
 
 export function CardTabs({ tabs, activeTab, onTabChange }: CardTabsProps) {
