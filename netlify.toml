@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install && pnpm run build"
+  command = "pnpm install && pnpm run build:client"
   publish = "dist/spa"
 
 [build.environment]
@@ -10,6 +10,8 @@
   to = "/index.html"
   status = 200
 
-[dev]
-  command = "pnpm run dev"
-  port = 3000
+# Proxy API calls to backend server
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
