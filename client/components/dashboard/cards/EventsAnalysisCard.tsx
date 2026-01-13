@@ -305,12 +305,12 @@ export function EventsAnalysisCard({
             {eventData.map(({ name, value }) => (
               <div
                 key={name}
-                className="p-2 sm:p-3 rounded text-center"
+                className="p-2 sm:p-3 rounded border-2 text-center"
                 style={{
                   backgroundColor: `${EVENT_COLORS[name] || "#6b7280"}15`,
+                  borderColor: EVENT_COLORS[name] || "#6b7280",
                   borderTopWidth: "4px",
                   borderTopColor: EVENT_COLORS[name] || "#6b7280",
-                  border: `2px solid ${EVENT_COLORS[name] || "#6b7280"}`,
                 }}
               >
                 <div
