@@ -10,7 +10,11 @@ import {
   Cell,
 } from "recharts";
 import { CowMovementsFact } from "@shared/models";
-import { calculateTopEvents, calculateAllEventsTotalMovements, TopEventData } from "@/lib/analytics";
+import {
+  calculateTopEvents,
+  calculateAllEventsTotalMovements,
+  TopEventData,
+} from "@/lib/analytics";
 import {
   Table,
   TableBody,
@@ -35,7 +39,8 @@ interface EventLogo {
 const EVENT_LOGOS: Record<string, EventLogo> = {
   "riyadh season": {
     name: "Riyadh Season",
-    imageUrl: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Faf509990f22c404abfcd24961f6298a9?format=webp&width=800",
+    imageUrl:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Faf509990f22c404abfcd24961f6298a9?format=webp&width=800",
     color: "#FF6B35",
   },
   "jeddah season": {
@@ -45,7 +50,8 @@ const EVENT_LOGOS: Record<string, EventLogo> = {
   },
   hajj: {
     name: "Hajj",
-    imageUrl: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F05c92686d68d4c299e9942cf600d9266?format=webp&width=800",
+    imageUrl:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F05c92686d68d4c299e9942cf600d9266?format=webp&width=800",
     color: "#1f4788",
   },
   "formula 1": {
@@ -70,7 +76,8 @@ const EVENT_LOGOS: Record<string, EventLogo> = {
   },
   "camel festival": {
     name: "Camel Festival",
-    imageUrl: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F153f48735c454e7fa35cb585f06eecf3?format=webp&width=800",
+    imageUrl:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F153f48735c454e7fa35cb585f06eecf3?format=webp&width=800",
     color: "#d4a574",
   },
 };
@@ -255,7 +262,10 @@ export function TopEventsMovementCard({
               <Bar
                 dataKey="count"
                 radius={[0, 12, 12, 0]}
-                style={{ cursor: "pointer", filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))" }}
+                style={{
+                  cursor: "pointer",
+                  filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))",
+                }}
               >
                 {chartData.map((entry, index) => (
                   <Cell
@@ -328,7 +338,6 @@ export function TopEventsMovementCard({
           </div>
         )}
       </div>
-
     </div>
   );
 }

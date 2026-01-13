@@ -129,7 +129,12 @@ export function WarehouseHubTimeCard({
 
               {/* Shadow filter for 3D effect */}
               <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="2" dy="4" stdDeviation="3" floodOpacity="0.3" />
+                <feDropShadow
+                  dx="2"
+                  dy="4"
+                  stdDeviation="3"
+                  floodOpacity="0.3"
+                />
               </filter>
             </defs>
           </svg>
@@ -143,23 +148,53 @@ export function WarehouseHubTimeCard({
               >
                 <defs>
                   {/* Gradient definitions for Recharts */}
-                  <linearGradient id="gradient0" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id="gradient0"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#60a5fa" stopOpacity={1} />
                     <stop offset="100%" stopColor="#1e40af" stopOpacity={1} />
                   </linearGradient>
-                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id="gradient1"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#22d3ee" stopOpacity={1} />
                     <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
                   </linearGradient>
-                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id="gradient2"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
                     <stop offset="100%" stopColor="#047857" stopOpacity={1} />
                   </linearGradient>
-                  <linearGradient id="gradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id="gradient3"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
                     <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
                   </linearGradient>
-                  <linearGradient id="gradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id="gradient4"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
                     <stop offset="100%" stopColor="#dc2626" stopOpacity={1} />
                   </linearGradient>
@@ -192,12 +227,17 @@ export function WarehouseHubTimeCard({
                       handleChartClick(state.name);
                     }
                   }}
-                  style={{ cursor: "pointer", filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))" }}
+                  style={{
+                    cursor: "pointer",
+                    filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))",
+                  }}
                 >
                   {chartData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={BUCKET_COLORS[index % BUCKET_COLORS.length].gradient}
+                      fill={
+                        BUCKET_COLORS[index % BUCKET_COLORS.length].gradient
+                      }
                     />
                   ))}
                 </Bar>
