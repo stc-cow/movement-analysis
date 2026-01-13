@@ -186,25 +186,57 @@ function parseCSVData(csvText: unknown): Movement[] {
       if (cells[17]) movement.From_Sub_Location = cells[17].trim();
       if (cells[21]) movement.To_Sub_Location = cells[21].trim();
 
-      // Add latitude/longitude
+      // Add latitude/longitude - log first 5 for debugging
       if (cells[18]) {
         const lat = parseFloat(cells[18].trim());
-        if (!isNaN(lat)) movement.From_Latitude = lat;
+        if (!isNaN(lat)) {
+          movement.From_Latitude = lat;
+        } else if (i <= 6) {
+          console.log(
+            `[${i}] From_Latitude (col 18) failed to parse: "${cells[18]}"`,
+          );
+        }
+      } else if (i <= 6) {
+        console.log(`[${i}] From_Latitude (col 18) is empty`);
       }
 
       if (cells[19]) {
         const lon = parseFloat(cells[19].trim());
-        if (!isNaN(lon)) movement.From_Longitude = lon;
+        if (!isNaN(lon)) {
+          movement.From_Longitude = lon;
+        } else if (i <= 6) {
+          console.log(
+            `[${i}] From_Longitude (col 19) failed to parse: "${cells[19]}"`,
+          );
+        }
+      } else if (i <= 6) {
+        console.log(`[${i}] From_Longitude (col 19) is empty`);
       }
 
       if (cells[22]) {
         const lat = parseFloat(cells[22].trim());
-        if (!isNaN(lat)) movement.To_Latitude = lat;
+        if (!isNaN(lat)) {
+          movement.To_Latitude = lat;
+        } else if (i <= 6) {
+          console.log(
+            `[${i}] To_Latitude (col 22) failed to parse: "${cells[22]}"`,
+          );
+        }
+      } else if (i <= 6) {
+        console.log(`[${i}] To_Latitude (col 22) is empty`);
       }
 
       if (cells[23]) {
         const lon = parseFloat(cells[23].trim());
-        if (!isNaN(lon)) movement.To_Longitude = lon;
+        if (!isNaN(lon)) {
+          movement.To_Longitude = lon;
+        } else if (i <= 6) {
+          console.log(
+            `[${i}] To_Longitude (col 23) failed to parse: "${cells[23]}"`,
+          );
+        }
+      } else if (i <= 6) {
+        console.log(`[${i}] To_Longitude (col 23) is empty`);
       }
 
       // Movement type
