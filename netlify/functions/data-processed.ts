@@ -38,7 +38,7 @@ function parseCSVLine(line: string): string[] {
     if (char === '"') {
       if (insideQuotes && nextChar === '"') {
         current += '"';
-        i++; // Skip next quote
+        i++;
       } else {
         insideQuotes = !insideQuotes;
       }
@@ -127,133 +127,26 @@ function parseCSVData(csvText: unknown): Movement[] {
       return [];
     }
 
-    const headerLine = lines[0];
-    const headerCells = parseCSVLine(headerLine);
-
-    const headerLower = headerCells.map((h, idx) => ({
-      original: h,
-      lower: h.toLowerCase().trim(),
-      index: idx,
-    }));
-
-    // Find column indices - use fallback indices based on Google Sheets structure
-    const cowIdIdx =
-      headerLower.find(
-        (h) =>
-          (h.lower.includes("cow") && h.lower.includes("id")) ||
-          h.lower === "cow" ||
-          h.lower === "cows id",
-      )?.index ?? 0; // Column A
-
-    const fromLocationIdx =
-      headerLower.find(
-        (h) =>
-          (h.lower.includes("from") && h.lower.includes("location")) ||
-          h.lower === "origin" ||
-          h.lower === "from",
-      )?.index ?? 16; // Column Q
-
-    const toLocationIdx =
-      headerLower.find(
-        (h) =>
-          (h.lower.includes("to") && h.lower.includes("location")) ||
-          h.lower === "destination" ||
-          h.lower === "to",
-      )?.index ?? 20; // Column U
-
-    // DateTime columns
-    const movedDateTimeMatch = headerLower.find(
-      (h) =>
-        h.lower.includes("moved") &&
-        h.lower.includes("date") &&
-        h.lower.includes("time"),
-    );
-    const movedDateTimeIdx = movedDateTimeMatch?.index ?? 12; // Column M
-
-    const reachedDateTimeMatch = headerLower.find(
-      (h) =>
-        h.lower.includes("reached") &&
-        h.lower.includes("date") &&
-        h.lower.includes("time"),
-    );
-    const reachedDateTimeIdx = reachedDateTimeMatch?.index ?? 14; // Column O
-
-    // Sub-location columns
-    const fromSubLocIdx =
-      headerLower.find(
-        (h) =>
-          h.lower.includes("from") &&
-          h.lower.includes("sub") &&
-          h.lower.includes("location"),
-      )?.index ?? 17; // Column R
-
-    const toSubLocIdx =
-      headerLower.find(
-        (h) =>
-          h.lower.includes("to") &&
-          h.lower.includes("sub") &&
-          h.lower.includes("location"),
-      )?.index ?? 21; // Column V
-
-    const movementTypeIdx =
-      headerLower.find(
-        (h) =>
-          (h.lower.includes("movement") && h.lower.includes("type")) ||
-          h.lower === "type",
-      )?.index ?? 25; // Column Z
-
-    const distanceIdx =
-      headerLower.find(
-        (h) =>
-          h.lower.includes("distance") ||
-          h.lower === "km" ||
-          h.lower === "distance (km)",
-      )?.index ?? 24; // Column Y
-
-    const topEventIdx =
-      headerLower.find((h) => h.lower === "top events")?.index ?? 11; // Column L
-
-    const regionFromIdx =
-      headerLower.find(
-        (h) => h.lower.includes("region") && h.lower.includes("from"),
-      )?.index ?? 26; // Column AA
-
-    const regionToIdx =
-      headerLower.find(
-        (h) => h.lower.includes("region") && h.lower.includes("to"),
-      )?.index ?? 27; // Column AB
-
-    const vendorIdx =
-      headerLower.find((h) => h.lower === "vendor")?.index ?? 28; // Column AC
-
-    const governorateIdx =
-      headerLower.find((h) => h.lower === "governorate")?.index ?? 29; // Column AD
-
-    // Find EBU/Royal flag column
-    const ebuRoyalIdx =
-      headerLower.find(
-        (h) =>
-          (h.lower.includes("ebu") && h.lower.includes("royal")) ||
-          h.lower === "ebu/royal",
-      )?.index ?? 4; // Column E
-
-    // Find latitude/longitude columns
-    const fromLatIdx =
-      headerLower.find(
-        (h) => h.lower.includes("from") && h.lower.includes("latitude"),
-      )?.index ?? 18; // Column S
-    const fromLonIdx =
-      headerLower.find(
-        (h) => h.lower.includes("from") && h.lower.includes("longitude"),
-      )?.index ?? 19; // Column T
-    const toLatIdx =
-      headerLower.find(
-        (h) => h.lower.includes("to") && h.lower.includes("latitude"),
-      )?.index ?? 22; // Column W
-    const toLonIdx =
-      headerLower.find(
-        (h) => h.lower.includes("to") && h.lower.includes("longitude"),
-      )?.index ?? 23; // Column X
+    // Use hardcoded indices based on actual Google Sheet structure
+    // Column A (0): COW ID
+    // Column E (4): EBU/Royal
+    // Column L (11): Top Event
+    // Column M (12): Moved DateTime
+    // Column O (14): Reached DateTime
+    // Column Q (16): From Location
+    // Column R (17): From Sub Location
+    // Column S (18): From Latitude
+    // Column T (19): From Longitude
+    // Column U (20): To Location
+    // Column V (21): To Sub Location
+    // Column W (22): To Latitude
+    // Column X (23): To Longitude
+    // Column Y (24): Distance
+    // Column Z (25): Movement Type
+    // Column AA (26): Region From
+    // Column AB (27): Region To
+    // Column AC (28): Vendor
+    // Column AD (29): Governorate
 
     const movements: Movement[] = [];
     let serialNumber = 1;
@@ -263,25 +156,25 @@ function parseCSVData(csvText: unknown): Movement[] {
       if (!line) continue;
 
       const cells = parseCSVLine(line);
-      const cowId = cells[cowIdIdx]?.trim();
+      const cowId = cells[0]?.trim();
 
       if (!cowId) continue;
 
-      // Ensure required datetime fields exist
+      // Extract required datetime fields with fallbacks
       const movedDt =
-        cells[movedDateTimeIdx]?.trim() || new Date().toISOString();
+        cells[12]?.trim() || cells[10]?.trim() || new Date().toISOString();
       const reachedDt =
-        cells[reachedDateTimeIdx]?.trim() || new Date().toISOString();
+        cells[14]?.trim() || cells[12]?.trim() || new Date().toISOString();
 
       // Classify Royal/EBU status
-      const ebuRoyalFlag = cells[ebuRoyalIdx]?.trim();
+      const ebuRoyalFlag = cells[4]?.trim();
       const { isRoyal, isEBU, category } = classifyEbuRoyal(ebuRoyalFlag);
 
       const movement: Movement = {
         SN: serialNumber++,
         COW_ID: cowId,
-        From_Location_ID: cells[fromLocationIdx]?.trim() || "",
-        To_Location_ID: cells[toLocationIdx]?.trim() || "",
+        From_Location_ID: cells[16]?.trim() || cells[14]?.trim() || "",
+        To_Location_ID: cells[20]?.trim() || cells[18]?.trim() || "",
         Moved_DateTime: movedDt,
         Reached_DateTime: reachedDt,
         Is_Royal: isRoyal,
@@ -290,67 +183,71 @@ function parseCSVData(csvText: unknown): Movement[] {
       };
 
       // Add optional fields
-      if (fromSubLocIdx !== undefined) {
-        movement.From_Sub_Location = cells[fromSubLocIdx]?.trim();
-      }
-
-      if (toSubLocIdx !== undefined) {
-        movement.To_Sub_Location = cells[toSubLocIdx]?.trim();
-      }
+      if (cells[17]) movement.From_Sub_Location = cells[17].trim();
+      if (cells[21]) movement.To_Sub_Location = cells[21].trim();
 
       // Add latitude/longitude
-      if (fromLatIdx !== undefined && cells[fromLatIdx]) {
-        const lat = parseFloat(cells[fromLatIdx].trim());
+      if (cells[18]) {
+        const lat = parseFloat(cells[18].trim());
         if (!isNaN(lat)) movement.From_Latitude = lat;
       }
 
-      if (fromLonIdx !== undefined && cells[fromLonIdx]) {
-        const lon = parseFloat(cells[fromLonIdx].trim());
+      if (cells[19]) {
+        const lon = parseFloat(cells[19].trim());
         if (!isNaN(lon)) movement.From_Longitude = lon;
       }
 
-      if (toLatIdx !== undefined && cells[toLatIdx]) {
-        const lat = parseFloat(cells[toLatIdx].trim());
+      if (cells[22]) {
+        const lat = parseFloat(cells[22].trim());
         if (!isNaN(lat)) movement.To_Latitude = lat;
       }
 
-      if (toLonIdx !== undefined && cells[toLonIdx]) {
-        const lon = parseFloat(cells[toLonIdx].trim());
+      if (cells[23]) {
+        const lon = parseFloat(cells[23].trim());
         if (!isNaN(lon)) movement.To_Longitude = lon;
       }
 
-      if (movementTypeIdx !== undefined && cells[movementTypeIdx]) {
-        movement.Movement_Type = cells[movementTypeIdx].trim();
+      // Movement type
+      if (cells[25]) {
+        const movType = cells[25].trim();
+        if (movType.includes("Full")) {
+          movement.Movement_Type = "Full";
+        } else if (movType.includes("Half")) {
+          movement.Movement_Type = "Half";
+        } else {
+          movement.Movement_Type = "Zero";
+        }
       }
 
-      if (distanceIdx !== undefined && cells[distanceIdx]) {
-        const distVal = parseFloat(cells[distanceIdx].trim());
+      // Distance
+      if (cells[24]) {
+        const distVal = parseFloat(cells[24].trim());
         movement.Distance_KM = isNaN(distVal) ? 0 : distVal;
       }
 
-      if (topEventIdx !== undefined && cells[topEventIdx]) {
-        movement.Top_Event = cells[topEventIdx].trim();
+      // Top Event
+      if (cells[11]) {
+        movement.Top_Event = cells[11].trim();
       }
 
-      if (regionFromIdx !== undefined && cells[regionFromIdx]) {
-        movement.Region_From = cells[regionFromIdx].trim();
+      // Regions
+      if (cells[26]) movement.Region_From = cells[26].trim();
+      if (cells[27]) movement.Region_To = cells[27].trim();
+
+      // Vendor
+      if (cells[28]) {
+        movement.Vendor = cells[28].trim() || "Unknown";
+      } else {
+        movement.Vendor = "Unknown";
       }
 
-      if (regionToIdx !== undefined && cells[regionToIdx]) {
-        movement.Region_To = cells[regionToIdx].trim();
-      }
-
-      if (vendorIdx !== undefined && cells[vendorIdx]) {
-        movement.Vendor = cells[vendorIdx].trim();
-      }
-
-      if (governorateIdx !== undefined && cells[governorateIdx]) {
-        movement.Governorate = cells[governorateIdx].trim();
-      }
+      // Governorate
+      if (cells[29]) movement.Governorate = cells[29].trim();
 
       movements.push(movement);
     }
 
+    console.log(`Parsed ${movements.length} movements from CSV`);
     return movements;
   } catch (error) {
     console.error("Error parsing CSV:", error);
@@ -369,6 +266,7 @@ const handler: Handler = async () => {
     // Check cache first
     const cached = getCache("processed-data-v2");
     if (cached) {
+      console.log("Returning cached data");
       return {
         statusCode: 200,
         headers,
@@ -414,7 +312,7 @@ const handler: Handler = async () => {
       };
     }
 
-    console.log(`Parsed ${movements.length} movements`);
+    console.log(`Successfully parsed ${movements.length} movements`);
 
     // Build dimension arrays
     const cowSet = new Set<string>();
@@ -425,7 +323,10 @@ const handler: Handler = async () => {
 
     movements.forEach((m) => {
       cowSet.add(m.COW_ID);
-      cowMovementCount.set(m.COW_ID, (cowMovementCount.get(m.COW_ID) || 0) + 1);
+      cowMovementCount.set(
+        m.COW_ID,
+        (cowMovementCount.get(m.COW_ID) || 0) + 1,
+      );
       if (m.From_Location_ID) locationSet.add(m.From_Location_ID);
       if (m.To_Location_ID) locationSet.add(m.To_Location_ID);
       if (m.Top_Event) eventSet.add(m.Top_Event);
@@ -463,6 +364,7 @@ const handler: Handler = async () => {
 
     // Cache the response
     setCache("processed-data-v2", responseData);
+    console.log("Data cached successfully");
 
     return {
       statusCode: 200,
