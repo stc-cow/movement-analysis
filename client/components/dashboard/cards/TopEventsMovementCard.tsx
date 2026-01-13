@@ -25,7 +25,14 @@ interface TopEventsMovementCardProps {
 }
 
 // Logo mapping for top events - match by lowercase for flexibility
-const EVENT_LOGOS: Record<string, { name: string; emoji: string; color: string }> = {
+interface EventLogo {
+  name: string;
+  emoji?: string; // For emoji-based logos
+  imageUrl?: string; // For image-based logos
+  color: string;
+}
+
+const EVENT_LOGOS: Record<string, EventLogo> = {
   "riyadh season": {
     name: "Riyadh Season",
     emoji: "🎪",
@@ -61,10 +68,15 @@ const EVENT_LOGOS: Record<string, { name: string; emoji: string; color: string }
     emoji: "⚽",
     color: "#003366",
   },
+  "camel festival": {
+    name: "Camel Festival",
+    imageUrl: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F153f48735c454e7fa35cb585f06eecf3?format=webp&width=800",
+    color: "#d4a574",
+  },
 };
 
 // Helper function to find matching logo for an event
-function getLogoForEvent(eventName: string): { name: string; emoji: string; color: string } {
+function getLogoForEvent(eventName: string): EventLogo {
   const eventLower = eventName.toLowerCase();
 
   // First try exact match
