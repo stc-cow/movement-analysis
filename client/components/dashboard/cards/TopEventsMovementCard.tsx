@@ -165,8 +165,14 @@ export function TopEventsMovementCard({
 
   return (
     <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 md:p-6">
-      {/* Total All Events Card */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+      {/* Total All Events Card - KPI Style */}
+      <div
+        className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
+        style={{
+          borderTopWidth: "4px",
+          borderTopColor: "#6366f1",
+        }}
+      >
         <div className="flex flex-col items-center justify-center gap-3">
           <div className="text-4xl sm:text-5xl">📊</div>
           <div className="text-center">
