@@ -224,6 +224,7 @@ function parseCSVData(csvText: string) {
       tower_height: cells[8]?.trim() || cells[6]?.trim() || "0",
       network_technology: cells[9]?.trim() || cells[7]?.trim() || "",
       vehicle_make: cells[10]?.trim() || cells[8]?.trim() || "",
+      top_event: cells[11]?.trim() || "", // Column L: Top Event (Riyadh Season, Hajj, etc.)
       vehicle_plate_number: cells[11]?.trim() || cells[9]?.trim() || "",
       moved_datetime: cells[12]?.trim() || cells[10]?.trim() || "",
       moved_month_year: cells[13]?.trim() || cells[11]?.trim() || "",
