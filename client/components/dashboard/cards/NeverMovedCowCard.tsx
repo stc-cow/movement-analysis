@@ -67,10 +67,73 @@ export function NeverMovedCowCard({ neverMovedCows }: NeverMovedCowCardProps) {
     "#ef4444", // Red
   ];
 
+  // Calculate regional breakdown
+  const regionStats = useMemo(() => {
+    const regions: Record<string, number> = {
+      WEST: 0,
+      SOUTH: 0,
+      CENTRAL: 0,
+      EAST: 0,
+    };
+
+    neverMovedCows.forEach((cow) => {
+      const region = cow.Region?.toUpperCase() || "UNKNOWN";
+      if (region in regions) {
+        regions[region]++;
+      }
+    });
+
+    return regions;
+  }, [neverMovedCows]);
+
+  const REGION_COLORS: Record<string, string> = {
+    WEST: "#3b82f6",
+    SOUTH: "#10b981",
+    CENTRAL: "#f59e0b",
+    EAST: "#ef4444",
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-      {/* Left Panel: On-Air Duration Chart */}
-      <div className="flex flex-col overflow-y-auto">
+      {/* Left Panel: On-Air Duration Chart and Stats */}
+      <div className="flex flex-col overflow-y-auto gap-4">
+        {/* KPI Cards: Total COWs and Regional Breakdown */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-shrink-0">
+          <Card className="flex-shrink-0">
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                  Total COWs
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {neverMovedCows.length}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {Object.entries(regionStats)
+            .filter(([_, count]) => count > 0)
+            .map(([region, count]) => (
+              <Card key={region} className="flex-shrink-0">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                      {region}
+                    </p>
+                    <p
+                      className="text-3xl font-bold"
+                      style={{ color: REGION_COLORS[region] || "#6b7280" }}
+                    >
+                      {count}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+        </div>
+
+        {/* Chart */}
         <Card className="flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>Never Moved COWs - On-Air Duration</CardTitle>
