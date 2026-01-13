@@ -240,23 +240,19 @@ function parseCSVData(csvText: unknown): Movement[] {
     // Find latitude/longitude columns
     const fromLatIdx =
       headerLower.find(
-        (h) =>
-          h.lower.includes("from") && h.lower.includes("latitude"),
+        (h) => h.lower.includes("from") && h.lower.includes("latitude"),
       )?.index ?? 18; // Column S
     const fromLonIdx =
       headerLower.find(
-        (h) =>
-          h.lower.includes("from") && h.lower.includes("longitude"),
+        (h) => h.lower.includes("from") && h.lower.includes("longitude"),
       )?.index ?? 19; // Column T
     const toLatIdx =
       headerLower.find(
-        (h) =>
-          h.lower.includes("to") && h.lower.includes("latitude"),
+        (h) => h.lower.includes("to") && h.lower.includes("latitude"),
       )?.index ?? 22; // Column W
     const toLonIdx =
       headerLower.find(
-        (h) =>
-          h.lower.includes("to") && h.lower.includes("longitude"),
+        (h) => h.lower.includes("to") && h.lower.includes("longitude"),
       )?.index ?? 23; // Column X
 
     const movements: Movement[] = [];
