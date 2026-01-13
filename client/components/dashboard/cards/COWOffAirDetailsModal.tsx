@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { OffAirStayDetails } from "@/lib/analytics";
 import {
   Dialog,
@@ -13,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSortableTable } from "@/hooks/useSortableTable";
 
 interface COWOffAirDetailsModalProps {
   open: boolean;
