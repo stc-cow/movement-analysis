@@ -98,7 +98,13 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
     <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 md:p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 flex-1 min-h-0">
         {/* EBU Classification - Three Categories */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 overflow-hidden flex flex-col">
+        <div
+          className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 overflow-hidden flex flex-col"
+          style={{
+            borderTopWidth: "4px",
+            borderTopColor: "#fbbf24",
+          }}
+        >
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex-shrink-0">
             EBU Classification
           </h3>
