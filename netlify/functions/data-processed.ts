@@ -66,6 +66,10 @@ interface Movement {
   Top_Event?: string;
   From_Sub_Location?: string;
   To_Sub_Location?: string;
+  From_Latitude?: number;
+  From_Longitude?: number;
+  To_Latitude?: number;
+  To_Longitude?: number;
   Region_From?: string;
   Region_To?: string;
   Vendor?: string;
