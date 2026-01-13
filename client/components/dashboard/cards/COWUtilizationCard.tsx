@@ -6,6 +6,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import {
   Table,
@@ -46,6 +47,15 @@ export function COWUtilizationCard({ cowMetrics }: COWUtilizationCardProps) {
     }),
   );
 
+  // Colors for each utilization bucket - red (low) to green (high)
+  const BUCKET_COLORS = [
+    "#ef4444", // Red: 0-5 (low utilization)
+    "#f97316", // Orange: 6-10
+    "#f59e0b", // Amber: 11-20
+    "#3b82f6", // Blue: 21-50
+    "#10b981", // Green: 50+ (high utilization)
+  ];
+
   const topMostMoved = cowMetrics
     .sort((a, b) => b.Total_Movements - a.Total_Movements)
     .slice(0, 8);
@@ -74,7 +84,14 @@ export function COWUtilizationCard({ cowMetrics }: COWUtilizationCardProps) {
                 borderRadius: "8px",
               }}
             />
-            <Bar dataKey="count" fill="#6366f1" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+              {histogramData.map((_, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={BUCKET_COLORS[index]}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
