@@ -332,38 +332,14 @@ export function ExecutiveOverviewCard({
     ZTE: { color: "#00A500", bgColor: "#E8F5E8" },
   };
 
-  // KPI Card color scheme for 3D styling
+  // KPI Card color scheme matching TopEventsMovementCard
   const KPI_CARD_COLORS = [
-    {
-      borderColor: "border-blue-500",
-      shadowColor: "shadow-blue-200",
-      bgGradient: "from-blue-50 to-white",
-    },
-    {
-      borderColor: "border-purple-500",
-      shadowColor: "shadow-purple-200",
-      bgGradient: "from-purple-50 to-white",
-    },
-    {
-      borderColor: "border-green-500",
-      shadowColor: "shadow-green-200",
-      bgGradient: "from-green-50 to-white",
-    },
-    {
-      borderColor: "border-orange-500",
-      shadowColor: "shadow-orange-200",
-      bgGradient: "from-orange-50 to-white",
-    },
-    {
-      borderColor: "border-pink-500",
-      shadowColor: "shadow-pink-200",
-      bgGradient: "from-pink-50 to-white",
-    },
-    {
-      borderColor: "border-indigo-500",
-      shadowColor: "shadow-indigo-200",
-      bgGradient: "from-indigo-50 to-white",
-    },
+    "#3b82f6", // Blue
+    "#06b6d4", // Cyan
+    "#10b981", // Green
+    "#f59e0b", // Amber
+    "#ef4444", // Red
+    "#8b5cf6", // Purple
   ];
 
   // Custom X-axis tick component with vendor logo image
@@ -557,18 +533,22 @@ export function ExecutiveOverviewCard({
         {/* RIGHT PANEL (40%): KPIs + Charts */}
         <div className="w-full lg:w-2/5 flex flex-col gap-3 overflow-y-auto min-h-0">
           {/* KPI Cards - 2×3 Grid */}
-          <div className="grid grid-cols-2 gap-3 flex-shrink-0">
+          <div className="grid grid-cols-2 gap-2 flex-shrink-0">
             {metrics.map((metric, idx) => {
-              const colors = KPI_CARD_COLORS[idx % KPI_CARD_COLORS.length];
+              const borderColor = KPI_CARD_COLORS[idx % KPI_CARD_COLORS.length];
               return (
                 <div
                   key={metric.label}
-                  className={`bg-gradient-to-br ${colors.bgGradient} rounded-xl p-4 border-2 ${colors.borderColor} shadow-lg ${colors.shadowColor} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-default`}
+                  className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow"
+                  style={{
+                    borderTopWidth: "4px",
+                    borderTopColor: borderColor,
+                  }}
                 >
-                  <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
+                  <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-1">
                     {metric.label}
                   </p>
-                  <p className="text-gray-900 text-2xl font-extrabold mt-2">
+                  <p className="text-gray-900 text-lg font-bold">
                     {metric.value}
                   </p>
                 </div>
@@ -577,23 +557,35 @@ export function ExecutiveOverviewCard({
           </div>
 
           {/* Active Warehouse & One Time Moved COWs - Matching Total COWs Style */}
-          <div className="grid grid-cols-2 gap-3 flex-shrink-0">
+          <div className="grid grid-cols-2 gap-2 flex-shrink-0">
             {/* One Time Moved COWs Card */}
-            <div className="bg-gradient-to-br from-cyan-50 to-white rounded-xl p-4 border-2 border-cyan-500 shadow-lg shadow-cyan-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-default">
-              <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
+            <div
+              className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow"
+              style={{
+                borderTopWidth: "4px",
+                borderTopColor: "#06b6d4",
+              }}
+            >
+              <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-1">
                 One Time Moved COWs
               </p>
-              <p className="text-gray-900 text-2xl font-extrabold mt-2">
+              <p className="text-gray-900 text-lg font-bold">
                 {monthlyKpis.staticCOWs}
               </p>
             </div>
 
             {/* Active Warehouses Card */}
-            <div className="bg-gradient-to-br from-teal-50 to-white rounded-xl p-4 border-2 border-teal-500 shadow-lg shadow-teal-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-default">
-              <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
+            <div
+              className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow"
+              style={{
+                borderTopWidth: "4px",
+                borderTopColor: "#10b981",
+              }}
+            >
+              <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-1">
                 Active Warehouses
               </p>
-              <p className="text-gray-900 text-2xl font-extrabold mt-2">
+              <p className="text-gray-900 text-lg font-bold">
                 {summaryStats[0]?.value || 0}
               </p>
             </div>
