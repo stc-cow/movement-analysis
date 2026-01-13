@@ -348,6 +348,7 @@ const handler: Handler = async () => {
 
     // Build dimension arrays
     const cowSet = new Set<string>();
+    const cowVendorMap = new Map<string, string>(); // Track vendor for each COW
     const cowMovementCount = new Map<string, number>();
     const locationMap = new Map<
       string,
@@ -366,6 +367,11 @@ const handler: Handler = async () => {
     movements.forEach((m) => {
       cowSet.add(m.COW_ID);
       cowMovementCount.set(m.COW_ID, (cowMovementCount.get(m.COW_ID) || 0) + 1);
+
+      // Track vendor for each COW (use the first vendor found)
+      if (m.Vendor && !cowVendorMap.has(m.COW_ID)) {
+        cowVendorMap.set(m.COW_ID, m.Vendor);
+      }
 
       // Track From Location with coordinates and region
       if (m.From_Location_ID) {
