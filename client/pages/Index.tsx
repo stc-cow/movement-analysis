@@ -360,6 +360,11 @@ export default function Dashboard() {
         {activeCard === "never-moved" && (
           <NeverMovedCowCard neverMovedCows={neverMovedCows} />
         )}
+
+        {/* Top Events Movement */}
+        {activeCard === "top-events" && (
+          <TopEventsMovementCard movements={filteredMovements} />
+        )}
       </div>
     </div>
   );
