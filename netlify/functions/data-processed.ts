@@ -377,12 +377,17 @@ const handler: Handler = async () => {
 
     // Build dimension arrays
     const cowSet = new Set<string>();
+    const cowMovementCount = new Map<string, number>();
     const locationSet = new Set<string>();
     const eventSet = new Set<string>();
     const vendorSet = new Set<string>();
 
     movements.forEach((m) => {
       cowSet.add(m.COW_ID);
+      cowMovementCount.set(
+        m.COW_ID,
+        (cowMovementCount.get(m.COW_ID) || 0) + 1,
+      );
       if (m.From_Location_ID) locationSet.add(m.From_Location_ID);
       if (m.To_Location_ID) locationSet.add(m.To_Location_ID);
       if (m.Top_Event) eventSet.add(m.Top_Event);
@@ -405,6 +410,12 @@ const handler: Handler = async () => {
       vendors: Array.from(vendorSet).map((id) => ({
         Vendor: id,
       })),
+      cowMovementCounts: Array.from(cowMovementCount.entries()).map(
+        ([cowId, count]) => ({
+          COW_ID: cowId,
+          movementCount: count,
+        }),
+      ),
       totalDistanceKM: movements.reduce(
         (sum, m) => sum + (m.Distance_KM || 0),
         0,
