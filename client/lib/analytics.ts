@@ -673,8 +673,9 @@ export function calculateOffAirWarehouseAging(
         );
 
         // Store stay details
+        const fromLocation = locMap.get(currentMov.From_Location_ID);
         stayDetails.push({
-          fromLocation: currentMov.From_Sub_Location || "Unknown",
+          fromLocation: fromLocation?.Location_Name || "Unknown",
           toWarehouse: warehouse.Location_Name,
           idleStartDate: currentMov.Reached_DateTime
             ? currentMov.Reached_DateTime.split("T")[0]
