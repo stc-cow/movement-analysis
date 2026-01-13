@@ -334,12 +334,36 @@ export function ExecutiveOverviewCard({
 
   // KPI Card color scheme for 3D styling
   const KPI_CARD_COLORS = [
-    { borderColor: "border-blue-500", shadowColor: "shadow-blue-200", bgGradient: "from-blue-50 to-white" },
-    { borderColor: "border-purple-500", shadowColor: "shadow-purple-200", bgGradient: "from-purple-50 to-white" },
-    { borderColor: "border-green-500", shadowColor: "shadow-green-200", bgGradient: "from-green-50 to-white" },
-    { borderColor: "border-orange-500", shadowColor: "shadow-orange-200", bgGradient: "from-orange-50 to-white" },
-    { borderColor: "border-pink-500", shadowColor: "shadow-pink-200", bgGradient: "from-pink-50 to-white" },
-    { borderColor: "border-indigo-500", shadowColor: "shadow-indigo-200", bgGradient: "from-indigo-50 to-white" },
+    {
+      borderColor: "border-blue-500",
+      shadowColor: "shadow-blue-200",
+      bgGradient: "from-blue-50 to-white",
+    },
+    {
+      borderColor: "border-purple-500",
+      shadowColor: "shadow-purple-200",
+      bgGradient: "from-purple-50 to-white",
+    },
+    {
+      borderColor: "border-green-500",
+      shadowColor: "shadow-green-200",
+      bgGradient: "from-green-50 to-white",
+    },
+    {
+      borderColor: "border-orange-500",
+      shadowColor: "shadow-orange-200",
+      bgGradient: "from-orange-50 to-white",
+    },
+    {
+      borderColor: "border-pink-500",
+      shadowColor: "shadow-pink-200",
+      bgGradient: "from-pink-50 to-white",
+    },
+    {
+      borderColor: "border-indigo-500",
+      shadowColor: "shadow-indigo-200",
+      bgGradient: "from-indigo-50 to-white",
+    },
   ];
 
   // Custom X-axis tick component with vendor logo image
