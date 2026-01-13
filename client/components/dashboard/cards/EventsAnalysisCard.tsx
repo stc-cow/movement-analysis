@@ -104,6 +104,14 @@ export function EventsAnalysisCard({
   const topEventType = eventData[0];
   const topDistance = distanceData[0];
 
+  // KPI Card color scheme
+  const KPI_CARD_COLORS = [
+    "#3b82f6", // Blue
+    "#06b6d4", // Cyan
+    "#10b981", // Green
+    "#f59e0b", // Amber
+  ];
+
   return (
     <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 md:p-6">
       {/* Charts Section - Responsive Height */}
