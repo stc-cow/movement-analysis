@@ -241,10 +241,41 @@ const handler: Handler = async (event, context) => {
       };
     }
 
+    // Extract unique dimensions
+    const cowIds = new Set(rows.map((m) => m.COW_ID));
+    const locationIds = new Set<string>();
+
+    rows.forEach((m) => {
+      if (m.From_Location_ID) locationIds.add(m.From_Location_ID);
+      if (m.To_Location_ID) locationIds.add(m.To_Location_ID);
+    });
+
+    // Build dimension arrays
+    const cows = Array.from(cowIds).map((cowId, idx) => ({
+      COW_ID: cowId,
+      index: idx,
+    }));
+
+    const locations = Array.from(locationIds).map((locId, idx) => ({
+      Location_ID: locId,
+      Location_Name: locId,
+      index: idx,
+    }));
+
+    const events = Array.from(
+      new Set(rows.map((m) => m.Top_Event).filter(Boolean))
+    ).map((event, idx) => ({
+      Event_ID: event,
+      Event_Name: event,
+      index: idx,
+    }));
+
     const responseData = {
       movements: rows,
+      cows,
+      locations,
+      events,
       totalDistanceKM: rows.reduce((sum, m) => sum + (m.Distance_KM || 0), 0),
-      uniqueCows: new Set(rows.map((m) => m.COW_ID)).size,
       timestamp: new Date().toISOString(),
     };
 
