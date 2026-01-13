@@ -217,81 +217,81 @@ export function EventsAnalysisCard({
       </div>
 
       {/* Event statistics - KPI Cards */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 flex-shrink-0">
+      <div className="flex-shrink-0 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         <div
-          className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 sm:p-3"
           style={{
             borderTopWidth: "4px",
             borderTopColor: KPI_CARD_COLORS[0],
           }}
         >
-          <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">
+          <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
             Total Events Tracked
-          </p>
-          <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          </div>
+          <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
             {Object.keys(eventCounts).length}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Event type categories
-          </p>
+          </div>
         </div>
 
         {topEventType && (
           <div
-            className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 sm:p-3"
             style={{
               borderTopWidth: "4px",
               borderTopColor: KPI_CARD_COLORS[1],
             }}
           >
-            <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">
+            <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               Most Common Event
-            </p>
-            <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            </div>
+            <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               {topEventType.value}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {topEventType.name}
-            </p>
+            </div>
           </div>
         )}
 
         {topDistance && (
           <div
-            className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 sm:p-3"
             style={{
               borderTopWidth: "4px",
               borderTopColor: KPI_CARD_COLORS[2],
             }}
           >
-            <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">
+            <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               Longest Avg Distance
-            </p>
-            <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            </div>
+            <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               {topDistance.avgDistance.toFixed(0)}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {topDistance.type} (KM)
-            </p>
+            </div>
           </div>
         )}
 
         <div
-          className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 sm:p-3"
           style={{
             borderTopWidth: "4px",
             borderTopColor: KPI_CARD_COLORS[3],
           }}
         >
-          <p className="text-gray-600 dark:text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">
+          <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
             Total Movements
-          </p>
-          <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          </div>
+          <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
             {totalMovements}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             movements analyzed
-          </p>
+          </div>
         </div>
       </div>
 
