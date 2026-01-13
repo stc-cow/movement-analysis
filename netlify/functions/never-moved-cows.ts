@@ -90,8 +90,12 @@ const handler: Handler = async () => {
       };
     }
 
-    // Count movements per COW
+    // Count movements per COW and extract coordinates for never-moved ones
     const cowMovementCount = new Map<string, number>();
+    const cowCoordinates = new Map<
+      string,
+      { latitude: number; longitude: number }
+    >();
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i]?.trim();
@@ -102,15 +106,34 @@ const handler: Handler = async () => {
 
       if (cowId) {
         cowMovementCount.set(cowId, (cowMovementCount.get(cowId) || 0) + 1);
+
+        // Extract coordinates from AN (index 39) and AO (index 40)
+        // Column AN = Latitude for static COWs
+        // Column AO = Longitude for static COWs
+        if (cells[39] && cells[40]) {
+          const lat = parseFloat(cells[39].trim());
+          const lon = parseFloat(cells[40].trim());
+
+          if (!isNaN(lat) && !isNaN(lon)) {
+            cowCoordinates.set(cowId, { latitude: lat, longitude: lon });
+          }
+        }
       }
     }
 
     // Find never-moved cows (those with exactly 1 movement)
     const neverMovedCows = Array.from(cowMovementCount.entries())
       .filter(([, count]) => count <= 1)
-      .map(([cowId]) => ({
-        COW_ID: cowId,
-      }));
+      .map(([cowId]) => {
+        const coords = cowCoordinates.get(cowId);
+        return {
+          COW_ID: cowId,
+          ...(coords && {
+            Latitude: coords.latitude,
+            Longitude: coords.longitude,
+          }),
+        };
+      });
 
     const responseData = {
       cows: neverMovedCows,
