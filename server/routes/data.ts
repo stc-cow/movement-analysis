@@ -456,6 +456,7 @@ function processData(rows: any[]) {
         : row.movement_type?.includes("Half")
           ? "Half"
           : "Zero",
+      Top_Event: row.top_event?.trim() || undefined, // Column L: Top Event
       Distance_KM: distanceValue, // Read from Column Y (cells[24])
       Is_Royal: isRoyal,
       Is_EBU: isEBU,
