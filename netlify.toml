@@ -5,10 +5,16 @@
 [build.environment]
   NODE_ENV = "production"
 
-# API redirect for processed-data endpoint
+# API redirects for Netlify Functions
 [[redirects]]
   from = "/api/data/processed-data"
   to = "/.netlify/functions/data-processed"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/data/never-moved-cows"
+  to = "/.netlify/functions/never-moved-cows"
   status = 200
   force = true
 
