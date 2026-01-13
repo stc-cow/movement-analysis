@@ -302,15 +302,28 @@ export function TopEventsMovementCard({
               <TableHeader>
                 <TableRow className="bg-gray-50 dark:bg-gray-900">
                   <TableHead className="text-center py-3 w-12">Rank</TableHead>
-                  <TableHead className="text-left py-3">Event Name</TableHead>
-                  <TableHead className="text-center py-3">
-                    Total Movements
+                  <TableHead
+                    className="text-left py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                    onClick={() => setSortColumn("eventName")}
+                  >
+                    Event Name{getSortIndicator("eventName")}
                   </TableHead>
-                  <TableHead className="text-center py-3">Percentage</TableHead>
+                  <TableHead
+                    className="text-center py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                    onClick={() => setSortColumn("movementCount")}
+                  >
+                    Total Movements{getSortIndicator("movementCount")}
+                  </TableHead>
+                  <TableHead
+                    className="text-center py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
+                    onClick={() => setSortColumn("percentage")}
+                  >
+                    Percentage{getSortIndicator("percentage")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {topEvents.map((event, index) => (
+                {sortedTopEvents.map((event, index) => (
                   <TableRow
                     key={event.eventName}
                     className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
