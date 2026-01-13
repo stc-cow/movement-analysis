@@ -111,6 +111,37 @@ export function WarehouseHubTimeCard({
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
             Off-Air Warehouse Aging
           </h3>
+          <svg width="0" height="0">
+            <defs>
+              {/* Gradient definitions for each bucket */}
+              <linearGradient id="gradient0" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#60a5fa" stopOpacity={1} />
+                <stop offset="100%" stopColor="#1e40af" stopOpacity={1} />
+              </linearGradient>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#22d3ee" stopOpacity={1} />
+                <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
+              </linearGradient>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
+                <stop offset="100%" stopColor="#047857" stopOpacity={1} />
+              </linearGradient>
+              <linearGradient id="gradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
+                <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+              </linearGradient>
+              <linearGradient id="gradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
+                <stop offset="100%" stopColor="#dc2626" stopOpacity={1} />
+              </linearGradient>
+
+              {/* Shadow filter for 3D effect */}
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="2" dy="4" stdDeviation="3" floodOpacity="0.3" />
+              </filter>
+            </defs>
+          </svg>
+
           <div style={{ width: "100%", height: "400px" }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -118,13 +149,37 @@ export function WarehouseHubTimeCard({
                 data={chartData}
                 margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
               >
+                <defs>
+                  {/* Gradient definitions for Recharts */}
+                  <linearGradient id="gradient0" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#60a5fa" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#1e40af" stopOpacity={1} />
+                  </linearGradient>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#22d3ee" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
+                  </linearGradient>
+                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#047857" stopOpacity={1} />
+                  </linearGradient>
+                  <linearGradient id="gradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+                  </linearGradient>
+                  <linearGradient id="gradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#dc2626" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
+
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis
                   dataKey="name"
                   angle={-45}
                   textAnchor="end"
                   height={100}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 12, fontWeight: 500 }}
                 />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip
@@ -132,19 +187,28 @@ export function WarehouseHubTimeCard({
                     backgroundColor: "#ffffff",
                     border: "1px solid #e5e7eb",
                     borderRadius: "8px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                   }}
                   formatter={(value: number) => `${value} COWs`}
+                  cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
                 />
                 <Bar
                   dataKey="count"
-                  fill={CHART_COLOR}
+                  radius={[12, 12, 0, 0]}
                   onClick={(state: any) => {
                     if (state && state.name) {
                       handleChartClick(state.name);
                     }
                   }}
-                  style={{ cursor: "pointer" }}
-                />
+                  style={{ cursor: "pointer", filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))" }}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={BUCKET_COLORS[index % BUCKET_COLORS.length].gradient}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
