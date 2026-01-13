@@ -848,8 +848,8 @@ export function getCOWOffAirAgingDetails(
       stays.push({
         fromLocation: currentMov.From_Sub_Location || "Unknown",
         toWarehouse: warehouse.Location_Name,
-        idleStartDate: currentMov.Reached_DateTime.split("T")[0],
-        idleEndDate: nextMov.Moved_DateTime.split("T")[0],
+        idleStartDate: currentMov.Reached_DateTime ? currentMov.Reached_DateTime.split("T")[0] : "",
+        idleEndDate: nextMov.Moved_DateTime ? nextMov.Moved_DateTime.split("T")[0] : "",
         idleDays: Math.round(idleDays * 100) / 100,
       });
     }
