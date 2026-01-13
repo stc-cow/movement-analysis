@@ -155,14 +155,25 @@ export function TopEventsMovementCard({
                 borderTopColor: logoData.color,
               }}
             >
-              <div
-                className="text-5xl sm:text-6xl mb-3 drop-shadow-lg"
-                style={{
-                  filter: `drop-shadow(0 2px 4px ${logoData.color}33)`,
-                }}
-              >
-                {logoData.emoji}
-              </div>
+              {logoData.imageUrl ? (
+                <img
+                  src={logoData.imageUrl}
+                  alt={logoData.name}
+                  className="w-20 h-20 sm:w-24 sm:h-24 object-contain mb-3 drop-shadow-lg"
+                  style={{
+                    filter: `drop-shadow(0 2px 4px ${logoData.color}33)`,
+                  }}
+                />
+              ) : (
+                <div
+                  className="text-5xl sm:text-6xl mb-3 drop-shadow-lg"
+                  style={{
+                    filter: `drop-shadow(0 2px 4px ${logoData.color}33)`,
+                  }}
+                >
+                  {logoData.emoji}
+                </div>
+              )}
               <h3 className="text-center font-bold text-sm sm:text-base text-gray-900 dark:text-white mb-2">
                 {logoData.name}
               </h3>
