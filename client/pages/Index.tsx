@@ -11,6 +11,7 @@ import { WarehouseHubTimeCard } from "@/components/dashboard/cards/WarehouseHubT
 import { COWUtilizationCard } from "@/components/dashboard/cards/COWUtilizationCard";
 import { EventsAnalysisCard } from "@/components/dashboard/cards/EventsAnalysisCard";
 import { RoyalEBUAnalysisCard } from "@/components/dashboard/cards/RoyalEBUAnalysisCard";
+import { TopEventsMovementCard } from "@/components/dashboard/cards/TopEventsMovementCard";
 import {
   DashboardFilters as DashboardFiltersType,
   NeverMovedCow,
