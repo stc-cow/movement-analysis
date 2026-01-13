@@ -55,11 +55,12 @@ function parseCSVLine(line: string): string[] {
 }
 
 interface Movement {
+  SN: number;
   COW_ID: string;
   From_Location_ID: string;
   To_Location_ID: string;
-  Moved_DateTime?: string;
-  Reached_DateTime?: string;
+  Moved_DateTime: string;
+  Reached_DateTime: string;
   Movement_Type?: string;
   Distance_KM?: number;
   Top_Event?: string;
