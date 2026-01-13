@@ -78,7 +78,7 @@ export function ExecutiveOverviewCard({
         playIndexRef.current = 0;
       }
       setCurrentMonthIndex(playIndexRef.current);
-    }, 6000); // 6000ms = 0.2x speed (5x slower than original 1200ms)
+    }, 1500); // 1500ms = faster playback (4x faster than current)
 
     return () => clearInterval(interval);
   }, [isPlaying, timelineMonths.length]);
