@@ -134,10 +134,15 @@ export function TopEventsMovementCard({
     return topEvents.slice(0, 3);
   }, [topEvents]);
 
-  // Calculate total movements
-  const totalMovements = useMemo(() => {
+  // Calculate total movements for top 10
+  const topTenTotal = useMemo(() => {
     return topEvents.reduce((sum, event) => sum + event.movementCount, 0);
   }, [topEvents]);
+
+  // Calculate total movements across all events
+  const allEventsTotalMovements = useMemo(() => {
+    return calculateAllEventsTotalMovements(movements);
+  }, [movements]);
 
   return (
     <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 md:p-6">
