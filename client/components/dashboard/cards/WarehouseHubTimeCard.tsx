@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSortableTable } from "@/hooks/useSortableTable";
 
 interface WarehouseHubTimeCardProps {
   movements: CowMovementsFact[];
