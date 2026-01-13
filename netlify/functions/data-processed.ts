@@ -368,9 +368,11 @@ const handler: Handler = async () => {
       cowSet.add(m.COW_ID);
       cowMovementCount.set(m.COW_ID, (cowMovementCount.get(m.COW_ID) || 0) + 1);
 
-      // Track vendor for each COW (use the first vendor found)
-      if (m.Vendor && !cowVendorMap.has(m.COW_ID)) {
+      // Track vendor for each COW (prefer real vendors over Unknown)
+      if (m.Vendor && m.Vendor.trim() !== "Unknown") {
         cowVendorMap.set(m.COW_ID, m.Vendor);
+      } else if (!cowVendorMap.has(m.COW_ID)) {
+        cowVendorMap.set(m.COW_ID, m.Vendor || "Unknown");
       }
 
       // Track From Location with coordinates and region
