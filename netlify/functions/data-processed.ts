@@ -1,39 +1,30 @@
 import { Handler } from "@netlify/functions";
 
-interface CacheEntry {
-  data: unknown;
-  timestamp: number;
-  ttl: number;
-}
-
-const cache = new Map<string, CacheEntry>();
-
-function getCached(key: string): unknown | null {
-  const entry = cache.get(key);
-  if (!entry) return null;
-
-  const now = Date.now();
-  if (now - entry.timestamp > entry.ttl) {
-    cache.delete(key);
-    return null;
-  }
-
-  return entry.data;
-}
-
-function setCached(key: string, data: unknown, ttlSeconds: number = 300): void {
-  cache.set(key, {
-    data,
-    timestamp: Date.now(),
-    ttl: ttlSeconds * 1000,
-  });
-}
-
 const FETCH_TIMEOUT = 20000;
 const CACHE_TTL = 300;
 
 const MOVEMENT_DATA_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1539310010&single=true&output=csv";
+
+// Simple in-memory cache
+const cache = new Map<string, { data: unknown; expires: number }>();
+
+function getCache(key: string): unknown | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expires) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCache(key: string, data: unknown): void {
+  cache.set(key, {
+    data,
+    expires: Date.now() + CACHE_TTL * 1000,
+  });
+}
 
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
@@ -63,231 +54,224 @@ function parseCSVLine(line: string): string[] {
   return result;
 }
 
-interface MovementData {
+interface Movement {
   COW_ID: string;
   From_Location_ID: string;
   To_Location_ID: string;
   Movement_Type?: string;
   Distance_KM?: number;
   Top_Event?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
-function parseCSVData(csvText: string): MovementData[] {
+function parseCSVData(csvText: unknown): Movement[] {
+  // Validate input
+  if (typeof csvText !== "string" || !csvText) {
+    console.error("Invalid CSV data type:", typeof csvText);
+    return [];
+  }
+
+  // Check for HTML error responses
   if (
     csvText.includes("<html") ||
     csvText.includes("<HTML") ||
     csvText.includes("<!DOCTYPE")
   ) {
-    throw new Error(
-      "Google Sheets returned HTML instead of CSV. Check if sheet is published.",
-    );
-  }
-
-  const lines = csvText.trim().split("\n");
-
-  if (lines.length < 2) {
+    console.error("Received HTML instead of CSV");
     return [];
   }
 
-  const headerLine = lines[0];
-  const headerCells = parseCSVLine(headerLine);
+  try {
+    const lines = csvText.trim().split("\n");
 
-  const headerLower = headerCells.map((h, idx) => ({
-    original: h,
-    lower: h.toLowerCase().trim(),
-    index: idx,
-  }));
-
-  const cowIdMatch = headerLower.find(
-    (h) =>
-      (h.lower.includes("cow") && h.lower.includes("id")) ||
-      h.lower === "cow" ||
-      h.lower === "cows id",
-  );
-
-  const fromLocationMatch = headerLower.find(
-    (h) =>
-      (h.lower.includes("from") && h.lower.includes("location")) ||
-      h.lower === "origin" ||
-      h.lower === "from",
-  );
-
-  const toLocationMatch = headerLower.find(
-    (h) =>
-      (h.lower.includes("to") && h.lower.includes("location")) ||
-      h.lower === "destination" ||
-      h.lower === "to",
-  );
-
-  const movementTypeMatch = headerLower.find(
-    (h) =>
-      (h.lower.includes("movement") && h.lower.includes("type")) ||
-      h.lower === "type",
-  );
-
-  const distanceMatch = headerLower.find(
-    (h) =>
-      h.lower.includes("distance") ||
-      h.lower === "km" ||
-      h.lower === "distance (km)",
-  );
-
-  const topEventMatch = headerLower.find((h) => h.lower === "top events");
-
-  const cowIdIdx = cowIdMatch?.index ?? 0;
-  const fromLocationIdx = fromLocationMatch?.index ?? 14;
-  const toLocationIdx = toLocationMatch?.index ?? 20;
-  const movementTypeIdx = movementTypeMatch?.index;
-  const distanceIdx = distanceMatch?.index;
-  const topEventIdx = topEventMatch?.index;
-
-  const movements: MovementData[] = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue;
-
-    const cells = parseCSVLine(line);
-    const cowId = cells[cowIdIdx]?.trim() || "";
-
-    if (!cowId) continue;
-
-    const movement: MovementData = {
-      COW_ID: cowId,
-      From_Location_ID: cells[fromLocationIdx]?.trim() || "",
-      To_Location_ID: cells[toLocationIdx]?.trim() || "",
-    };
-
-    if (movementTypeIdx !== undefined) {
-      movement.Movement_Type = cells[movementTypeIdx]?.trim();
+    if (lines.length < 2) {
+      console.warn("CSV has fewer than 2 lines");
+      return [];
     }
 
-    if (distanceIdx !== undefined) {
-      const distVal = parseFloat(cells[distanceIdx]?.trim() || "0");
-      movement.Distance_KM = isNaN(distVal) ? 0 : distVal;
+    const headerLine = lines[0];
+    const headerCells = parseCSVLine(headerLine);
+
+    const headerLower = headerCells.map((h, idx) => ({
+      original: h,
+      lower: h.toLowerCase().trim(),
+      index: idx,
+    }));
+
+    // Find column indices
+    const cowIdIdx =
+      headerLower.find(
+        (h) =>
+          (h.lower.includes("cow") && h.lower.includes("id")) ||
+          h.lower === "cow" ||
+          h.lower === "cows id",
+      )?.index ?? 0;
+
+    const fromLocationIdx =
+      headerLower.find(
+        (h) =>
+          (h.lower.includes("from") && h.lower.includes("location")) ||
+          h.lower === "origin" ||
+          h.lower === "from",
+      )?.index ?? 14;
+
+    const toLocationIdx =
+      headerLower.find(
+        (h) =>
+          (h.lower.includes("to") && h.lower.includes("location")) ||
+          h.lower === "destination" ||
+          h.lower === "to",
+      )?.index ?? 20;
+
+    const movementTypeIdx = headerLower.find(
+      (h) =>
+        (h.lower.includes("movement") && h.lower.includes("type")) ||
+        h.lower === "type",
+    )?.index;
+
+    const distanceIdx = headerLower.find(
+      (h) =>
+        h.lower.includes("distance") ||
+        h.lower === "km" ||
+        h.lower === "distance (km)",
+    )?.index;
+
+    const topEventIdx = headerLower.find((h) => h.lower === "top events")
+      ?.index;
+
+    const movements: Movement[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i]?.trim();
+      if (!line) continue;
+
+      const cells = parseCSVLine(line);
+      const cowId = cells[cowIdIdx]?.trim();
+
+      if (!cowId) continue;
+
+      const movement: Movement = {
+        COW_ID: cowId,
+        From_Location_ID: cells[fromLocationIdx]?.trim() || "",
+        To_Location_ID: cells[toLocationIdx]?.trim() || "",
+      };
+
+      if (movementTypeIdx !== undefined && cells[movementTypeIdx]) {
+        movement.Movement_Type = cells[movementTypeIdx].trim();
+      }
+
+      if (distanceIdx !== undefined && cells[distanceIdx]) {
+        const distVal = parseFloat(cells[distanceIdx].trim());
+        movement.Distance_KM = isNaN(distVal) ? 0 : distVal;
+      }
+
+      if (topEventIdx !== undefined && cells[topEventIdx]) {
+        movement.Top_Event = cells[topEventIdx].trim();
+      }
+
+      movements.push(movement);
     }
 
-    if (topEventIdx !== undefined) {
-      movement.Top_Event = cells[topEventIdx]?.trim();
-    }
-
-    movements.push(movement);
+    return movements;
+  } catch (error) {
+    console.error("Error parsing CSV:", error);
+    return [];
   }
-
-  return movements;
 }
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async () => {
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Cache-Control": "public, max-age=300",
+  };
+
   try {
-    const cacheKey = "processed-data-v2";
-    const cachedData = getCached(cacheKey);
-    if (cachedData) {
+    // Check cache first
+    const cached = getCache("processed-data-v2");
+    if (cached) {
       return {
         statusCode: 200,
-        body: JSON.stringify(cachedData),
+        headers,
+        body: JSON.stringify(cached),
       };
     }
 
-    let csvData: string | null = null;
+    console.log("Fetching data from Google Sheets...");
 
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
-
-      const response = await fetch(MOVEMENT_DATA_CSV_URL, {
-        headers: {
-          "User-Agent": "Mozilla/5.0",
-        },
-        // @ts-ignore - AbortSignal might not be available in all Netlify environments
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (response.ok) {
-        csvData = await response.text();
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-    } catch (e) {
-      const error = e instanceof Error ? e.message : String(e);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: "Failed to fetch movement data",
-          details: error,
-        }),
-      };
-    }
-
-    if (!csvData || csvData.length === 0) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: "No data received from Google Sheets",
-        }),
-      };
-    }
-
-    const rows = parseCSVData(csvData);
-
-    if (rows.length === 0) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: "No valid data rows found in Google Sheet",
-        }),
-      };
-    }
-
-    // Extract unique dimensions
-    const cowIds = new Set(rows.map((m) => m.COW_ID));
-    const locationIds = new Set<string>();
-
-    rows.forEach((m) => {
-      if (m.From_Location_ID) locationIds.add(m.From_Location_ID);
-      if (m.To_Location_ID) locationIds.add(m.To_Location_ID);
+    // Fetch CSV from Google Sheets
+    const response = await fetch(MOVEMENT_DATA_CSV_URL, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
     });
 
+    if (!response.ok) {
+      console.error(`HTTP error: ${response.status}`);
+      return {
+        statusCode: response.status,
+        headers,
+        body: JSON.stringify({
+          error: `Failed to fetch data: HTTP ${response.status}`,
+        }),
+      };
+    }
+
+    const csvText = await response.text();
+    console.log(`Received ${csvText.length} bytes from Google Sheets`);
+
+    // Parse CSV
+    const movements = parseCSVData(csvText);
+
+    if (!movements || movements.length === 0) {
+      console.error("No movements parsed from CSV");
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({
+          error: "No valid movement data found in Google Sheet",
+        }),
+      };
+    }
+
+    console.log(`Parsed ${movements.length} movements`);
+
     // Build dimension arrays
-    const cows = Array.from(cowIds).map((cowId, idx) => ({
-      COW_ID: cowId,
-      index: idx,
-    }));
+    const cowSet = new Set<string>();
+    const locationSet = new Set<string>();
+    const eventSet = new Set<string>();
 
-    const locations = Array.from(locationIds).map((locId, idx) => ({
-      Location_ID: locId,
-      Location_Name: locId,
-      index: idx,
-    }));
-
-    const events = Array.from(
-      new Set(rows.map((m) => m.Top_Event).filter(Boolean)),
-    ).map((event, idx) => ({
-      Event_ID: event,
-      Event_Name: event,
-      index: idx,
-    }));
+    movements.forEach((m) => {
+      cowSet.add(m.COW_ID);
+      if (m.From_Location_ID) locationSet.add(m.From_Location_ID);
+      if (m.To_Location_ID) locationSet.add(m.To_Location_ID);
+      if (m.Top_Event) eventSet.add(m.Top_Event);
+    });
 
     const responseData = {
-      movements: rows,
-      cows,
-      locations,
-      events,
-      totalDistanceKM: rows.reduce((sum, m) => sum + (m.Distance_KM || 0), 0),
+      movements,
+      cows: Array.from(cowSet).map((id) => ({
+        COW_ID: id,
+      })),
+      locations: Array.from(locationSet).map((id) => ({
+        Location_ID: id,
+        Location_Name: id,
+      })),
+      events: Array.from(eventSet).map((id) => ({
+        Event_ID: id,
+        Event_Name: id,
+      })),
+      totalDistanceKM: movements.reduce((sum, m) => sum + (m.Distance_KM || 0), 0),
       timestamp: new Date().toISOString(),
     };
 
-    setCached(cacheKey, responseData, CACHE_TTL);
+    // Cache the response
+    setCache("processed-data-v2", responseData);
 
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=300",
-        "Access-Control-Allow-Origin": "*",
-      },
+      headers,
       body: JSON.stringify(responseData),
     };
   } catch (error) {
@@ -297,10 +281,7 @@ const handler: Handler = async (event, context) => {
 
     return {
       statusCode: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
+      headers,
       body: JSON.stringify({
         error: "Internal server error",
         message: errorMessage,
