@@ -132,13 +132,7 @@ export function TopEventsMovementCard({
       {/* Top 3 Events Logos Section */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {topThree.map((event, index) => {
-          const logoData =
-            EVENT_LOGOS[event.eventName] ||
-            EVENT_LOGOS[
-              Object.keys(EVENT_LOGOS).find((key) =>
-                event.eventName.toLowerCase().includes(key.toLowerCase()),
-              ) || "Riyadh Season"
-            ];
+          const logoData = getLogoForEvent(event.eventName);
 
           return (
             <div
