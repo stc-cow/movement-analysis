@@ -332,6 +332,16 @@ export function ExecutiveOverviewCard({
     ZTE: { color: "#00A500", bgColor: "#E8F5E8" },
   };
 
+  // KPI Card color scheme for 3D styling
+  const KPI_CARD_COLORS = [
+    { borderColor: "border-blue-500", shadowColor: "shadow-blue-200", bgGradient: "from-blue-50 to-white" },
+    { borderColor: "border-purple-500", shadowColor: "shadow-purple-200", bgGradient: "from-purple-50 to-white" },
+    { borderColor: "border-green-500", shadowColor: "shadow-green-200", bgGradient: "from-green-50 to-white" },
+    { borderColor: "border-orange-500", shadowColor: "shadow-orange-200", bgGradient: "from-orange-50 to-white" },
+    { borderColor: "border-pink-500", shadowColor: "shadow-pink-200", bgGradient: "from-pink-50 to-white" },
+    { borderColor: "border-indigo-500", shadowColor: "shadow-indigo-200", bgGradient: "from-indigo-50 to-white" },
+  ];
+
   // Custom X-axis tick component with vendor logo image
   const VendorXAxisTick = (props: any) => {
     const { x, y, payload } = props;
@@ -523,40 +533,43 @@ export function ExecutiveOverviewCard({
         {/* RIGHT PANEL (40%): KPIs + Charts */}
         <div className="w-full lg:w-2/5 flex flex-col gap-3 overflow-y-auto min-h-0">
           {/* KPI Cards - 2×3 Grid */}
-          <div className="grid grid-cols-2 gap-2 flex-shrink-0">
-            {metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm"
-              >
-                <p className="text-gray-700 text-xs font-semibold uppercase tracking-wider">
-                  {metric.label}
-                </p>
-                <p className="text-gray-900 text-lg font-bold mt-1">
-                  {metric.value}
-                </p>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-3 flex-shrink-0">
+            {metrics.map((metric, idx) => {
+              const colors = KPI_CARD_COLORS[idx % KPI_CARD_COLORS.length];
+              return (
+                <div
+                  key={metric.label}
+                  className={`bg-gradient-to-br ${colors.bgGradient} rounded-xl p-4 border-2 ${colors.borderColor} shadow-lg ${colors.shadowColor} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-default`}
+                >
+                  <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
+                    {metric.label}
+                  </p>
+                  <p className="text-gray-900 text-2xl font-extrabold mt-2">
+                    {metric.value}
+                  </p>
+                </div>
+              );
+            })}
           </div>
 
           {/* Active Warehouse & One Time Moved COWs - Matching Total COWs Style */}
-          <div className="grid grid-cols-2 gap-2 flex-shrink-0">
+          <div className="grid grid-cols-2 gap-3 flex-shrink-0">
             {/* One Time Moved COWs Card */}
-            <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
-              <p className="text-gray-700 text-xs font-semibold uppercase tracking-wider">
+            <div className="bg-gradient-to-br from-cyan-50 to-white rounded-xl p-4 border-2 border-cyan-500 shadow-lg shadow-cyan-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-default">
+              <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
                 One Time Moved COWs
               </p>
-              <p className="text-gray-900 text-lg font-bold mt-1">
+              <p className="text-gray-900 text-2xl font-extrabold mt-2">
                 {monthlyKpis.staticCOWs}
               </p>
             </div>
 
             {/* Active Warehouses Card */}
-            <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
-              <p className="text-gray-700 text-xs font-semibold uppercase tracking-wider">
+            <div className="bg-gradient-to-br from-teal-50 to-white rounded-xl p-4 border-2 border-teal-500 shadow-lg shadow-teal-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-default">
+              <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">
                 Active Warehouses
               </p>
-              <p className="text-gray-900 text-lg font-bold mt-1">
+              <p className="text-gray-900 text-2xl font-extrabold mt-2">
                 {summaryStats[0]?.value || 0}
               </p>
             </div>
