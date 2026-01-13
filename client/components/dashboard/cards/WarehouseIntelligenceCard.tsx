@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import {
   Table,
@@ -93,6 +94,16 @@ export function WarehouseIntelligenceCard({
     [warehouses],
   );
 
+  // Colorful bar colors for warehouse charts
+  const WAREHOUSE_COLORS = [
+    "#3b82f6", // Blue
+    "#06b6d4", // Cyan
+    "#10b981", // Green
+    "#f59e0b", // Amber
+    "#ef4444", // Red
+    "#8b5cf6", // Purple
+  ];
+
   return (
     <div className="h-full overflow-y-auto flex flex-col gap-4 p-3 sm:p-4">
       {/* Region Filter */}
@@ -155,10 +166,16 @@ export function WarehouseIntelligenceCard({
               />
               <Bar
                 dataKey="movements"
-                fill="#10b981"
                 radius={[8, 8, 0, 0]}
                 isAnimationActive={false}
-              />
+              >
+                {topOutgoing.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={WAREHOUSE_COLORS[index % WAREHOUSE_COLORS.length]}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -194,10 +211,16 @@ export function WarehouseIntelligenceCard({
               />
               <Bar
                 dataKey="movements"
-                fill="#f59e0b"
                 radius={[8, 8, 0, 0]}
                 isAnimationActive={false}
-              />
+              >
+                {topIncoming.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={WAREHOUSE_COLORS[index % WAREHOUSE_COLORS.length]}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
