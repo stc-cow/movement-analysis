@@ -144,6 +144,36 @@ function parseCSVData(csvText: unknown): Movement[] {
       (h) => h.lower === "top events",
     )?.index;
 
+    // Find datetime columns (typically columns L and N: "Moved Date/Time" and "Reached Date/Time")
+    const movedDateTimeIdx =
+      headerLower.find(
+        (h) =>
+          h.lower.includes("moved") && h.lower.includes("date") &&
+          h.lower.includes("time"),
+      )?.index ?? 12;
+
+    const reachedDateTimeIdx =
+      headerLower.find(
+        (h) =>
+          h.lower.includes("reached") && h.lower.includes("date") &&
+          h.lower.includes("time"),
+      )?.index ?? 14;
+
+    // Find sub-location columns
+    const fromSubLocIdx =
+      headerLower.find(
+        (h) =>
+          h.lower.includes("from") && h.lower.includes("sub") &&
+          h.lower.includes("location"),
+      )?.index;
+
+    const toSubLocIdx =
+      headerLower.find(
+        (h) =>
+          h.lower.includes("to") && h.lower.includes("sub") &&
+          h.lower.includes("location"),
+      )?.index;
+
     const movements: Movement[] = [];
 
     for (let i = 1; i < lines.length; i++) {
@@ -160,6 +190,26 @@ function parseCSVData(csvText: unknown): Movement[] {
         From_Location_ID: cells[fromLocationIdx]?.trim() || "",
         To_Location_ID: cells[toLocationIdx]?.trim() || "",
       };
+
+      // Add datetime fields
+      const movedDt = cells[movedDateTimeIdx]?.trim();
+      if (movedDt) {
+        movement.Moved_DateTime = movedDt;
+      }
+
+      const reachedDt = cells[reachedDateTimeIdx]?.trim();
+      if (reachedDt) {
+        movement.Reached_DateTime = reachedDt;
+      }
+
+      // Add sub-location fields
+      if (fromSubLocIdx !== undefined) {
+        movement.From_Sub_Location = cells[fromSubLocIdx]?.trim();
+      }
+
+      if (toSubLocIdx !== undefined) {
+        movement.To_Sub_Location = cells[toSubLocIdx]?.trim();
+      }
 
       if (movementTypeIdx !== undefined && cells[movementTypeIdx]) {
         movement.Movement_Type = cells[movementTypeIdx].trim();
