@@ -49,6 +49,17 @@ export function BucketCowsModal({
       );
   }, [cowIds, allTableData, searchTerm]);
 
+  // Set up table sorting
+  const {
+    sortedData: sortedBucketData,
+    setSortColumn,
+    getSortIndicator,
+  } = useSortableTable({
+    data: bucketData,
+    initialSortColumn: "avgOffAirIdleDays",
+    initialSortDirection: "desc",
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[80vh] overflow-hidden flex flex-col">
