@@ -47,7 +47,7 @@ const EVENT_LOGOS: Record<string, EventLogo> = {
   "jeddah season": {
     name: "Jeddah Season",
     emoji: "🌊",
-    color: "#00a9d5",
+    color: "#1Bced8",
   },
   hajj: {
     name: "Hajj",
