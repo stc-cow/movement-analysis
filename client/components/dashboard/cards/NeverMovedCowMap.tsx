@@ -92,7 +92,10 @@ export function NeverMovedCowMap({
             .map(
               (item) =>
                 `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <div style="width: 24px; height: 30px; background-color: ${item.color}; border-radius: 50% 50% 50% 0; border: 1px solid white; transform: rotate(-45deg); position: relative;"></div>
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+              <path d="M 8 1 C 12.4 1 16 4.6 16 8.5 C 16 13 8 18.5 8 18.5 C 8 18.5 0 13 0 8.5 C 0 4.6 3.6 1 8 1 Z" fill="${item.color}"/>
+              <circle cx="8" cy="7.5" r="2.5" fill="white"/>
+            </svg>
             <span style="color: #6b7280;">${item.range}</span>
           </div>`,
             )
