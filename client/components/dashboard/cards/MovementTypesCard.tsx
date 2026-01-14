@@ -137,7 +137,18 @@ export function MovementTypesCard({
                   borderRadius: "8px",
                 }}
               />
-              <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              <Bar
+                dataKey="count"
+                fill="#3b82f6"
+                radius={[8, 8, 0, 0]}
+                label={{
+                  position: "top",
+                  fill: "#374151",
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  formatter: (value: number) => value.toString(),
+                }}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
