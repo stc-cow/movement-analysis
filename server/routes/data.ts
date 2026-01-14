@@ -612,13 +612,15 @@ function processData(rows: any[]) {
  */
 const processedDataHandler: RequestHandler = async (req, res) => {
   try {
-    // Check cache first - reduces load on APIs (skip in dev to ensure fresh data)
+    // Check cache first - reduces load on APIs (skip in dev and when cache busting)
     // Add version to cache key to bust old cached values
     const cacheKey = "processed-data-v2";
     const shouldUseCache = process.env.NODE_ENV === "production";
-    const cachedData = shouldUseCache ? getCached(cacheKey) : null;
+    const hasCacheBustParam = req.query.nocache === "true" || req.query.t; // Allow cache busting
+    const cachedData = shouldUseCache && !hasCacheBustParam ? getCached(cacheKey) : null;
     if (cachedData) {
       console.log(`✓ Serving cached data for processed-data`);
+      res.set("Cache-Control", "public, max-age=300");
       return res.json(cachedData);
     }
 
