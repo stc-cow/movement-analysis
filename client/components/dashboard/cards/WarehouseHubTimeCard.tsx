@@ -119,24 +119,24 @@ export function WarehouseHubTimeCard({
             <defs>
               {/* Gradient definitions for each bucket */}
               <linearGradient id="gradient0" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#60a5fa" stopOpacity={1} />
-                <stop offset="100%" stopColor="#1e40af" stopOpacity={1} />
+                <stop offset="0%" stopColor="#FF375E" stopOpacity={1} />
+                <stop offset="100%" stopColor="#CC2C4B" stopOpacity={1} />
               </linearGradient>
               <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#22d3ee" stopOpacity={1} />
-                <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
+                <stop offset="0%" stopColor="#1Bced8" stopOpacity={1} />
+                <stop offset="100%" stopColor="#159CA3" stopOpacity={1} />
               </linearGradient>
               <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
-                <stop offset="100%" stopColor="#047857" stopOpacity={1} />
+                <stop offset="0%" stopColor="#4F008C" stopOpacity={1} />
+                <stop offset="100%" stopColor="#3A0066" stopOpacity={1} />
               </linearGradient>
               <linearGradient id="gradient3" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
-                <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+                <stop offset="0%" stopColor="#FF6F8A" stopOpacity={1} />
+                <stop offset="100%" stopColor="#CC2C4B" stopOpacity={1} />
               </linearGradient>
               <linearGradient id="gradient4" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
-                <stop offset="100%" stopColor="#dc2626" stopOpacity={1} />
+                <stop offset="0%" stopColor="#5FE0E7" stopOpacity={1} />
+                <stop offset="100%" stopColor="#159CA3" stopOpacity={1} />
               </linearGradient>
 
               {/* Shadow filter for 3D effect */}
@@ -167,8 +167,8 @@ export function WarehouseHubTimeCard({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#60a5fa" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#1e40af" stopOpacity={1} />
+                    <stop offset="0%" stopColor="#FF375E" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#CC2C4B" stopOpacity={1} />
                   </linearGradient>
                   <linearGradient
                     id="gradient1"
@@ -177,8 +177,8 @@ export function WarehouseHubTimeCard({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#22d3ee" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#0891b2" stopOpacity={1} />
+                    <stop offset="0%" stopColor="#1Bced8" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#159CA3" stopOpacity={1} />
                   </linearGradient>
                   <linearGradient
                     id="gradient2"
@@ -187,8 +187,8 @@ export function WarehouseHubTimeCard({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#34d399" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#047857" stopOpacity={1} />
+                    <stop offset="0%" stopColor="#4F008C" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#3A0066" stopOpacity={1} />
                   </linearGradient>
                   <linearGradient
                     id="gradient3"
@@ -197,8 +197,8 @@ export function WarehouseHubTimeCard({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+                    <stop offset="0%" stopColor="#FF6F8A" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#CC2C4B" stopOpacity={1} />
                   </linearGradient>
                   <linearGradient
                     id="gradient4"
@@ -207,8 +207,8 @@ export function WarehouseHubTimeCard({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#dc2626" stopOpacity={1} />
+                    <stop offset="0%" stopColor="#5FE0E7" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#159CA3" stopOpacity={1} />
                   </linearGradient>
                 </defs>
 
