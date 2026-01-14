@@ -442,12 +442,25 @@ function processData(rows: any[]) {
 
     // Add movement with standard field names
     const distanceValue = parseFloat(row.distance_km) || 0;
+
+    // Create Location IDs - use full normalized location name (no truncation to prevent collisions)
+    const normalizeLocationName = (name: string): string => {
+      return name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "-") // Replace special chars with dash
+        .replace(/-+/g, "-") // Collapse multiple dashes
+        .replace(/^-+|-+$/g, ""); // Remove leading/trailing dashes
+    };
+
+    const fromLocId = `LOC-${normalizeLocationName(from_loc)}`;
+    const toLocId = `LOC-${normalizeLocationName(to_loc)}`;
+
     movements.push({
       SN: idx + 1,
       COW_ID: row.cow_id,
-      From_Location_ID: `LOC-${from_loc.replace(/\s+/g, "-").substring(0, 20)}`,
+      From_Location_ID: fromLocId,
       From_Sub_Location: row.from_sub_location || undefined,
-      To_Location_ID: `LOC-${to_loc.replace(/\s+/g, "-").substring(0, 20)}`,
+      To_Location_ID: toLocId,
       To_Sub_Location: row.to_sub_location || undefined,
       Moved_DateTime: parseDate(row.moved_datetime),
       Reached_DateTime: parseDate(row.reached_datetime),
