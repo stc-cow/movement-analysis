@@ -172,7 +172,7 @@ export function EventsAnalysisCard({
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4 overflow-hidden flex flex-col"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#10b981",
+            borderTopColor: "#1Bced8",
           }}
         >
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
