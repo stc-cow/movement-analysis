@@ -253,11 +253,11 @@ export function ExecutiveOverviewCard({
 
   // Color mapping for event types
   const EVENT_TYPE_COLOR_MAP: Record<string, string> = {
-    Event: "#3b82f6", // Blue
-    Other: "#6b7280", // Gray
-    "Mega project": "#ec4899", // Pink
-    Royal: "#8b5cf6", // Purple
-    WH: "#10b981", // Green
+    Event: "#FF375E", // Red (Base)
+    Other: "#1Bced8", // Teal (Base)
+    "Mega project": "#4F008C", // Purple (Base)
+    Royal: "#FF6F8A", // Red (Light)
+    WH: "#5FE0E7", // Teal (Light)
   };
 
   // Calculate EBU Classification data
