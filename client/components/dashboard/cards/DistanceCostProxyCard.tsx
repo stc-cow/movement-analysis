@@ -133,7 +133,7 @@ export function DistanceCostProxyCard({
               <Line
                 type="monotone"
                 dataKey="distance"
-                stroke="#3b82f6"
+                stroke="#1Bced8"
                 strokeWidth={2}
               />
             </LineChart>
