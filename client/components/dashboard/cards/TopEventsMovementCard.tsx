@@ -85,6 +85,12 @@ const EVENT_LOGOS: Record<string, EventLogo> = {
       "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F153f48735c454e7fa35cb585f06eecf3?format=webp&width=800",
     color: "#d4a574",
   },
+  "winter season": {
+    name: "Winter Season",
+    imageUrl:
+      "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F1b1cfabe1c404fc28093dfff8c5614f2?format=webp&width=800",
+    color: "#06b6d4",
+  },
 };
 
 // Helper function to find matching logo for an event
