@@ -191,7 +191,18 @@ export function DistanceCostProxyCard({
                 borderRadius: "8px",
               }}
             />
-            <Bar dataKey="distance" fill="#a855f7" radius={[8, 8, 0, 0]} />
+            <Bar
+              dataKey="distance"
+              fill="#a855f7"
+              radius={[8, 8, 0, 0]}
+              label={{
+                position: "top",
+                fill: "#374151",
+                fontSize: 10,
+                fontWeight: "bold",
+                formatter: (value: number) => value.toString(),
+              }}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
