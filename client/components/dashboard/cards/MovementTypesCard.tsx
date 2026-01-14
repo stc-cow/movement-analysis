@@ -170,21 +170,21 @@ export function MovementTypesCard({
             <Line
               type="monotone"
               dataKey="Full"
-              stroke="#3b82f6"
+              stroke="#FF375E"
               strokeWidth={2}
               dot={false}
             />
             <Line
               type="monotone"
               dataKey="Half"
-              stroke="#a855f7"
+              stroke="#1Bced8"
               strokeWidth={2}
               dot={false}
             />
             <Line
               type="monotone"
               dataKey="Zero"
-              stroke="#6b7280"
+              stroke="#4F008C"
               strokeWidth={2}
               dot={false}
             />
