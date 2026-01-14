@@ -201,10 +201,10 @@ export function WarehouseLocationMap({
 
 function getOwnerColor(owner: string): string {
   const colors: Record<string, string> = {
-    STC: "#3A0CA3",
-    ACES: "#5F2EEA",
-    Madaf: "#06B6D4",
-    HOI: "#F97316",
+    STC: "#4F008C", // Purple (Base)
+    ACES: "#FF375E", // Red (Base)
+    Madaf: "#1Bced8", // Teal (Base)
+    HOI: "#FF6F8A", // Red (Light)
   };
-  return colors[owner] || "#6366F1";
+  return colors[owner] || "#5FE0E7";
 }
