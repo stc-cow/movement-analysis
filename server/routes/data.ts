@@ -369,6 +369,19 @@ function classifyEbuRoyal(flag: string | undefined): {
 }
 
 /**
+ * Normalize location name to create consistent Location IDs
+ * Converts to lowercase, removes special characters, collapses dashes
+ * This prevents Location ID collisions from truncation
+ */
+function normalizeLocationName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "-") // Replace special chars with dash
+    .replace(/-+/g, "-") // Collapse multiple dashes
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing dashes
+}
+
+/**
  * Process CSV data into structured format
  * Uses the standardized column mapping: A-AE with snake_case field names
  */
