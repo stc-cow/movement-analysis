@@ -114,6 +114,36 @@ function normalizeLocationName(name: string): string {
     .replace(/^-+|-+$/g, ""); // Remove leading/trailing dashes
 }
 
+/**
+ * Normalize region names to standard values
+ * Must match the server-side implementation in server/routes/data.ts
+ */
+function normalizeRegion(
+  region: string,
+): "WEST" | "EAST" | "CENTRAL" | "SOUTH" {
+  const normalized = region?.toUpperCase().trim() || "";
+  if (
+    normalized.includes("WEST") ||
+    normalized.includes("MAKKAH") ||
+    normalized.includes("MEDINA")
+  )
+    return "WEST";
+  if (
+    normalized.includes("EAST") ||
+    normalized.includes("EASTERN") ||
+    normalized.includes("DAMMAM")
+  )
+    return "EAST";
+  if (normalized.includes("CENTRAL") || normalized.includes("RIYADH"))
+    return "CENTRAL";
+  if (normalized.includes("SOUTH") || normalized.includes("ASIR"))
+    return "SOUTH";
+  // Map NORTH/HAIL to WEST (Western region)
+  if (normalized.includes("NORTH") || normalized.includes("HAIL"))
+    return "WEST";
+  return "CENTRAL";
+}
+
 function parseCSVData(csvText: unknown): Movement[] {
   // Validate input
   if (typeof csvText !== "string" || !csvText) {
