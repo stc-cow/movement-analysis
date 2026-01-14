@@ -73,7 +73,19 @@ export function WarehouseIntelligence({
                   borderRadius: "8px",
                 }}
               />
-              <Bar dataKey="movements" fill="#10b981" radius={[0, 8, 8, 0]} />
+              <Bar
+                dataKey="movements"
+                fill="#10b981"
+                radius={[0, 8, 8, 0]}
+                label={{
+                  position: "right",
+                  fill: "#374151",
+                  fontSize: 9,
+                  fontWeight: "bold",
+                  formatter: (value: number) => value.toString(),
+                  offset: 5,
+                }}
+              />
             </BarChart>
           </ResponsiveContainer>
 
