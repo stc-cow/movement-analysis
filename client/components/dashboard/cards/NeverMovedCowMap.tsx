@@ -8,42 +8,40 @@ interface NeverMovedCowMapProps {
   onCowSelected?: (cow: NeverMovedCow) => void;
 }
 
-// Create custom icons based on years on-air bucket
+// Create custom pin icons based on years on-air bucket
 const createIcon = (yearsOnAir: number) => {
   // Determine color based on years on-air bucket (matching chart colors)
   let color: string;
-  let bgColor: string;
 
   if (yearsOnAir <= 3) {
     color = "#FF375E"; // Red (Base) - 1-3 Years
-    bgColor = "#FFE8ED";
   } else if (yearsOnAir <= 6) {
     color = "#1Bced8"; // Teal (Base) - 4-6 Years
-    bgColor = "#E0F7FB";
   } else if (yearsOnAir <= 9) {
     color = "#4F008C"; // Purple (Base) - 7-9 Years
-    bgColor = "#F3E5FF";
   } else if (yearsOnAir <= 12) {
     color = "#FF6F8A"; // Red (Light) - 10-12 Years
-    bgColor = "#FFE8ED";
   } else {
-    color = "#5FE0E7"; // Teal (Light) - 12+ Years
-    bgColor = "#E0F7FB";
+    color = "#7A3DB8"; // Purple (Light) - 12+ Years
   }
 
+  // Create a pin-shaped SVG marker
   const svgString = `
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="16" cy="16" r="14" fill="${bgColor}" stroke="${color}" stroke-width="2"/>
-      <circle cx="16" cy="16" r="6" fill="${color}"/>
-      <circle cx="16" cy="16" r="3" fill="white"/>
+    <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Pin body -->
+      <path d="M 20 2 C 30.6274 2 39 10.3726 39 21 C 39 32.5 20 46 20 46 C 20 46 1 32.5 1 21 C 1 10.3726 9.3726 2 20 2 Z" fill="${color}"/>
+      <!-- Pin outline -->
+      <path d="M 20 2 C 30.6274 2 39 10.3726 39 21 C 39 32.5 20 46 20 46 C 20 46 1 32.5 1 21 C 1 10.3726 9.3726 2 20 2 Z" stroke="white" stroke-width="1.5" fill="none"/>
+      <!-- Inner circle -->
+      <circle cx="20" cy="18" r="6" fill="white" opacity="0.9"/>
     </svg>
   `;
 
   return L.icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(svgString)}`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -16],
+    iconSize: [40, 48],
+    iconAnchor: [20, 48], // Point of the pin touches the location
+    popupAnchor: [0, -48],
   });
 };
 
