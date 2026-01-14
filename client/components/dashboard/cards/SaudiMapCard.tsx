@@ -127,17 +127,17 @@ export function SaudiMapCard({
       {
         name: "Full",
         value: currentMonth.movementCounts.Full,
-        fill: "#3b82f6",
+        fill: "#FF375E",
       },
       {
         name: "Half",
         value: currentMonth.movementCounts.Half,
-        fill: "#a855f7",
+        fill: "#1Bced8",
       },
       {
         name: "Zero",
         value: currentMonth.movementCounts.Zero,
-        fill: "#6b7280",
+        fill: "#4F008C",
       },
     ].filter((item) => item.value > 0);
   }, [currentMonth]);
