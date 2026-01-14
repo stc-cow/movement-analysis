@@ -347,7 +347,7 @@ export function MovementHeatMapCard({
         {
           type: "mappoint",
           name: "Origin Locations",
-          color: "#a855f7",
+          color: "#FF375E",
           data: originPoints,
           showInLegend: true,
           tooltip: {
@@ -366,7 +366,7 @@ export function MovementHeatMapCard({
         {
           type: "mappoint",
           name: "Destination Locations",
-          color: "#ec4899",
+          color: "#1Bced8",
           data: destinationPoints,
           showInLegend: true,
           tooltip: {
@@ -394,7 +394,7 @@ export function MovementHeatMapCard({
               "separator",
               "viewFullscreen",
             ],
-            symbolFill: "#a855f7",
+            symbolFill: "#FF375E",
           },
         },
         csv: {
