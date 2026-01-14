@@ -579,7 +579,7 @@ export function ExecutiveOverviewCard({
               className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow"
               style={{
                 borderTopWidth: "4px",
-                borderTopColor: "#10b981",
+                borderTopColor: "#4F008C",
               }}
             >
               <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-1">
