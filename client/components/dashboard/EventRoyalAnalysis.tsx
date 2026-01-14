@@ -192,7 +192,7 @@ export function EventRoyalAnalysis({
                   {vipData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={index === 0 ? "#8b5cf6" : "#cbd5e1"}
+                      fill={index === 0 ? "#4F008C" : "#cbd5e1"}
                     />
                   ))}
                 </Pie>
