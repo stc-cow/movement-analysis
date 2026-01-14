@@ -47,7 +47,10 @@ const createIcon = (yearsOnAir: number) => {
   });
 };
 
-export function NeverMovedCowMap({ cows, onCowSelected }: NeverMovedCowMapProps) {
+export function NeverMovedCowMap({
+  cows,
+  onCowSelected,
+}: NeverMovedCowMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
