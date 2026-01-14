@@ -187,7 +187,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#8b5cf6",
+            borderTopColor: "#4F008C",
           }}
         >
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -202,7 +202,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#fbbf24",
+            borderTopColor: "#FF375E",
           }}
         >
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -217,7 +217,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#6b7280",
+            borderTopColor: "#1Bced8",
           }}
         >
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -232,7 +232,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#8b5cf6",
+            borderTopColor: "#4F008C",
           }}
         >
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -246,7 +246,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#fbbf24",
+            borderTopColor: "#FF375E",
           }}
         >
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
@@ -260,7 +260,7 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
           className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3"
           style={{
             borderTopWidth: "4px",
-            borderTopColor: "#6b7280",
+            borderTopColor: "#1Bced8",
           }}
         >
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
