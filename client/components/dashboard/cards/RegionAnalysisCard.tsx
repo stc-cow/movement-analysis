@@ -183,6 +183,13 @@ export function RegionAnalysisCard({
                   fill="#1Bced8"
                   radius={[8, 8, 0, 0]}
                   animationDuration={600}
+                  label={{
+                    position: "top",
+                    fill: "#374151",
+                    fontSize: 10,
+                    fontWeight: "bold",
+                    formatter: (value: number) => value.toString(),
+                  }}
                 />
               </BarChart>
             </ResponsiveContainer>
