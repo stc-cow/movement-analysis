@@ -424,7 +424,7 @@ export function ExecutiveOverviewCard({
                 <span className="text-lg">📅</span>
                 <span>
                   {currentMonthIndex === -1
-                    ? "All Months (2021-2025)"
+                    ? "All Months"
                     : `${timelineMonths[currentMonthIndex]?.month} ${timelineMonths[currentMonthIndex]?.year}`}
                 </span>
               </div>
