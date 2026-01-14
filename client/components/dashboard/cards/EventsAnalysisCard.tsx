@@ -18,14 +18,14 @@ interface EventsAnalysisCardProps {
 }
 
 const EVENT_COLORS: Record<string, string> = {
-  Hajj: "#f59e0b",
-  Umrah: "#06b6d4",
-  Royal: "#8b5cf6",
-  "Mega Project": "#ec4899",
-  "National Event": "#10b981",
-  Seasonal: "#14b8a6",
-  Event: "#3b82f6",
-  "Normal Coverage": "#6b7280",
+  Hajj: "#FF375E", // Red (Base)
+  Umrah: "#1Bced8", // Teal (Base)
+  Royal: "#4F008C", // Purple (Base)
+  "Mega Project": "#FF6F8A", // Red (Light)
+  "National Event": "#5FE0E7", // Teal (Light)
+  Seasonal: "#7A3DB8", // Purple (Light)
+  Event: "#CC2C4B", // Red (Dark)
+  "Normal Coverage": "#159CA3", // Teal (Dark)
 };
 
 // Normalize event type names
