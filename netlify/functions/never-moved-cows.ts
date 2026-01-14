@@ -3,6 +3,8 @@ import { Handler } from "@netlify/functions";
 const MOVEMENT_DATA_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1539310010&single=true&output=csv";
 
+const FETCH_TIMEOUT = 60000; // 60 seconds - allows time for Google Sheets to respond
+
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = "";
