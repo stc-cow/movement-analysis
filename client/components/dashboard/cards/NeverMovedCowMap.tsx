@@ -72,6 +72,36 @@ export function NeverMovedCowMap({ cows, onCowSelected }: NeverMovedCowMapProps)
     map.setMaxBounds(saudiaBounds);
     map.fitBounds(saudiaBounds);
 
+    // Add legend
+    const legend = L.control({ position: "bottomright" });
+    legend.onAdd = () => {
+      const div = L.DomUtil.create("div", "info legend");
+      const legendData = [
+        { range: "1-3 Years", color: "#FF375E" },
+        { range: "4-6 Years", color: "#1Bced8" },
+        { range: "7-9 Years", color: "#4F008C" },
+        { range: "10-12 Years", color: "#FF6F8A" },
+        { range: "12+ Years", color: "#5FE0E7" },
+      ];
+
+      div.innerHTML = `
+        <div style="background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 12px;">
+          <div style="font-weight: bold; margin-bottom: 8px; color: #374151;">Years On-Air</div>
+          ${legendData
+            .map(
+              (item) =>
+                `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <div style="width: 16px; height: 16px; border-radius: 50%; background-color: ${item.color}; border: 2px solid ${item.color};"></div>
+            <span style="color: #6b7280;">${item.range}</span>
+          </div>`,
+            )
+            .join("")}
+        </div>
+      `;
+      return div;
+    };
+    legend.addTo(map);
+
     mapRef.current = map;
 
     return () => {
