@@ -148,7 +148,19 @@ export function MovementAnalytics({
                   borderRadius: "8px",
                 }}
               />
-              <Bar dataKey="count" fill="#4F008C" radius={[0, 8, 8, 0]} />
+              <Bar
+                dataKey="count"
+                fill="#4F008C"
+                radius={[0, 8, 8, 0]}
+                label={{
+                  position: "right",
+                  fill: "#374151",
+                  fontSize: 9,
+                  fontWeight: "bold",
+                  formatter: (value: number) => value.toString(),
+                  offset: 5,
+                }}
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
