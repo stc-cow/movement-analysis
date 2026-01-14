@@ -84,7 +84,17 @@ export function COWUtilizationCard({ cowMetrics }: COWUtilizationCardProps) {
                 borderRadius: "8px",
               }}
             />
-            <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+            <Bar
+              dataKey="count"
+              radius={[8, 8, 0, 0]}
+              label={{
+                position: "top",
+                fill: "#374151",
+                fontSize: 10,
+                fontWeight: "bold",
+                formatter: (value: number) => value.toString(),
+              }}
+            >
               {histogramData.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={BUCKET_COLORS[index]} />
               ))}
