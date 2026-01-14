@@ -99,8 +99,9 @@ export function NeverMovedCowMap({ cows, onCowSelected }: NeverMovedCowMapProps)
 
     cows.forEach((cow) => {
       if (cow.Latitude && cow.Longitude) {
+        const yearsOnAir = (cow.Days_On_Air || 0) / 365;
         const marker = L.marker([cow.Latitude, cow.Longitude], {
-          icon: createIcon(cow.Status),
+          icon: createIcon(yearsOnAir),
         });
 
         // Add click handler to show full details
