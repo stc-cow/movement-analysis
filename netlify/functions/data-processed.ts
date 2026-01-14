@@ -182,17 +182,27 @@ function parseCSVData(csvText: unknown): Movement[] {
       const ebuRoyalFlag = cells[4]?.trim();
       const { isRoyal, isEBU, category } = classifyEbuRoyal(ebuRoyalFlag);
 
+      // Extract location names and create normalized Location IDs
+      const fromLocationName = cells[16]?.trim() || cells[14]?.trim() || "";
+      const toLocationName = cells[20]?.trim() || cells[18]?.trim() || "";
+      const fromLocationId = fromLocationName ? `LOC-${normalizeLocationName(fromLocationName)}` : "";
+      const toLocationId = toLocationName ? `LOC-${normalizeLocationName(toLocationName)}` : "";
+
       const movement: Movement = {
         SN: serialNumber++,
         COW_ID: cowId,
-        From_Location_ID: cells[16]?.trim() || cells[14]?.trim() || "",
-        To_Location_ID: cells[20]?.trim() || cells[18]?.trim() || "",
+        From_Location_ID: fromLocationId,
+        To_Location_ID: toLocationId,
         Moved_DateTime: movedDt,
         Reached_DateTime: reachedDt,
         Is_Royal: isRoyal,
         Is_EBU: isEBU,
         EbuRoyalCategory: category,
       };
+
+      // Store location names for later use
+      (movement as any).From_Location_Name = fromLocationName;
+      (movement as any).To_Location_Name = toLocationName;
 
       // Add optional fields
       if (cells[17]) movement.From_Sub_Location = cells[17].trim();
