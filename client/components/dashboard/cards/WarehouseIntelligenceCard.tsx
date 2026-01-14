@@ -249,6 +249,13 @@ export function WarehouseIntelligenceCard({
                 dataKey="movements"
                 radius={[8, 8, 0, 0]}
                 isAnimationActive={false}
+                label={{
+                  position: "top",
+                  fill: "#374151",
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  formatter: (value: number) => value.toString(),
+                }}
               >
                 {topIncoming.map((_, index) => (
                   <Cell
