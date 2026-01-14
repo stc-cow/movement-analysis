@@ -337,7 +337,7 @@ export function WarehouseIntelligenceCard({
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: "#06B6D4" }}
+              style={{ backgroundColor: "#1Bced8" }}
             />
             <span className="text-gray-700 dark:text-gray-300">Madaf</span>
           </div>
