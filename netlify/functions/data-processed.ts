@@ -342,9 +342,9 @@ function parseCSVData(csvText: unknown): Movement[] {
         movement.Top_Event = cells[11].trim();
       }
 
-      // Regions
-      if (cells[26]) movement.Region_From = cells[26].trim();
-      if (cells[27]) movement.Region_To = cells[27].trim();
+      // Regions (normalize to standard region values)
+      if (cells[26]) movement.Region_From = normalizeRegion(cells[26].trim());
+      if (cells[27]) movement.Region_To = normalizeRegion(cells[27].trim());
 
       // Vendor (Column AC - index 28)
       const vendorRaw = cells[28]?.trim() || "";
