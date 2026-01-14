@@ -434,19 +434,43 @@ function processData(rows: any[]) {
     const from_loc = hasFromLocation ? row.from_location.trim() : "Unknown";
     const to_loc = hasToLocation ? row.to_location.trim() : "Unknown";
 
-    // Safely parse dates
+    // Safely parse dates - preserve timezone information properly
     const parseDate = (dateStr: string): string => {
       if (!dateStr || dateStr.trim() === "") {
-        return new Date().toISOString();
+        // Return a far-past date instead of today to avoid confusion
+        return "1900-01-01T00:00:00Z";
       }
       try {
-        const date = new Date(dateStr);
+        // Try parsing as ISO first, then as other common formats
+        let date: Date;
+        const trimmed = dateStr.trim();
+
+        // Try ISO format first
+        if (trimmed.includes("T")) {
+          date = new Date(trimmed);
+        } else if (trimmed.includes("-")) {
+          // YYYY-MM-DD format - add time to be safe
+          date = new Date(trimmed + "T00:00:00Z");
+        } else if (trimmed.includes("/")) {
+          // M/D/YYYY or MM/DD/YYYY format
+          date = new Date(trimmed);
+        } else {
+          // Fallback
+          date = new Date(trimmed);
+        }
+
         if (isNaN(date.getTime())) {
-          return new Date().toISOString();
+          if (idx < 10) {
+            console.warn(`⚠️  Row ${idx}: Invalid date format "${dateStr}"`);
+          }
+          return "1900-01-01T00:00:00Z";
         }
         return date.toISOString();
       } catch (e) {
-        return new Date().toISOString();
+        if (idx < 10) {
+          console.warn(`⚠️  Row ${idx}: Date parsing error for "${dateStr}": ${e}`);
+        }
+        return "1900-01-01T00:00:00Z";
       }
     };
 
