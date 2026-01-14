@@ -203,7 +203,7 @@ export function EventsAnalysisCard({
                 />
                 <Bar
                   dataKey="avgDistance"
-                  fill="#3b82f6"
+                  fill="#1Bced8"
                   radius={[8, 8, 0, 0]}
                 />
               </BarChart>
