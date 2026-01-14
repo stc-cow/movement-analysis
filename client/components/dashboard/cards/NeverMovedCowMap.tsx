@@ -8,10 +8,28 @@ interface NeverMovedCowMapProps {
   onCowSelected?: (cow: NeverMovedCow) => void;
 }
 
-// Create custom icons for ON-AIR and OFF-AIR markers
-const createIcon = (status: "ON-AIR" | "OFF-AIR") => {
-  const color = status === "ON-AIR" ? "#22c55e" : "#ef4444";
-  const bgColor = status === "ON-AIR" ? "#dcfce7" : "#fee2e2";
+// Create custom icons based on years on-air bucket
+const createIcon = (yearsOnAir: number) => {
+  // Determine color based on years on-air bucket (matching chart colors)
+  let color: string;
+  let bgColor: string;
+
+  if (yearsOnAir <= 3) {
+    color = "#FF375E"; // Red (Base) - 1-3 Years
+    bgColor = "#FFE8ED";
+  } else if (yearsOnAir <= 6) {
+    color = "#1Bced8"; // Teal (Base) - 4-6 Years
+    bgColor = "#E0F7FB";
+  } else if (yearsOnAir <= 9) {
+    color = "#4F008C"; // Purple (Base) - 7-9 Years
+    bgColor = "#F3E5FF";
+  } else if (yearsOnAir <= 12) {
+    color = "#FF6F8A"; // Red (Light) - 10-12 Years
+    bgColor = "#FFE8ED";
+  } else {
+    color = "#5FE0E7"; // Teal (Light) - 12+ Years
+    bgColor = "#E0F7FB";
+  }
 
   const svgString = `
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
