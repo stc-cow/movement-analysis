@@ -125,7 +125,7 @@ export function EventsAnalysisCard({
           }}
         >
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
-            Movements by Event Type
+            Movement by Category
           </h3>
           {totalEventsData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -176,7 +176,7 @@ export function EventsAnalysisCard({
           }}
         >
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
-            Average Distance by Event Type
+            Average Distance by category Type
           </h3>
           {distanceData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
