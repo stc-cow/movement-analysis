@@ -137,7 +137,7 @@ export function MovementAnalytics({
                   borderRadius: "8px",
                 }}
               />
-              <Bar dataKey="count" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
+              <Bar dataKey="count" fill="#4F008C" radius={[0, 8, 8, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
