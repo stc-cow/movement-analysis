@@ -117,18 +117,21 @@ function getLogoForEvent(eventName: string): EventLogo {
   };
 }
 
-// Bar colors for chart
+// Bar colors for chart - follows global color palette
+// Base (3): Red, Teal, Purple
+// Light (3): Red, Teal, Purple variations
+// Dark (3): Red, Teal, Purple variations
 const BAR_COLORS = [
-  "#3b82f6", // Blue
-  "#06b6d4", // Cyan
-  "#10b981", // Green
-  "#f59e0b", // Amber
-  "#ef4444", // Red
-  "#8b5cf6", // Purple
-  "#ec4899", // Pink
-  "#14b8a6", // Teal
-  "#f97316", // Orange
-  "#6366f1", // Indigo
+  "#FF375E", // Red (Base)
+  "#1Bced8", // Teal (Base)
+  "#4F008C", // Purple (Base)
+  "#FF6F8A", // Red (Light)
+  "#5FE0E7", // Teal (Light)
+  "#7A3DB8", // Purple (Light)
+  "#CC2C4B", // Red (Dark)
+  "#159CA3", // Teal (Dark)
+  "#3A0066", // Purple (Dark)
+  "#FF375E", // Red (Base) - cycle repeats
 ];
 
 export function TopEventsMovementCard({
