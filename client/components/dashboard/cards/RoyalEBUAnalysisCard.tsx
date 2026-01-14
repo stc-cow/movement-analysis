@@ -70,9 +70,9 @@ export function RoyalEBUAnalysisCard({ movements }: RoyalEBUAnalysisCardProps) {
 
   // Category colors
   const CATEGORY_COLORS = {
-    ROYAL: "#8b5cf6", // Purple
-    EBU: "#fbbf24", // Amber
-    "NON EBU": "#6b7280", // Gray
+    ROYAL: "#4F008C", // Purple (Base)
+    EBU: "#FF375E", // Red (Base)
+    "NON EBU": "#1Bced8", // Teal (Base)
   };
 
   const distanceData = [
