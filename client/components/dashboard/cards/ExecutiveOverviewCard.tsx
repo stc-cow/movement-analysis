@@ -334,12 +334,12 @@ export function ExecutiveOverviewCard({
 
   // KPI Card color scheme matching TopEventsMovementCard
   const KPI_CARD_COLORS = [
-    "#3b82f6", // Blue
-    "#06b6d4", // Cyan
-    "#10b981", // Green
-    "#f59e0b", // Amber
-    "#ef4444", // Red
-    "#8b5cf6", // Purple
+    "#FF375E", // Red (Base)
+    "#1Bced8", // Teal (Base)
+    "#4F008C", // Purple (Base)
+    "#FF6F8A", // Red (Light)
+    "#5FE0E7", // Teal (Light)
+    "#7A3DB8", // Purple (Light)
   ];
 
   // Custom X-axis tick component with vendor logo image
