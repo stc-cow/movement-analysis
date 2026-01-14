@@ -203,7 +203,7 @@ export function ExecutiveOverviewCard({
     {
       name: "Full",
       value: movementsByType.full,
-      color: "#3B82F6",
+      color: "#FF375E", // Red (Base)
       percentage: (
         (movementsByType.full / (totalMovementClassifications || 1)) *
         100
@@ -212,7 +212,7 @@ export function ExecutiveOverviewCard({
     {
       name: "Half",
       value: movementsByType.half,
-      color: "#A855F7",
+      color: "#1Bced8", // Teal (Base)
       percentage: (
         (movementsByType.half / (totalMovementClassifications || 1)) *
         100
@@ -221,7 +221,7 @@ export function ExecutiveOverviewCard({
     {
       name: "Zero",
       value: movementsByType.zero,
-      color: "#6B7280",
+      color: "#4F008C", // Purple (Base)
       percentage: (
         (movementsByType.zero / (totalMovementClassifications || 1)) *
         100
