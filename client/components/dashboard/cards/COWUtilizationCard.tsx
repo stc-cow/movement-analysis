@@ -49,11 +49,11 @@ export function COWUtilizationCard({ cowMetrics }: COWUtilizationCardProps) {
 
   // Colors for each utilization bucket - red (low) to green (high)
   const BUCKET_COLORS = [
-    "#ef4444", // Red: 0-5 (low utilization)
-    "#f97316", // Orange: 6-10
-    "#f59e0b", // Amber: 11-20
-    "#3b82f6", // Blue: 21-50
-    "#10b981", // Green: 50+ (high utilization)
+    "#FF375E", // Red (Base): 0-5 (low utilization)
+    "#CC2C4B", // Red (Dark): 6-10
+    "#FF6F8A", // Red (Light): 11-20
+    "#1Bced8", // Teal (Base): 21-50
+    "#5FE0E7", // Teal (Light): 50+ (high utilization)
   ];
 
   const topMostMoved = cowMetrics
