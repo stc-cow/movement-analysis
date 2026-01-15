@@ -1,27 +1,36 @@
 # GitHub Pages Deployment Fix
 
 ## Problem
+
 Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` despite GitHub Actions reporting a successful deployment.
 
 ## Root Causes Fixed
 
 ### 1. ✅ Missing `GITHUB_PAGES` Environment Variable
+
 **Fixed:** Added `GITHUB_PAGES: "true"` to both workflows
+
 - This tells `vite.config.ts` to extract the repository name and set the correct base path
 - The app now builds with `base: /cmms-2Fanalysis/`
 
 ### 2. ✅ Jekyll Processing Interfering with SPA
+
 **Fixed:** Added `.nojekyll` file to the `public/` folder
+
 - Tells GitHub Pages to NOT process your app with Jekyll
 - Prevents modification of your static files
 
 ### 3. ✅ SPA Routing on Subpath
+
 **Fixed:** Updated `404.html` to handle client-side routing
+
 - GitHub Pages serves `404.html` when a route doesn't exist
 - The SPA can now handle all routing through React Router
 
 ### 4. ✅ Build Configuration
+
 **Fixed:** Updated `jekyll-gh-pages.yml` workflow to properly:
+
 - Set `GITHUB_PAGES=true` environment variable during build
 - Use the correct Node and pnpm versions
 - Deploy directly to GitHub Pages (not the docs folder)
@@ -48,6 +57,7 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 ## What You Need to Do
 
 ### Option A: Use the New `jekyll-gh-pages.yml` (Recommended)
+
 1. Go to your GitHub repository settings
 2. Navigate to **Settings → Pages**
 3. Under "Build and deployment":
@@ -57,6 +67,7 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 5. Wait for the workflow to complete (check **Actions** tab)
 
 ### Option B: Keep Using `deploy.yml`
+
 1. Go to your GitHub repository settings
 2. Navigate to **Settings → Pages**
 3. Under "Build and deployment":
@@ -68,9 +79,10 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 ## How It Works Now
 
 1. **Vite Configuration** (`vite.config.ts`):
+
    ```typescript
    const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1]; // "cmms-2Fanalysis"
-   const isGitHubPages = process.env.GITHUB_PAGES === "true";     // true
+   const isGitHubPages = process.env.GITHUB_PAGES === "true"; // true
    const base = isGitHubPages && repoName ? `/${repoName}/` : "/"; // "/cmms-2Fanalysis/"
    ```
 
@@ -103,11 +115,11 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 
 1. **Clear browser cache**: Use Ctrl+Shift+Delete (or Cmd+Shift+Delete on Mac)
 2. **Check browser console**: Open DevTools (F12) and look for errors
-3. **Verify GitHub Pages settings**: 
+3. **Verify GitHub Pages settings**:
    - Go to Settings → Pages
    - Check the source is correctly configured
    - Verify it's using the gh-pages branch or docs folder as expected
-4. **Check deployment**: 
+4. **Check deployment**:
    - Go to **Actions** tab
    - Verify the latest workflow run completed successfully
    - All steps should have green checkmarks
@@ -116,6 +128,7 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 ## Rollback
 
 If you need to revert to a previous working version:
+
 1. You can disable `jekyll-gh-pages.yml` and keep using `deploy.yml`
 2. Make sure `GITHUB_PAGES: "true"` is set in the workflow you use
 3. Redeploy by pushing a commit to main
