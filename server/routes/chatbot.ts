@@ -59,60 +59,40 @@ router.post("/chat", async (req, res) => {
 
     const history = conversationHistory.get(sid)!;
 
-    // Determine query type
-    const queryType = parseQueryType(message);
+    const route = routeMessage(message);
 
-    // Generate response based on query type
+    // Generate response based on route type
     let response: string;
     let context: any = {};
+    let queryType: QueryType;
 
-    switch (queryType) {
-      case "COW_STATUS":
-        const cowId = extractCowId(message);
-        const statusInfo = getCOWStatus(cowId);
-        response = formatCOWStatusResponse(statusInfo);
-        context = statusInfo;
-        break;
-
-      case "PREDICTIONS":
-        if (mlEngine && featureEngineer) {
-          const predictions = getPredictions(message);
-          response = formatPredictionResponse(predictions);
-          context = predictions;
-        } else {
-          response =
-            "ML models are not initialized. Please ensure they are trained first.";
-        }
-        break;
-
-      case "RECOMMENDATIONS":
-        if (mlEngine && featureEngineer) {
-          const recommendations = getRecommendations(message);
-          response = formatRecommendationResponse(recommendations);
-          context = recommendations;
-        } else {
-          response = "ML models are not initialized for generating recommendations.";
-        }
-        break;
-
-      case "STATISTICS":
-        const stats = getStatistics(message);
-        response = formatStatisticsResponse(stats);
-        context = stats;
-        break;
-
-      case "ANALYSIS":
-        const analysis = performAnalysis(message);
-        response = formatAnalysisResponse(analysis);
-        context = analysis;
-        break;
-
-      case "HELP":
-        response = getHelpResponse();
-        break;
-
-      default:
-        response = getGeneralResponse(message);
+    if (route === "cow") {
+      const cowResult = handleCowQuery(message);
+      response = cowResult.response;
+      context = cowResult.context;
+      queryType = cowResult.queryType;
+    } else if (route === "general") {
+      const generalResult = await runGeneralAgent({
+        userText: message,
+        chatHistory: history,
+        now: new Date(),
+      });
+      response = generalResult.message;
+      context = generalResult.context;
+      queryType = "GENERAL_LIVE_INFO";
+    } else {
+      const cowResult = handleCowQuery(message);
+      const generalResult = await runGeneralAgent({
+        userText: message,
+        chatHistory: history,
+        now: new Date(),
+      });
+      response = `${cowResult.response}\n\n---\n\n${generalResult.message}`;
+      context = {
+        cow: cowResult.context,
+        general: generalResult.context,
+      };
+      queryType = "HYBRID";
     }
 
     // Add to history
@@ -217,9 +197,93 @@ type QueryType =
   | "STATISTICS"
   | "ANALYSIS"
   | "HELP"
-  | "GENERAL";
+  | "GENERAL"
+  | "GENERAL_LIVE_INFO"
+  | "HYBRID";
 
-function parseQueryType(message: string): QueryType {
+type RouteType = "cow" | "general" | "hybrid";
+
+type ToolSource = {
+  title: string;
+  url: string;
+  published?: string;
+  provider?: string;
+};
+
+type ToolResult = {
+  ok: boolean;
+  data?: any;
+  error?: string;
+  sources?: ToolSource[];
+};
+
+type GeneralAgentContext = {
+  intent: string;
+  sources?: ToolSource[];
+  toolErrors?: string[];
+};
+
+type GeneralAgentResult = {
+  message: string;
+  context: GeneralAgentContext;
+};
+
+const cowSignals = [
+  "cow",
+  "movement",
+  "dashboard",
+  "anomaly",
+  "predict",
+  "duration",
+  "cluster",
+];
+
+const generalSignals = [
+  "weather",
+  "riyadh",
+  "jeddah",
+  "dammam",
+  "events",
+  "season",
+  "city",
+  "news",
+  "today",
+  "tomorrow",
+];
+
+const saudiCities = [
+  "riyadh",
+  "jeddah",
+  "makkah",
+  "mecca",
+  "madinah",
+  "medina",
+  "dammam",
+  "khobar",
+  "al khobar",
+  "tabuk",
+  "taif",
+  "abha",
+  "jazan",
+  "najran",
+  "hail",
+  "al ahsa",
+  "hofuf",
+  "qassim",
+  "yanbu",
+];
+
+function routeMessage(message: string): RouteType {
+  const lower = message.toLowerCase();
+  const cowHit = cowSignals.some((signal) => lower.includes(signal));
+  const generalHit = generalSignals.some((signal) => lower.includes(signal));
+
+  if (cowHit && generalHit) return "hybrid";
+  if (cowHit) return "cow";
+  return "general";
+}
+
+function parseCowQueryType(message: string): QueryType {
   const lower = message.toLowerCase();
 
   if (
@@ -269,6 +333,389 @@ function parseQueryType(message: string): QueryType {
   }
 
   return "GENERAL";
+}
+
+function handleCowQuery(message: string): {
+  response: string;
+  context: any;
+  queryType: QueryType;
+} {
+  const queryType = parseCowQueryType(message);
+  let response: string;
+  let context: any = {};
+
+  switch (queryType) {
+    case "COW_STATUS": {
+      const cowId = extractCowId(message);
+      const statusInfo = getCOWStatus(cowId);
+      response = formatCOWStatusResponse(statusInfo);
+      context = statusInfo;
+      break;
+    }
+    case "PREDICTIONS": {
+      if (mlEngine && featureEngineer) {
+        const predictions = getPredictions(message);
+        response = formatPredictionResponse(predictions);
+        context = predictions;
+      } else {
+        response =
+          "ML models are not initialized. Please ensure they are trained first.";
+      }
+      break;
+    }
+    case "RECOMMENDATIONS": {
+      if (mlEngine && featureEngineer) {
+        const recommendations = getRecommendations(message);
+        response = formatRecommendationResponse(recommendations);
+        context = recommendations;
+      } else {
+        response = "ML models are not initialized for generating recommendations.";
+      }
+      break;
+    }
+    case "STATISTICS": {
+      const stats = getStatistics(message);
+      response = formatStatisticsResponse(stats);
+      context = stats;
+      break;
+    }
+    case "ANALYSIS": {
+      const analysis = performAnalysis(message);
+      response = formatAnalysisResponse(analysis);
+      context = analysis;
+      break;
+    }
+    case "HELP": {
+      response = getHelpResponse();
+      break;
+    }
+    default:
+      response = getGeneralResponse(message);
+  }
+
+  return { response, context, queryType };
+}
+
+type GeneralIntent =
+  | "WEATHER"
+  | "EVENTS"
+  | "SEASON"
+  | "CITY_INFO"
+  | "NEWS"
+  | "GENERAL";
+
+function parseGeneralIntent(message: string): GeneralIntent {
+  const lower = message.toLowerCase();
+
+  if (
+    lower.includes("weather") ||
+    lower.includes("temperature") ||
+    lower.includes("forecast")
+  ) {
+    return "WEATHER";
+  }
+
+  if (
+    lower.includes("event") ||
+    lower.includes("concert") ||
+    lower.includes("festival") ||
+    lower.includes("exhibition")
+  ) {
+    return "EVENTS";
+  }
+
+  if (lower.includes("season") || lower.includes("spring")) {
+    return "SEASON";
+  }
+
+  if (lower.includes("news") || lower.includes("headline") || lower.includes("latest")) {
+    return "NEWS";
+  }
+
+  if (
+    lower.includes("city") ||
+    lower.includes("population") ||
+    lower.includes("district") ||
+    lower.includes("about")
+  ) {
+    return "CITY_INFO";
+  }
+
+  return "GENERAL";
+}
+
+async function runGeneralAgent(input: {
+  userText: string;
+  chatHistory: { role: string; content: string }[];
+  now: Date;
+}): Promise<GeneralAgentResult> {
+  const intent = parseGeneralIntent(input.userText);
+  const asOf = formatRiyadhTimestamp(input.now);
+
+  switch (intent) {
+    case "WEATHER": {
+      const city = extractSaudiCity(input.userText) ?? "Riyadh";
+      const weather = await getWeather(city);
+      if (!weather.ok) {
+        return formatLiveDataFailure("weather", city, asOf, weather.error);
+      }
+
+      const summary = weather.data?.summary ?? "Weather data is available.";
+      const details = weather.data?.details ?? "";
+      const message = [
+        `**Weather in ${city}**`,
+        summary,
+        details,
+        `As of ${asOf} (Asia/Riyadh).`,
+        formatSources(weather.sources),
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return {
+        message,
+        context: {
+          intent,
+          sources: weather.sources,
+        },
+      };
+    }
+    case "EVENTS": {
+      const city = extractSaudiCity(input.userText) ?? "Riyadh";
+      const { from, to } = getDefaultDateRange(input.now, 30);
+      const events = await saudiEvents(city, from, to);
+      if (!events.ok) {
+        return formatLiveDataFailure("events", city, asOf, events.error);
+      }
+
+      const list = Array.isArray(events.data?.events)
+        ? events.data.events
+            .slice(0, 5)
+            .map(
+              (event: any, index: number) =>
+                `${index + 1}. ${event.title ?? "Event"}${
+                  event.date ? ` (${event.date})` : ""
+                }${event.venue ? ` — ${event.venue}` : ""}`,
+            )
+        : [];
+
+      const message = [
+        `**Upcoming events in ${city}**`,
+        list.length > 0 ? list.join("\n") : "No events returned by the events feed.",
+        `Date range: ${from} → ${to}.`,
+        `As of ${asOf} (Asia/Riyadh).`,
+        formatSources(events.sources),
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return {
+        message,
+        context: {
+          intent,
+          sources: events.sources,
+        },
+      };
+    }
+    case "SEASON": {
+      const season = getSeasonKSA(input.now.toISOString());
+      const message = [
+        `**Season in Saudi Arabia**`,
+        season.ok
+          ? `Season: ${season.data?.season ?? "Unknown"}.`
+          : "Season data is unavailable.",
+        `As of ${asOf} (Asia/Riyadh).`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return {
+        message,
+        context: {
+          intent,
+        },
+      };
+    }
+    case "NEWS": {
+      const query = input.userText;
+      const news = await webSearch(query, 7);
+      if (!news.ok) {
+        return formatLiveDataFailure("news", undefined, asOf, news.error);
+      }
+
+      const message = [
+        `**Latest news results**`,
+        "Here are the most recent items I found:",
+        formatSources(news.sources),
+        `As of ${asOf} (Asia/Riyadh).`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return {
+        message,
+        context: {
+          intent,
+          sources: news.sources,
+        },
+      };
+    }
+    case "CITY_INFO": {
+      const city = extractSaudiCity(input.userText) ?? "Saudi Arabia";
+      const info = await webSearch(`${city} city overview`, 365);
+      if (!info.ok) {
+        return formatLiveDataFailure("city info", city, asOf, info.error);
+      }
+
+      const message = [
+        `**${city} overview**`,
+        "Here are a few sources to explore:",
+        formatSources(info.sources),
+        `As of ${asOf} (Asia/Riyadh).`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return {
+        message,
+        context: {
+          intent,
+          sources: info.sources,
+        },
+      };
+    }
+    default:
+      return {
+        message: [
+          "I can help with Saudi weather, events, seasons, city information, and news.",
+          "Ask a question like:",
+          "- “What’s the weather in Riyadh tomorrow?”",
+          "- “Upcoming events in Jeddah this month?”",
+          "- “What season is it in Saudi Arabia?”",
+          `As of ${asOf} (Asia/Riyadh).`,
+        ].join("\n"),
+        context: { intent },
+      };
+  }
+}
+
+async function webSearch(query: string, recencyDays = 7): Promise<ToolResult> {
+  return {
+    ok: false,
+    error: `webSearch is not configured. Set up a search provider for query "${query}" (recency ${recencyDays} days).`,
+  };
+}
+
+async function getWeather(location: string): Promise<ToolResult> {
+  return {
+    ok: false,
+    error: `getWeather is not configured. Set up a weather provider for ${location}.`,
+  };
+}
+
+async function geocode(place: string): Promise<ToolResult> {
+  return {
+    ok: false,
+    error: `geocode is not configured. Provide a geocoding provider for ${place}.`,
+  };
+}
+
+async function saudiEvents(
+  city: string,
+  from: string,
+  to: string,
+): Promise<ToolResult> {
+  return {
+    ok: false,
+    error: `saudiEvents is not configured. Provide event sources for ${city} (${from} → ${to}).`,
+  };
+}
+
+function getSeasonKSA(dateISO: string): ToolResult {
+  const month = new Date(dateISO).getUTCMonth() + 1;
+  let season = "Unknown";
+
+  if ([12, 1, 2].includes(month)) {
+    season = "Winter";
+  } else if ([3, 4, 5].includes(month)) {
+    season = "Spring";
+  } else if ([6, 7, 8].includes(month)) {
+    season = "Summer";
+  } else if ([9, 10, 11].includes(month)) {
+    season = "Autumn";
+  }
+
+  return { ok: true, data: { season } };
+}
+
+function extractSaudiCity(message: string): string | null {
+  const lower = message.toLowerCase();
+  const match = saudiCities.find((city) => lower.includes(city));
+  return match ? toTitleCase(match) : null;
+}
+
+function toTitleCase(value: string): string {
+  return value
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function getDefaultDateRange(now: Date, days: number): {
+  from: string;
+  to: string;
+} {
+  const fromDate = new Date(now);
+  const toDate = new Date(now);
+  toDate.setDate(toDate.getDate() + days);
+
+  return {
+    from: fromDate.toISOString().slice(0, 10),
+    to: toDate.toISOString().slice(0, 10),
+  };
+}
+
+function formatRiyadhTimestamp(now: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Riyadh",
+  }).format(now);
+}
+
+function formatSources(sources?: ToolSource[]): string {
+  if (!sources || sources.length === 0) return "";
+  return ["Sources:"]
+    .concat(
+      sources.map((source) => {
+        const published = source.published ? ` (${source.published})` : "";
+        return `- ${source.title}${published}: ${source.url}`;
+      }),
+    )
+    .join("\n");
+}
+
+function formatLiveDataFailure(
+  intent: string,
+  city: string | undefined,
+  asOf: string,
+  error?: string,
+): GeneralAgentResult {
+  const detail = error ? `Error: ${error}` : "Live data tool is unavailable.";
+  return {
+    message: [
+      `I couldn't retrieve live ${intent} data right now.`,
+      city ? `Location: ${city}.` : null,
+      detail,
+      `As of ${asOf} (Asia/Riyadh).`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    context: {
+      intent,
+      toolErrors: [detail],
+    },
+  };
 }
 
 function extractCowId(message: string): string | null {
@@ -537,6 +984,11 @@ I'm your AI assistant for COW movement insights. I can help with:
 - "Analyze movement patterns"
 - "What insights exist?"
 - "Detect anomalies"
+
+**🌍 General Info (live data tools)**
+- "Weather in Riyadh tomorrow"
+- "Events in Jeddah this week"
+- "What season is it in Saudi Arabia?"
 
 Try asking naturally! I'll do my best to help. 🚀
 `.trim();

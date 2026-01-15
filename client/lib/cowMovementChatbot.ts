@@ -50,7 +50,34 @@ export type QueryType =
   | "STATISTICS"
   | "ANALYSIS"
   | "HELP"
-  | "GENERAL";
+  | "GENERAL"
+  | "GENERAL_LIVE_INFO"
+  | "HYBRID";
+
+type RouteType = "cow" | "general" | "hybrid";
+
+const cowSignals = [
+  "cow",
+  "movement",
+  "dashboard",
+  "anomaly",
+  "predict",
+  "duration",
+  "cluster",
+];
+
+const generalSignals = [
+  "weather",
+  "riyadh",
+  "jeddah",
+  "dammam",
+  "events",
+  "season",
+  "city",
+  "news",
+  "today",
+  "tomorrow",
+];
 
 // ============================================================================
 // CHATBOT SERVICE
@@ -93,51 +120,30 @@ export class COWMovementChatbot {
     this.messages.push(userMsg);
 
     try {
-      // Parse query type
-      const queryType = this.parseQueryType(userMessage);
-
-      // Generate response
+      const route = this.routeMessage(userMessage);
       let responseText: string;
       let context: any = {};
+      let queryType: QueryType;
 
-      switch (queryType) {
-        case "COW_STATUS":
-          const cowId = this.extractCowId(userMessage);
-          const statusInfo = await this.getCOWStatus(cowId);
-          responseText = this.formatCOWStatusResponse(statusInfo);
-          context = statusInfo;
-          break;
-
-        case "PREDICTIONS":
-          const predictions = await this.getPredictions(userMessage);
-          responseText = this.formatPredictionResponse(predictions);
-          context = { recommendations: predictions };
-          break;
-
-        case "RECOMMENDATIONS":
-          const recs = await this.getRecommendations(userMessage);
-          responseText = this.formatRecommendationResponse(recs);
-          context = { recommendations: recs };
-          break;
-
-        case "STATISTICS":
-          const stats = await this.getStatistics(userMessage);
-          responseText = this.formatStatisticsResponse(stats);
-          context = { statistics: stats };
-          break;
-
-        case "ANALYSIS":
-          const analysis = await this.performAnalysis(userMessage);
-          responseText = this.formatAnalysisResponse(analysis);
-          context = analysis;
-          break;
-
-        case "HELP":
-          responseText = this.getHelpResponse();
-          break;
-
-        default:
-          responseText = this.getGeneralResponse(userMessage);
+      if (route === "cow") {
+        queryType = this.parseCowQueryType(userMessage);
+        const cowResponse = await this.buildCowResponse(queryType, userMessage);
+        responseText = cowResponse.responseText;
+        context = cowResponse.context;
+      } else if (route === "general") {
+        queryType = "GENERAL_LIVE_INFO";
+        responseText = this.getGeneralLiveInfoResponse(userMessage);
+      } else {
+        const cowQueryType = this.parseCowQueryType(userMessage);
+        const cowResponse = await this.buildCowResponse(
+          cowQueryType,
+          userMessage,
+        );
+        queryType = "HYBRID";
+        responseText = `${cowResponse.responseText}\n\n---\n\n${this.getGeneralLiveInfoResponse(
+          userMessage,
+        )}`;
+        context = { cow: cowResponse.context };
       }
 
       // Create assistant response
@@ -216,6 +222,23 @@ export class COWMovementChatbot {
    * Parse the type of query from user message
    */
   private parseQueryType(message: string): QueryType {
+    const route = this.routeMessage(message);
+    if (route === "general") return "GENERAL_LIVE_INFO";
+    if (route === "hybrid") return "HYBRID";
+    return this.parseCowQueryType(message);
+  }
+
+  private routeMessage(message: string): RouteType {
+    const lower = message.toLowerCase();
+    const cowHit = cowSignals.some((signal) => lower.includes(signal));
+    const generalHit = generalSignals.some((signal) => lower.includes(signal));
+
+    if (cowHit && generalHit) return "hybrid";
+    if (cowHit) return "cow";
+    return "general";
+  }
+
+  private parseCowQueryType(message: string): QueryType {
     const lower = message.toLowerCase();
 
     if (
@@ -272,6 +295,56 @@ export class COWMovementChatbot {
     }
 
     return "GENERAL";
+  }
+
+  private async buildCowResponse(
+    queryType: QueryType,
+    userMessage: string,
+  ): Promise<{ responseText: string; context: any }> {
+    let responseText: string;
+    let context: any = {};
+
+    switch (queryType) {
+      case "COW_STATUS": {
+        const cowId = this.extractCowId(userMessage);
+        const statusInfo = await this.getCOWStatus(cowId);
+        responseText = this.formatCOWStatusResponse(statusInfo);
+        context = statusInfo;
+        break;
+      }
+      case "PREDICTIONS": {
+        const predictions = await this.getPredictions(userMessage);
+        responseText = this.formatPredictionResponse(predictions);
+        context = { recommendations: predictions };
+        break;
+      }
+      case "RECOMMENDATIONS": {
+        const recs = await this.getRecommendations(userMessage);
+        responseText = this.formatRecommendationResponse(recs);
+        context = { recommendations: recs };
+        break;
+      }
+      case "STATISTICS": {
+        const stats = await this.getStatistics(userMessage);
+        responseText = this.formatStatisticsResponse(stats);
+        context = { statistics: stats };
+        break;
+      }
+      case "ANALYSIS": {
+        const analysis = await this.performAnalysis(userMessage);
+        responseText = this.formatAnalysisResponse(analysis);
+        context = analysis;
+        break;
+      }
+      case "HELP": {
+        responseText = this.getHelpResponse();
+        break;
+      }
+      default:
+        responseText = this.getGeneralResponse(userMessage);
+    }
+
+    return { responseText, context };
   }
 
   /**
@@ -707,6 +780,11 @@ I can help you with:
 - "What insights can you provide?"
 - "Identify movement anomalies"
 
+**🌍 General Info (live data tools)**
+- "Weather in Riyadh tomorrow"
+- "Events in Jeddah this week"
+- "What season is it in Saudi Arabia?"
+
 Just ask naturally and I'll do my best to help! 🤖
 `.trim();
   }
@@ -728,6 +806,21 @@ To better assist you, you can:
 - Analyze movement patterns
 
 Type "help" or ask me anything about COW movements! 🤖
+`.trim();
+  }
+
+  private getGeneralLiveInfoResponse(message: string): string {
+    return `
+I can answer general questions about Saudi weather, events, seasons, cities, and news. 
+
+Your question: "${message.substring(0, 60)}..."
+
+To fetch live data, connect this client to the server chatbot route that has web search and weather tools configured.
+
+Try:
+- "Weather in Riyadh tomorrow"
+- "Events in Jeddah this week"
+- "What season is it in Saudi Arabia?"
 `.trim();
   }
 
@@ -767,6 +860,10 @@ Type "help" or ask me anything about COW movements! 🤖
         break;
       case "ANALYSIS":
         sources.push("Pattern Recognition", "Anomaly Detection", "ML Models");
+        break;
+      case "GENERAL_LIVE_INFO":
+      case "HYBRID":
+        sources.push("Live Data Tools", "Search Providers", "Weather/Events APIs");
         break;
       default:
         sources.push("Knowledge Base");
