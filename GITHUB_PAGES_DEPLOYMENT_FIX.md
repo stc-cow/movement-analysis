@@ -115,13 +115,17 @@ The `jekyll-gh-pages.yml` workflow will:
 2. **Check browser console**: Open DevTools (F12) and look for errors
 3. **Verify GitHub Pages settings**:
    - Go to Settings → Pages
-   - Check the source is correctly configured
-   - Verify it's using the gh-pages branch or docs folder as expected
+   - Verify **Source** is set to `Deploy from a branch`
+   - Verify **Branch** is `main` and **Folder** is `/docs`
 4. **Check deployment**:
    - Go to **Actions** tab
    - Verify the latest workflow run completed successfully
    - All steps should have green checkmarks
-5. **Wait for propagation**: GitHub Pages can take 1-2 minutes to update after a new deployment
+   - Check that the workflow pushed new commits to main
+5. **Verify docs folder was updated**:
+   - Check that new files exist in the `docs/` folder
+   - The `.nojekyll` file should be present in `docs/`
+6. **Wait for propagation**: GitHub Pages can take 1-2 minutes to update after a new deployment
 
 ## Rollback
 
