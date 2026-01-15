@@ -33,7 +33,8 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 
 - Set `GITHUB_PAGES=true` environment variable during build
 - Use the correct Node and pnpm versions
-- Deploy directly to GitHub Pages (not the docs folder)
+- Copy built app to `docs/` folder (GitHub Pages source)
+- Commit and push to main branch (no gh-pages branch needed)
 
 ## Files Changed
 
