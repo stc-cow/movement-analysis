@@ -9,6 +9,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Main from "./pages/Main";
 import Dashboard from "./pages/Dashboard";
+import AIMovement from "./pages/AIMovement";
+import AIChatAgent from "./pages/AIChatAgent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
