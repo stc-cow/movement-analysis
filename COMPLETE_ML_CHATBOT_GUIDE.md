@@ -44,15 +44,15 @@ A complete AI/ML ecosystem for COW (Cell On Wheels) movement analytics comprisin
 
 ### Key Capabilities
 
-| Feature | Capability |
-|---------|-----------|
-| **Movement Prediction** | 65-75% accuracy with KNN |
-| **Stay Duration Forecasting** | 0.60-0.75 R² score |
-| **COW Clustering** | Groups 3-5 distinct patterns |
-| **Query Processing** | 7 different query types |
-| **Chat Interface** | ChatGPT-like UX |
-| **Real-time Updates** | Sub-second responses with caching |
-| **Data Volume** | 100K+ movements supported |
+| Feature                       | Capability                        |
+| ----------------------------- | --------------------------------- |
+| **Movement Prediction**       | 65-75% accuracy with KNN          |
+| **Stay Duration Forecasting** | 0.60-0.75 R² score                |
+| **COW Clustering**            | Groups 3-5 distinct patterns      |
+| **Query Processing**          | 7 different query types           |
+| **Chat Interface**            | ChatGPT-like UX                   |
+| **Real-time Updates**         | Sub-second responses with caching |
+| **Data Volume**               | 100K+ movements supported         |
 
 ---
 
@@ -318,18 +318,18 @@ class KNNNextLocationModel implements NextLocationModel {
   // Hyperparameters
   k: number = 5; // Number of neighbors
   distance: "euclidean" | "manhattan" = "euclidean";
-  
+
   // Training
   - Stores all historical movements as reference points
   - Uses Euclidean distance to find similar movements
   - No mathematical model to train
-  
+
   // Prediction
   - For new COW: find 5 most similar historical movements
   - Count which locations these movements went to
   - Return top 3 locations by frequency
   - Probability = (count of neighbors) / k
-  
+
   // Performance
   - Training: O(1) - just stores data
   - Prediction: O(n) - checks all historical points
@@ -339,6 +339,7 @@ class KNNNextLocationModel implements NextLocationModel {
 ```
 
 **Example Prediction:**
+
 ```
 Input: COW in WH_RIYADH, idle 25 days, June
 Historical similar movements found:
@@ -361,7 +362,7 @@ class LinearRegressionOptimalStayModel implements OptimalStayModel {
   // Algorithm: Gradient Descent
   coefficients: number[]; // β0, β1, β2, ..., βn
   intercept: number;      // β0
-  
+
   // Training Steps
   1. Normalize features (z-score): x' = (x - mean) / std
   2. Initialize coefficients randomly
@@ -369,12 +370,12 @@ class LinearRegressionOptimalStayModel implements OptimalStayModel {
      - Calculate predictions: ŷ = β0 + Σ(βi × xi)
      - Calculate error: MSE = Σ(ŷ - y)² / n
      - Update coefficients using gradient descent
-  
+
   // Prediction
   - For new COW: ŷ = β0 + Σ(βi × x'i)
   - Clamp result: 1 ≤ ŷ ≤ 90 days
   - Calculate movement readiness: min(1, currentIdle / predicted)
-  
+
   // Performance
   - R² Score: 0.60-0.75
   - RMSE: ±3-5 days
@@ -383,6 +384,7 @@ class LinearRegressionOptimalStayModel implements OptimalStayModel {
 ```
 
 **Example Prediction:**
+
 ```
 Input:
   - idleDays: 20
@@ -395,7 +397,7 @@ Calculation:
   x' = normalize([20, 2, 1, 1, 18])
   ŷ = 2.5 + 1.2×x'0 + 0.8×x'1 + 3.2×x'2 + 0.5×x'3 + 2.1×x'4
   ŷ = 22 days (predicted stay)
-  
+
   movementReadinessScore = 20 / 22 = 0.91 (ready to move)
 
 Output: "Expected stay is 22 days. COW is 91% ready to move."
@@ -408,26 +410,26 @@ class KMeansClusteringModel implements CowClusteringModel {
   // Algorithm: K-Means (k=3)
   numClusters: number = 3;
   maxIterations: number = 100;
-  
+
   // Steps
   1. Initialize: Pick 3 random COWs as centroids
   2. Assign: Each COW to nearest centroid
   3. Update: Recalculate centroid = mean of assigned COWs
   4. Repeat steps 2-3 until convergence
-  
+
   // Clusters
   Cluster 0: "Short-stay high-frequency movers"
     - Avg idle: 5-10 days
     - Movements/month: >5
-    
+
   Cluster 1: "Medium-stay moderate movers"
     - Avg idle: 15-25 days
     - Movements/month: 2-5
-    
+
   Cluster 2: "Long-stay low-frequency movers"
     - Avg idle: 30+ days
     - Movements/month: <2
-  
+
   // Performance
   - Silhouette Score: 0.4-0.6
   - Separability: 0.5-0.7
@@ -524,7 +526,7 @@ Query Database:
      ↓
 [formatCOWStatusResponse()]
      ↓
-Response: 
+Response:
 "📍 **Current Location:** WH_RIYADH
  📅 **Last Moved:** Jan 15, 2024
  ⏱️ **Idle Time:** 25 days
@@ -540,15 +542,15 @@ Response:
 
 ```typescript
 interface ChatMessage {
-  id: string;              // Unique message ID
+  id: string; // Unique message ID
   role: "user" | "assistant";
-  content: string;         // Message text (markdown supported)
+  content: string; // Message text (markdown supported)
   timestamp: Date;
   metadata?: {
-    query_type?: string;   // Type of query
-    cow_ids?: string[];    // Referenced COWs
-    confidence?: number;   // 0-1 score
-    sources?: string[];    // Data sources used
+    query_type?: string; // Type of query
+    cow_ids?: string[]; // Referenced COWs
+    confidence?: number; // 0-1 score
+    sources?: string[]; // Data sources used
   };
 }
 ```
@@ -556,6 +558,7 @@ interface ChatMessage {
 ### Query Types & Responses
 
 #### 1. COW_STATUS
+
 ```
 User: "What's the status of COW_001?"
 
@@ -576,6 +579,7 @@ This COW has been idle for 25 days. It's in a normal movement cycle.
 ```
 
 #### 2. PREDICTIONS
+
 ```
 User: "Predict where COW_001 should go next"
 
@@ -599,6 +603,7 @@ Confidence Level: HIGH
 ```
 
 #### 3. RECOMMENDATIONS
+
 ```
 User: "Should we move COW_001?"
 
@@ -622,12 +627,13 @@ Movement Readiness: 91%
 ```
 
 #### 4. STATISTICS
+
 ```
 User: "Show me movement statistics"
 
 Processing:
 - Aggregate: All movement data
-- Calculate: 
+- Calculate:
   - Total COWs
   - Total movements
   - Average idle days
@@ -652,6 +658,7 @@ Response:
 ```
 
 #### 5. ANALYSIS
+
 ```
 User: "Analyze movement patterns"
 
@@ -686,6 +693,7 @@ Response:
 ```
 
 #### 6. HELP
+
 ```
 User: "Help"
 
@@ -788,14 +796,22 @@ const nextLocationModel = new KNNNextLocationModel();
 const optimalStayModel = new LinearRegressionOptimalStayModel();
 const clusteringModel = new KMeansClusteringModel();
 
-const { bestModel: locModel } = await ModelTrainingPipeline
-  .trainNextLocationModel(nextLocationModel, dataset, 5);
+const { bestModel: locModel } =
+  await ModelTrainingPipeline.trainNextLocationModel(
+    nextLocationModel,
+    dataset,
+    5,
+  );
 
-const { bestModel: stayModel } = await ModelTrainingPipeline
-  .trainOptimalStayModel(optimalStayModel, dataset, 5);
+const { bestModel: stayModel } =
+  await ModelTrainingPipeline.trainOptimalStayModel(
+    optimalStayModel,
+    dataset,
+    5,
+  );
 
-const { model: clusterModel } = await ModelTrainingPipeline
-  .trainClusteringModel(clusteringModel, dataset);
+const { model: clusterModel } =
+  await ModelTrainingPipeline.trainClusteringModel(clusteringModel, dataset);
 
 // Setup inference engine
 const mlEngine = new MovementRecommendationEngine();
@@ -857,6 +873,7 @@ npm run dev
 ### ML Endpoints (Backend)
 
 #### POST /api/ml/train
+
 Train ML models with current data
 
 ```typescript
@@ -883,6 +900,7 @@ Response:
 ```
 
 #### POST /api/ml/predict
+
 Generate predictions for COWs
 
 ```typescript
@@ -912,6 +930,7 @@ Response:
 ### Chatbot Endpoints
 
 #### POST /api/chatbot/chat
+
 Send message to chatbot
 
 ```typescript
@@ -938,6 +957,7 @@ Response:
 ```
 
 #### GET /api/chatbot/history/:sessionId
+
 Get conversation history
 
 ```typescript
@@ -956,6 +976,7 @@ Response:
 ```
 
 #### DELETE /api/chatbot/history/:sessionId
+
 Clear conversation history
 
 ```typescript
@@ -967,6 +988,7 @@ Response:
 ```
 
 #### GET /api/chatbot/status
+
 Get chatbot status
 
 ```typescript
@@ -1010,7 +1032,9 @@ async function initializeSystem() {
   const pipeline = new DataPreparationPipeline(movements, locations);
   const quality = pipeline.assessDataQuality();
 
-  console.log(`Data Quality: ${(quality.overallQualityScore * 100).toFixed(1)}%`);
+  console.log(
+    `Data Quality: ${(quality.overallQualityScore * 100).toFixed(1)}%`,
+  );
 
   if (quality.overallQualityScore < 0.8) {
     console.warn("Data quality below threshold!");
@@ -1032,16 +1056,16 @@ async function initializeSystem() {
     await ModelTrainingPipeline.trainNextLocationModel(
       locationModel,
       dataset,
-      5
+      5,
     );
   console.log(
-    `✓ Location Model: ${(locMetrics[0]?.accuracy * 100).toFixed(1)}%`
+    `✓ Location Model: ${(locMetrics[0]?.accuracy * 100).toFixed(1)}%`,
   );
 
   const { bestModel: stayModelTrained, metrics: stayMetrics } =
     await ModelTrainingPipeline.trainOptimalStayModel(stayModel, dataset, 5);
   console.log(
-    `✓ Stay Duration Model: ${(stayMetrics[0]?.r2Score * 100).toFixed(1)}%`
+    `✓ Stay Duration Model: ${(stayMetrics[0]?.r2Score * 100).toFixed(1)}%`,
   );
 
   const { model: clusterModelTrained } =
@@ -1148,12 +1172,14 @@ private async getWeatherData(message: string) {
 ### Production Checklist
 
 #### Data Quality
+
 - [ ] Quality score > 0.85
 - [ ] No critical data issues
 - [ ] Sufficient training data (1000+ movements)
 - [ ] Date ranges cover seasonal variations
 
 #### Models
+
 - [ ] All 3 models trained and validated
 - [ ] Cross-validation performed (5-fold)
 - [ ] Hyperparameter tuning done
@@ -1161,6 +1187,7 @@ private async getWeatherData(message: string) {
 - [ ] Models exported and backed up
 
 #### Chatbot
+
 - [ ] All query types tested
 - [ ] Error handling in place
 - [ ] Session management working
@@ -1168,6 +1195,7 @@ private async getWeatherData(message: string) {
 - [ ] Logging enabled
 
 #### Infrastructure
+
 - [ ] Environment variables configured
 - [ ] Database connections tested
 - [ ] API endpoints verified
@@ -1175,12 +1203,14 @@ private async getWeatherData(message: string) {
 - [ ] Authentication enforced
 
 #### Performance
+
 - [ ] Load tested with 1000+ concurrent users
 - [ ] Response time < 1 second
 - [ ] Memory usage acceptable
 - [ ] Caching strategy implemented
 
 #### Security
+
 - [ ] Input validation enabled
 - [ ] XSS protection in place
 - [ ] CSRF tokens configured
@@ -1188,6 +1218,7 @@ private async getWeatherData(message: string) {
 - [ ] Audit logging enabled
 
 #### Monitoring
+
 - [ ] Error tracking setup (Sentry)
 - [ ] Performance monitoring (APM)
 - [ ] Usage analytics configured
@@ -1227,7 +1258,9 @@ npm run metrics
 **Problem:** Models only achieving 50% accuracy
 
 **Solutions:**
+
 1. Check data quality:
+
    ```typescript
    const quality = pipeline.assessDataQuality();
    if (quality.overallQualityScore < 0.8) {
@@ -1245,12 +1278,10 @@ npm run metrics
 **Problem:** Good training accuracy but poor test accuracy
 
 **Solutions:**
+
 ```typescript
 // Generate learning curve
-const curve = await LearningCurveAnalysis.generateLearningCurve(
-  model,
-  dataset
-);
+const curve = await LearningCurveAnalysis.generateLearningCurve(model, dataset);
 
 const isOverfitting = LearningCurveAnalysis.detectOverfitting(curve);
 
@@ -1265,12 +1296,15 @@ if (isOverfitting) {
 **Problem:** Predictions taking >1 second
 
 **Solutions:**
+
 1. Use batch predictions:
+
    ```typescript
    const batchResults = mlEngine.recommendBatch(cowsList);
    ```
 
 2. Enable caching:
+
    ```typescript
    const service = new RealtimePredictionService(engine);
    const rec = service.getRecommendation(...); // Cached
@@ -1286,9 +1320,11 @@ if (isOverfitting) {
 **Problem:** 🐄 button not visible
 
 **Solutions:**
+
 1. Check z-index:
+
    ```typescript
-   className="fixed bottom-6 right-6 z-50"
+   className = "fixed bottom-6 right-6 z-50";
    ```
 
 2. Verify component is imported
@@ -1300,7 +1336,9 @@ if (isOverfitting) {
 **Problem:** `/api/chatbot/chat` not found
 
 **Solutions:**
+
 1. Verify routes are registered:
+
    ```typescript
    app.use("/api/chatbot", chatbotRouter);
    ```
@@ -1314,7 +1352,9 @@ if (isOverfitting) {
 **Problem:** ML models not being used
 
 **Solutions:**
+
 1. Check models are initialized:
+
    ```typescript
    const status = await getStatus();
    if (!status.mlModelsInitialized) {
@@ -1333,6 +1373,7 @@ if (isOverfitting) {
 **Problem:** Empty movements array
 
 **Solutions:**
+
 ```typescript
 // Check database connection
 const movements = await db.movements.findAll();
@@ -1350,12 +1391,13 @@ if (!sample.COW_ID || !sample.Moved_DateTime) {
 **Problem:** Locations not found
 
 **Solutions:**
+
 ```typescript
 const locations = await db.locations.findAll();
 console.log("Loaded locations:", locations.length);
 
 // Must have Location_ID for lookups
-const locMap = new Map(locations.map(l => [l.Location_ID, l]));
+const locMap = new Map(locations.map((l) => [l.Location_ID, l]));
 ```
 
 ---
@@ -1364,28 +1406,28 @@ const locMap = new Map(locations.map(l => [l.Location_ID, l]));
 
 ### Model Performance
 
-| Model | Metric | Value |
-|-------|--------|-------|
-| **KNN Location** | Accuracy | 65-75% |
-| | Top-3 Accuracy | 85-90% |
-| | Training Time | <1s |
-| | Prediction Time | <1ms |
-| **Regression Stay** | R² Score | 0.60-0.75 |
-| | RMSE | ±3-5 days |
-| | MAPE | 15-20% |
-| **Clustering** | Silhouette Score | 0.40-0.60 |
-| | Separability | 0.50-0.70 |
+| Model               | Metric           | Value     |
+| ------------------- | ---------------- | --------- |
+| **KNN Location**    | Accuracy         | 65-75%    |
+|                     | Top-3 Accuracy   | 85-90%    |
+|                     | Training Time    | <1s       |
+|                     | Prediction Time  | <1ms      |
+| **Regression Stay** | R² Score         | 0.60-0.75 |
+|                     | RMSE             | ±3-5 days |
+|                     | MAPE             | 15-20%    |
+| **Clustering**      | Silhouette Score | 0.40-0.60 |
+|                     | Separability     | 0.50-0.70 |
 
 ### System Performance
 
-| Metric | Value |
-|--------|-------|
-| **Chatbot Response** | <500ms |
-| **ML Prediction** | <1s (single), 50-100ms (batch) |
-| **Memory Usage** | 50-100MB |
-| **Concurrent Users** | 1000+ supported |
-| **Data Volume** | 100k+ movements |
-| **Training Time** | 10-60 seconds |
+| Metric               | Value                          |
+| -------------------- | ------------------------------ |
+| **Chatbot Response** | <500ms                         |
+| **ML Prediction**    | <1s (single), 50-100ms (batch) |
+| **Memory Usage**     | 50-100MB                       |
+| **Concurrent Users** | 1000+ supported                |
+| **Data Volume**      | 100k+ movements                |
+| **Training Time**    | 10-60 seconds                  |
 
 ### Scalability
 
@@ -1409,7 +1451,7 @@ This complete system provides:
 ✅ **Production Ready** - Fully typed, error-handled, well-documented  
 ✅ **Easy Integration** - 5-step setup process  
 ✅ **Extensible** - Add custom queries and models easily  
-✅ **Well Documented** - 2,500+ lines of guides and examples  
+✅ **Well Documented** - 2,500+ lines of guides and examples
 
 ### Next Steps
 
@@ -1428,6 +1470,7 @@ This complete system provides:
 **Last Updated:** January 2024
 
 For additional help, see individual module documentation:
+
 - `ml/README.md` - ML Module overview
 - `ml/IMPLEMENTATION_GUIDE.md` - Detailed ML setup
 - `CHATBOT_INTEGRATION.md` - Chatbot setup
