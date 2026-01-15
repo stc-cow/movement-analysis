@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, MessageCircle, Brain } from "lucide-react";
+import { ArrowLeft, Send, MessageCircle, Brain, AlertCircle } from "lucide-react";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { DimCow, CowMovementsFact } from "@shared/models";
 
 interface Message {
   id: string;
@@ -12,12 +14,13 @@ interface Message {
 
 export default function AIChatAgent() {
   const navigate = useNavigate();
+  const { data: dashboardData, loading: dataLoading } = useDashboardData();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       type: "ai",
       content:
-        "Hello! I'm your AI Chat Agent. I can help you with questions about cow movements, logistics, analytics, or anything else you'd like to know. What can I help you with today?",
+        "Hello! I'm your AI Chat Agent. I can help you with questions about cow movements, logistics, analytics, or anything else you'd like to know. Try asking about a specific COW ID (like CWN052) to get deployment and movement data. What can I help you with today?",
       timestamp: new Date(),
     },
   ]);
@@ -33,71 +36,200 @@ export default function AIChatAgent() {
     scrollToBottom();
   }, [messages]);
 
+  // Extract COW ID from question (e.g., "CWN052" or "COW-001")
+  const extractCowId = (question: string): string | null => {
+    const cowPattern = /\b([A-Z]{2,3}[A-Z]?\d{3,4})\b/i;
+    const match = question.match(cowPattern);
+    return match ? match[1].toUpperCase() : null;
+  };
+
+  // Find COW data by ID
+  const findCowData = (cowId: string): DimCow | null => {
+    if (!dashboardData) return null;
+    return dashboardData.cows.find(
+      (cow) => cow.COW_ID.toUpperCase() === cowId.toUpperCase(),
+    ) || null;
+  };
+
+  // Get movement statistics for a COW
+  const getCowMovementStats = (
+    cowId: string,
+  ): {
+    totalMovements: number;
+    lastDeployDate?: string;
+    firstDeployDate?: string;
+    totalDistance: number;
+    regions: string[];
+    lastMovementDate?: string;
+  } | null => {
+    if (!dashboardData) return null;
+
+    const cowMovements = dashboardData.movements.filter(
+      (m) => m.COW_ID.toUpperCase() === cowId.toUpperCase(),
+    );
+
+    if (cowMovements.length === 0) {
+      return {
+        totalMovements: 0,
+        totalDistance: 0,
+        regions: [],
+      };
+    }
+
+    const totalDistance = cowMovements.reduce(
+      (sum, m) => sum + (m.Distance_KM || 0),
+      0,
+    );
+    const regions = Array.from(
+      new Set(
+        cowMovements
+          .map((m) => {
+            const toLocation = dashboardData.locations.find(
+              (l) => l.Location_ID === m.To_Location_ID,
+            );
+            return toLocation?.Region;
+          })
+          .filter(Boolean),
+      ),
+    ) as string[];
+
+    const sortedMovements = [...cowMovements].sort(
+      (a, b) =>
+        new Date(b.Moved_DateTime).getTime() -
+        new Date(a.Moved_DateTime).getTime(),
+    );
+
+    const cow = dashboardData.cows.find(
+      (c) => c.COW_ID.toUpperCase() === cowId.toUpperCase(),
+    );
+
+    return {
+      totalMovements: cowMovements.length,
+      lastDeployDate: cow?.Last_Deploy_Date,
+      firstDeployDate: cow?.First_Deploy_Date,
+      totalDistance,
+      regions,
+      lastMovementDate: sortedMovements[0]?.Moved_DateTime,
+    };
+  };
+
+  // Generate AI response based on question and data
   const generateAIResponse = (question: string): string => {
     const lowerQuestion = question.toLowerCase();
+    const cowId = extractCowId(question);
 
-    // Movement and logistics related questions
-    if (
-      lowerQuestion.includes("movement") ||
-      lowerQuestion.includes("cow") ||
-      lowerQuestion.includes("location")
-    ) {
-      const responses = [
-        "Based on the data, cow movements are typically tracked from warehouses to distribution hubs. You can create new movements using the AI Movement tracker to log these transfers.",
-        "Movement patterns show that most COWs are transferred between regions to optimize logistics efficiency. Would you like to know more about specific movement data?",
-        "To track a movement, you'll need the COW ID, source location, destination, and date. Our system automatically logs all transfers for analysis.",
-      ];
-      return responses[Math.floor(Math.random() * responses.length)];
+    // If COW ID is found, get specific data
+    if (cowId) {
+      const cowData = findCowData(cowId);
+      const movementStats = getCowMovementStats(cowId);
+
+      if (!cowData) {
+        return `I couldn't find COW ${cowId} in the database. Please check the COW ID and try again. Make sure it's in the correct format (e.g., CWN052, COW001, etc.).`;
+      }
+
+      if (!movementStats) {
+        return `There was an issue retrieving data for COW ${cowId}. Please try again.`;
+      }
+
+      // Question about deployment
+      if (
+        lowerQuestion.includes("deploy") ||
+        lowerQuestion.includes("how many times")
+      ) {
+        return `📊 **Deployment Information for COW ${cowId}:**
+
+**Total Deployments:** ${movementStats.totalMovements} times
+
+**Deployment Timeline:**
+- First Deployed: ${movementStats.firstDeployDate ? new Date(movementStats.firstDeployDate).toLocaleDateString() : "Not recorded"}
+- Last Deployed: ${movementStats.lastDeployDate ? new Date(movementStats.lastDeployDate).toLocaleDateString() : "Not recorded"}
+- Most Recent Movement: ${movementStats.lastMovementDate ? new Date(movementStats.lastMovementDate).toLocaleDateString() : "No movements"}
+
+**Regions Served:** ${movementStats.regions.length > 0 ? movementStats.regions.join(", ") : "None"}
+
+**Total Distance Covered:** ${movementStats.totalDistance.toFixed(2)} KM
+
+**Specifications:**
+- Tower Type: ${cowData.Tower_Type}
+- Vendor: ${cowData.Vendor}
+- Networks: ${[cowData.Network_2G && "2G", cowData.Network_4G && "4G", cowData.Network_5G && "5G"].filter(Boolean).join(", ")}`;
+      }
+
+      // Question about location/movement
+      if (
+        lowerQuestion.includes("location") ||
+        lowerQuestion.includes("where") ||
+        lowerQuestion.includes("movement")
+      ) {
+        return `📍 **Movement History for COW ${cowId}:**
+
+**Total Movements:** ${movementStats.totalMovements}
+**Total Distance:** ${movementStats.totalDistance.toFixed(2)} KM
+**Regions Deployed:** ${movementStats.regions.length > 0 ? movementStats.regions.join(", ") : "No movements"}
+
+This COW has been deployed to ${movementStats.regions.length} region(s) with an average of ${(movementStats.totalDistance / Math.max(movementStats.totalMovements, 1)).toFixed(2)} KM per movement.`;
+      }
+
+      // Question about vendor
+      if (lowerQuestion.includes("vendor") || lowerQuestion.includes("supplier")) {
+        return `🏢 **Vendor Information for COW ${cowId}:**
+
+**Vendor:** ${cowData.Vendor}
+**Tower Type:** ${cowData.Tower_Type}
+**Shelter:** ${cowData.Shelter_Type}
+**Installation Date:** ${new Date(cowData.Installation_Date).toLocaleDateString()}
+
+This COW from ${cowData.Vendor} has been deployed ${movementStats.totalMovements} times across ${movementStats.regions.length} region(s).`;
+      }
+
+      // General question about COW
+      return `📡 **Information for COW ${cowId}:**
+
+**Deployment Stats:**
+- Total Movements: ${movementStats.totalMovements}
+- Total Distance: ${movementStats.totalDistance.toFixed(2)} KM
+- Regions: ${movementStats.regions.length > 0 ? movementStats.regions.join(", ") : "None"}
+
+**Specifications:**
+- Vendor: ${cowData.Vendor}
+- Type: ${cowData.Tower_Type}
+- Height: ${cowData.Tower_Height}m
+- Networks: ${[cowData.Network_2G && "2G", cowData.Network_4G && "4G", cowData.Network_5G && "5G"].filter(Boolean).join(", ")}
+- Shelter: ${cowData.Shelter_Type}
+
+Last Deployed: ${movementStats.lastDeployDate ? new Date(movementStats.lastDeployDate).toLocaleDateString() : "Not recorded"}`;
     }
 
-    // Analytics related questions
-    if (
-      lowerQuestion.includes("analytics") ||
-      lowerQuestion.includes("data") ||
-      lowerQuestion.includes("report")
-    ) {
-      const responses = [
-        "Our analytics dashboard provides comprehensive insights into movement patterns, distribution efficiency, and regional performance. Visit the Dashboard to explore detailed reports.",
-        "Data visualization helps us identify trends and optimize operations. The dashboard shows KPIs, movement distribution, and warehouse utilization metrics.",
-        "Analytics reveal that efficient movement planning reduces costs and improves delivery times. Would you like specific insights from our dashboard?",
-      ];
-      return responses[Math.floor(Math.random() * responses.length)];
-    }
-
-    // General knowledge questions
+    // General questions without COW ID
     if (
       lowerQuestion.includes("help") ||
       lowerQuestion.includes("how") ||
-      lowerQuestion.includes("what")
+      lowerQuestion.includes("what can")
     ) {
-      const responses = [
-        "I'm here to assist! I can help you understand cow movement tracking, answer logistics questions, or discuss analytics insights. What specifically would you like to know?",
-        "Feel free to ask me anything - whether it's about the system features, general knowledge, or specific business questions. I'll do my best to help!",
-        "You can ask me about movements, analytics, locations, or any general topic. I'm powered by advanced AI to provide helpful answers.",
-      ];
-      return responses[Math.floor(Math.random() * responses.length)];
+      return `I can help you with:
+
+1. **Specific COW Information** - Ask about any COW ID (e.g., "CWN052 how many times deployed")
+2. **Movement History** - Ask where a COW has been deployed
+3. **Vendor Details** - Ask about which vendor supplied a COW
+4. **Location Data** - Ask where a COW is currently deployed
+5. **General Questions** - I can discuss anything else too!
+
+Try asking: "CWN052 deployment statistics" or "How many times has COW-001 been moved?"`;
     }
 
-    // Greeting responses
     if (
       lowerQuestion.includes("hello") ||
       lowerQuestion.includes("hi") ||
       lowerQuestion.includes("hey")
     ) {
-      const responses = [
-        "Hello! Great to see you. How can I assist you today?",
-        "Hi there! What questions can I answer for you?",
-        "Hey! I'm ready to help. What would you like to know?",
-      ];
-      return responses[Math.floor(Math.random() * responses.length)];
+      return "Hello! Great to see you. Ask me about any COW in the system (e.g., 'CWN052' or 'COW-001') to get detailed deployment and movement data!";
     }
 
-    // Default response for any topic
+    // Default response for general questions
     const defaultResponses = [
-      "That's an interesting question! While I'm specialized in cow movement analytics, I can try to help. Could you provide more details?",
-      "I understand your question. Let me provide some insights: Based on best practices and available data, the answer involves careful planning and optimization.",
-      "Great question! This is an important topic. The key factors to consider are efficiency, accuracy, and real-time monitoring. Would you like more specific information?",
-      "I appreciate the question. The answer depends on various factors like logistics, planning, and available resources. Feel free to ask follow-up questions!",
+      "That's an interesting question! While I'm specialized in cow movement analytics, I can try to help. For specific COW data, please provide a COW ID.",
+      "I understand your question. For deployment data and movement history, please ask about a specific COW ID. For general questions, I'm happy to help!",
+      "Good question! If you're asking about a specific COW, please provide the COW ID (like CWN052 or COW-001) and I can get you detailed analytics.",
     ];
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
   };
@@ -126,7 +258,7 @@ export default function AIChatAgent() {
       };
       setMessages((prev) => [...prev, aiResponse]);
       setIsLoading(false);
-    }, 1000);
+    }, 800);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -164,6 +296,25 @@ export default function AIChatAgent() {
         </div>
       </header>
 
+      {/* Data Loading Status */}
+      {dataLoading && (
+        <div className="bg-blue-500/20 border-b border-blue-400/30 px-6 py-3 flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-blue-200">
+            Loading dashboard data...
+          </span>
+        </div>
+      )}
+
+      {!dashboardData && !dataLoading && (
+        <div className="bg-amber-500/20 border-b border-amber-400/30 px-6 py-3 flex items-center gap-2">
+          <AlertCircle className="w-5 h-5 text-amber-400" />
+          <span className="text-sm text-amber-200">
+            Dashboard data unavailable. Some features may be limited.
+          </span>
+        </div>
+      )}
+
       {/* Chat Container */}
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-3xl mx-auto space-y-6">
@@ -186,7 +337,9 @@ export default function AIChatAgent() {
                     <Brain className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
                   )}
                   <div>
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-sm whitespace-pre-wrap break-words">
+                      {message.content}
+                    </p>
                     <p
                       className={`text-xs mt-2 ${
                         message.type === "user"
@@ -228,7 +381,7 @@ export default function AIChatAgent() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything... (Shift+Enter for new line, Enter to send)"
+            placeholder="Ask about any COW (e.g., 'CWN052 how many times deployed') or any general question..."
             rows={1}
             className="flex-1 px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none"
             style={{
