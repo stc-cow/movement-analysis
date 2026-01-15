@@ -57,25 +57,20 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 
 ## What You Need to Do
 
-### Option A: Use the New `jekyll-gh-pages.yml` (Recommended)
-
-1. Go to your GitHub repository settings
-2. Navigate to **Settings → Pages**
-3. Under "Build and deployment":
-   - Set **Source** to `Deploy from a branch`
-   - Set **Branch** to `gh-pages` (not `main`)
-4. Save changes
-5. Wait for the workflow to complete (check **Actions** tab)
-
-### Option B: Keep Using `deploy.yml`
-
 1. Go to your GitHub repository settings
 2. Navigate to **Settings → Pages**
 3. Under "Build and deployment":
    - Set **Source** to `Deploy from a branch`
    - Set **Branch** to `main`
    - Set **Folder** to `/docs`
-4. The existing `deploy.yml` already copies the built app to `docs/`
+4. **Save** the settings
+5. Push your code to main (or trigger the workflow manually from **Actions** tab)
+
+The `jekyll-gh-pages.yml` workflow will:
+- Build your Vite app with the correct base path
+- Copy the built app to the `docs/` folder
+- Commit and push the changes to main
+- GitHub Pages will automatically serve from `/docs`
 
 ## How It Works Now
 
