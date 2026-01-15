@@ -93,7 +93,10 @@ export function useDashboardData(): UseDashboardDataResult {
 
         const errorMessage =
           err instanceof Error ? err.message : "Unknown error";
-        console.warn("Failed to load data from API, using mock data:", errorMessage);
+        console.warn(
+          "Failed to load data from API, using mock data:",
+          errorMessage,
+        );
 
         // Fall back to mock data (useful for GitHub Pages or offline mode)
         try {
