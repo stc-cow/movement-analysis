@@ -36,7 +36,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
+      - name: Build with GitHub Pages base path
+        env:
+          GITHUB_PAGES: "true"
         run: pnpm run build
 
       - name: Prepare build for GitHub Pages
