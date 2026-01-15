@@ -5,6 +5,12 @@ import {
   DimEvent,
   CowMovementsFact,
 } from "@shared/models";
+import {
+  generateMockCows,
+  generateMockLocations,
+  generateMockEvents,
+  generateMockMovements,
+} from "@/lib/mockData";
 
 interface DashboardDataResponse {
   movements: CowMovementsFact[];
