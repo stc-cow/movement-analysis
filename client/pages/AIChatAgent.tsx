@@ -127,6 +127,109 @@ export default function AIChatAgent() {
     const lowerQuestion = question.toLowerCase();
     const cowId = extractCowId(question);
 
+    // Check for Saudi event questions
+    if (
+      lowerQuestion.includes("event") ||
+      lowerQuestion.includes("hajj") ||
+      lowerQuestion.includes("umrah") ||
+      lowerQuestion.includes("riyadh season") ||
+      lowerQuestion.includes("formula 1") ||
+      lowerQuestion.includes("f1")
+    ) {
+      const eventResults = searchEvents(question);
+      if (eventResults.length > 0) {
+        const event = eventResults[0];
+        return `🎪 **${event.name}**
+
+**Type:** ${event.type}
+**Season:** ${event.season}
+**Description:** ${event.description}
+
+**Affected Regions:** ${event.affectedRegions.join(", ")}
+${event.expectedVisitors ? `**Expected Visitors:** ${event.expectedVisitors}` : ""}
+
+This is a major event in Saudi Arabia with significant impact on logistics and infrastructure planning.`;
+      }
+    }
+
+    // Check for city questions
+    if (
+      lowerQuestion.includes("city") ||
+      lowerQuestion.includes("riyadh") ||
+      lowerQuestion.includes("jeddah") ||
+      lowerQuestion.includes("mecca") ||
+      lowerQuestion.includes("medina") ||
+      lowerQuestion.includes("dammam") ||
+      lowerQuestion.includes("abha")
+    ) {
+      const cityResults = searchCities(question);
+      if (cityResults.length > 0) {
+        const city = cityResults[0];
+        return `🏙️ **${city.name}**
+
+**Region:** ${city.region}
+**Population:** ${city.population}
+**Description:** ${city.description}
+
+**Climate:** ${city.climate}
+
+**Major Projects:** ${city.majorProjects.join(", ")}
+
+**Notable Places:** ${city.notablePlaces.join(", ")}
+
+This city plays an important role in Saudi Arabia's strategic infrastructure and development.`;
+      }
+    }
+
+    // Check for weather questions
+    if (
+      lowerQuestion.includes("weather") ||
+      lowerQuestion.includes("climate") ||
+      lowerQuestion.includes("temperature") ||
+      lowerQuestion.includes("hot") ||
+      lowerQuestion.includes("cold")
+    ) {
+      const weatherResults = getWeatherByRegion(question);
+      if (weatherResults.length > 0) {
+        const weathers = weatherResults.slice(0, 2);
+        let response = "🌤️ **Weather & Climate Information**\n\n";
+        weathers.forEach((weather) => {
+          response += `**${weather.region} - ${weather.season}**\n`;
+          response += `Temperature: ${weather.temperature}\n`;
+          response += `${weather.description}\n\n`;
+        });
+        return response;
+      }
+    }
+
+    // Check for mega project questions
+    if (
+      lowerQuestion.includes("project") ||
+      lowerQuestion.includes("neom") ||
+      lowerQuestion.includes("the line") ||
+      lowerQuestion.includes("qiddiya") ||
+      lowerQuestion.includes("red sea") ||
+      lowerQuestion.includes("al diriyah")
+    ) {
+      const projectResults = searchProjects(question);
+      if (projectResults.length > 0) {
+        const project = projectResults[0];
+        return `🏗️ **${project.name}**
+
+**Region:** ${project.region}
+**Status:** ${project.status}
+${project.targetCompletion ? `**Target Completion:** ${project.targetCompletion}` : ""}
+
+**Description:** ${project.description}
+
+**Investment:** ${project.investment}
+
+**Expected Impact:** ${project.expectedImpact}
+
+This is one of Saudi Arabia's flagship development projects transforming the nation.`;
+      }
+    }
+
     // If COW ID is found, get specific data
     if (cowId) {
       const cowData = findCowData(cowId);
@@ -215,15 +318,34 @@ Last Deployed: ${movementStats.lastDeployDate ? new Date(movementStats.lastDeplo
       lowerQuestion.includes("how") ||
       lowerQuestion.includes("what can")
     ) {
-      return `I can help you with:
+      return `✨ **I can help you with:**
 
-1. **Specific COW Information** - Ask about any COW ID (e.g., "CWN052 how many times deployed")
-2. **Movement History** - Ask where a COW has been deployed
-3. **Vendor Details** - Ask about which vendor supplied a COW
-4. **Location Data** - Ask where a COW is currently deployed
-5. **General Questions** - I can discuss anything else too!
+**📡 COW Analytics**
+- Specific COW Information (e.g., "CWN052 deployment")
+- Movement History and Statistics
+- Vendor Details and Specifications
 
-Try asking: "CWN052 deployment statistics" or "How many times has COW-001 been moved?"`;
+**🏙️ Saudi Cities**
+- Major cities information (Riyadh, Jeddah, Mecca, etc.)
+- City descriptions and notable places
+- Regional information
+
+**🎪 Saudi Events**
+- Hajj, Umrah pilgrimage details
+- Riyadh Season, Formula 1, cultural events
+- Event timing and visitor information
+
+**🌤️ Weather & Climate**
+- Regional weather patterns
+- Seasonal temperature information
+- Climate conditions
+
+**🏗️ Mega Projects**
+- NEOM, The Line, Qiddiya
+- Red Sea Project, Al Diriyah
+- Development projects and investments
+
+Try asking: "CWN052 deployment", "Tell me about Riyadh", "What is NEOM?" or "Events in December"`;
     }
 
     if (
@@ -231,14 +353,14 @@ Try asking: "CWN052 deployment statistics" or "How many times has COW-001 been m
       lowerQuestion.includes("hi") ||
       lowerQuestion.includes("hey")
     ) {
-      return "Hello! Great to see you. Ask me about any COW in the system (e.g., 'CWN052' or 'COW-001') to get detailed deployment and movement data!";
+      return "👋 Hello! I'm your Saudi-aware AI Chat Agent. Ask me about COW deployments, Saudi cities, events, weather, or mega projects!";
     }
 
     // Default response for general questions
     const defaultResponses = [
-      "That's an interesting question! While I'm specialized in cow movement analytics, I can try to help. For specific COW data, please provide a COW ID.",
-      "I understand your question. For deployment data and movement history, please ask about a specific COW ID. For general questions, I'm happy to help!",
-      "Good question! If you're asking about a specific COW, please provide the COW ID (like CWN052 or COW-001) and I can get you detailed analytics.",
+      "That's a great question! I'm trained on Saudi Arabia knowledge base including cities, events, weather, mega projects, and COW analytics. What would you like to know more about?",
+      "I can help with that! Try asking about specific topics like Saudi events, cities, weather patterns, mega projects (NEOM, Qiddiya), or COW deployment analytics.",
+      "Interesting question! I combine Saudi Arabia knowledge (cities, events, weather, mega projects) with real COW movement analytics. What aspect would you like to explore?",
     ];
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
   };
