@@ -1,7 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, MessageCircle, Brain, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Send,
+  MessageCircle,
+  Brain,
+  AlertCircle,
+} from "lucide-react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { DimCow, CowMovementsFact } from "@shared/models";
 import {
@@ -55,9 +61,11 @@ export default function AIChatAgent() {
   // Find COW data by ID
   const findCowData = (cowId: string): DimCow | null => {
     if (!dashboardData) return null;
-    return dashboardData.cows.find(
-      (cow) => cow.COW_ID.toUpperCase() === cowId.toUpperCase(),
-    ) || null;
+    return (
+      dashboardData.cows.find(
+        (cow) => cow.COW_ID.toUpperCase() === cowId.toUpperCase(),
+      ) || null
+    );
   };
 
   // Get movement statistics for a COW
@@ -283,7 +291,10 @@ This COW has been deployed to ${movementStats.regions.length} region(s) with an 
       }
 
       // Question about vendor
-      if (lowerQuestion.includes("vendor") || lowerQuestion.includes("supplier")) {
+      if (
+        lowerQuestion.includes("vendor") ||
+        lowerQuestion.includes("supplier")
+      ) {
         return `🏢 **Vendor Information for COW ${cowId}:**
 
 **Vendor:** ${cowData.Vendor}
@@ -362,7 +373,9 @@ Try asking: "CWN052 deployment", "Tell me about Riyadh", "What is NEOM?" or "Eve
       "I can help with that! Try asking about specific topics like Saudi events, cities, weather patterns, mega projects (NEOM, Qiddiya), or COW deployment analytics.",
       "Interesting question! I combine Saudi Arabia knowledge (cities, events, weather, mega projects) with real COW movement analytics. What aspect would you like to explore?",
     ];
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+    return defaultResponses[
+      Math.floor(Math.random() * defaultResponses.length)
+    ];
   };
 
   const handleSendMessage = async () => {
@@ -495,7 +508,9 @@ Try asking: "CWN052 deployment", "Tell me about Riyadh", "What is NEOM?" or "Eve
                     <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-100" />
                     <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-200" />
                   </div>
-                  <span className="text-sm text-slate-400">AI is thinking...</span>
+                  <span className="text-sm text-slate-400">
+                    AI is thinking...
+                  </span>
                 </div>
               </div>
             </div>

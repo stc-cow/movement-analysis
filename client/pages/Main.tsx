@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Brain, MessageCircle, Zap, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Brain,
+  MessageCircle,
+  Zap,
+  TrendingUp,
+} from "lucide-react";
 
 export default function Main() {
   const navigate = useNavigate();
@@ -35,7 +41,8 @@ export default function Main() {
             </span>
           </h1>
           <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
-            Harness the power of advanced machine learning and real-time chatbot AI to unlock insights from your data. Make smarter decisions faster.
+            Harness the power of advanced machine learning and real-time chatbot
+            AI to unlock insights from your data. Make smarter decisions faster.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button
@@ -76,7 +83,10 @@ export default function Main() {
       </div>
 
       {/* Features Section */}
-      <div id="features" className="py-20 px-6 bg-slate-800/50 backdrop-blur-sm">
+      <div
+        id="features"
+        className="py-20 px-6 bg-slate-800/50 backdrop-blur-sm"
+      >
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16">
             Powered by ACES MSD
@@ -140,15 +150,21 @@ export default function Main() {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-slate-700/40 rounded-lg p-6 border border-slate-600/40">
               <h4 className="font-bold text-lg mb-3">Smart Insights</h4>
-              <p className="text-slate-400">Automatically generate actionable insights from complex datasets</p>
+              <p className="text-slate-400">
+                Automatically generate actionable insights from complex datasets
+              </p>
             </div>
             <div className="bg-slate-700/40 rounded-lg p-6 border border-slate-600/40">
               <h4 className="font-bold text-lg mb-3">Predictive Models</h4>
-              <p className="text-slate-400">Forecast future trends with high accuracy ML models</p>
+              <p className="text-slate-400">
+                Forecast future trends with high accuracy ML models
+              </p>
             </div>
             <div className="bg-slate-700/40 rounded-lg p-6 border border-slate-600/40">
               <h4 className="font-bold text-lg mb-3">Data Visualization</h4>
-              <p className="text-slate-400">Beautiful, interactive charts and dashboards</p>
+              <p className="text-slate-400">
+                Beautiful, interactive charts and dashboards
+              </p>
             </div>
           </div>
         </div>
@@ -159,7 +175,8 @@ export default function Main() {
         <div className="max-w-4xl mx-auto text-center bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-2xl p-12 border border-blue-400/30 backdrop-blur-sm">
           <h2 className="text-4xl font-bold mb-6">Explore AI Features</h2>
           <p className="text-xl text-slate-300 mb-8">
-            Try our AI-powered tools to track movements and ask questions with our intelligent chat agent.
+            Try our AI-powered tools to track movements and ask questions with
+            our intelligent chat agent.
           </p>
         </div>
       </div>
@@ -167,7 +184,10 @@ export default function Main() {
       {/* Footer */}
       <footer className="border-t border-slate-700/50 py-8 px-6 bg-slate-900/50">
         <div className="max-w-6xl mx-auto text-center text-slate-400">
-          <p>© 2024 AI Analytics Platform. Powered by Machine Learning & Advanced AI.</p>
+          <p>
+            © 2024 AI Analytics Platform. Powered by Machine Learning &
+            Advanced AI.
+          </p>
         </div>
       </footer>
     </div>

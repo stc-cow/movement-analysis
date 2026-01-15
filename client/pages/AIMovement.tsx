@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, MapPin, Calendar, Package } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  MapPin,
+  Calendar,
+  Package,
+} from "lucide-react";
 
 interface Movement {
   id: string;
@@ -124,7 +131,9 @@ export default function AIMovement() {
                 type="text"
                 placeholder="e.g., Warehouse A"
                 value={formData.from}
-                onChange={(e) => setFormData({ ...formData, from: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, from: e.target.value })
+                }
                 className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
               />
             </div>
@@ -137,7 +146,9 @@ export default function AIMovement() {
                 type="text"
                 placeholder="e.g., Warehouse B"
                 value={formData.to}
-                onChange={(e) => setFormData({ ...formData, to: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, to: e.target.value })
+                }
                 className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
               />
             </div>
@@ -247,7 +258,9 @@ export default function AIMovement() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-lg p-6 border border-blue-400/20">
             <p className="text-slate-400 text-sm">Total Movements</p>
-            <p className="text-3xl font-bold text-blue-400">{movements.length}</p>
+            <p className="text-3xl font-bold text-blue-400">
+              {movements.length}
+            </p>
           </div>
           <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg p-6 border border-purple-400/20">
             <p className="text-slate-400 text-sm">Unique COWs</p>
@@ -258,10 +271,12 @@ export default function AIMovement() {
           <div className="bg-gradient-to-br from-green-500/10 to-cyan-500/10 rounded-lg p-6 border border-green-400/20">
             <p className="text-slate-400 text-sm">Locations Used</p>
             <p className="text-3xl font-bold text-green-400">
-              {new Set([
-                ...movements.map((m) => m.from),
-                ...movements.map((m) => m.to),
-              ]).size}
+              {
+                new Set([
+                  ...movements.map((m) => m.from),
+                  ...movements.map((m) => m.to),
+                ]).size
+              }
             </p>
           </div>
         </div>
