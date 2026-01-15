@@ -426,7 +426,11 @@ export function WarehouseHubTimeCard({
             if (!open) setSelectedBucketForModal(null);
           }}
           bucketName={selectedBucketForModal}
-          cowIds={bucketCows.get(selectedBucketForModal) || []}
+          cowIds={
+            ["1-5 Days", "6-10 Days", "11-15 Days"].includes(selectedBucketForModal)
+              ? shortIdleBucketCows.get(selectedBucketForModal) || []
+              : bucketCows.get(selectedBucketForModal) || []
+          }
           allTableData={tableData}
         />
       )}
