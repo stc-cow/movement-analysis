@@ -20,10 +20,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/ai-movement" element={<AIMovement />} />
-            <Route path="/ai-chat" element={<AIChatAgent />} />
+            <Route path="/" element={<Dashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
