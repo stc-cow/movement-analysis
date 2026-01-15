@@ -327,6 +327,11 @@ export function WarehouseHubTimeCard({
                     fontWeight: "bold",
                     formatter: (value: number) => value.toString(),
                   }}
+                  onClick={(state: any) => {
+                    if (state && state.name) {
+                      handleChartClick(state.name);
+                    }
+                  }}
                   style={{
                     cursor: "pointer",
                     filter: "drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))",
