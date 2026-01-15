@@ -40,8 +40,8 @@ Your app shows a blank page at `https://stc-cow.github.io/cmms-2Fanalysis/` desp
 
 1. **`.github/workflows/jekyll-gh-pages.yml`** ← New deployment workflow
    - Builds the Vite app with `GITHUB_PAGES=true`
-   - Uploads to GitHub Pages automatically
-   - Cleaner than copying to `docs/` folder
+   - Copies built app to `docs/` folder
+   - Commits and pushes to main branch
 
 2. **`.github/workflows/deploy.yml`** ← Updated existing workflow
    - Now sets `GITHUB_PAGES=true` during build
