@@ -42,21 +42,9 @@ jobs:
           GITHUB_PAGES: "true"
         run: pnpm run build:client
 
-      - name: Deploy to docs folder for GitHub Pages
-        run: |
-          rm -rf docs/assets docs/index.html docs/*.js docs/*.css
-          cp -r dist/spa/* docs/
-
-      - name: Commit and push to main (if changes exist)
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Deploy: Update built app to docs folder"
-            git push origin main
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/spa
+          cname: false
