@@ -157,17 +157,10 @@ export default function Main() {
       {/* CTA Section */}
       <div className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-2xl p-12 border border-blue-400/30 backdrop-blur-sm">
-          <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Analytics?</h2>
+          <h2 className="text-4xl font-bold mb-6">Explore AI Features</h2>
           <p className="text-xl text-slate-300 mb-8">
-            Explore our comprehensive dashboard with real-time data, ML predictions, and AI-powered insights.
+            Try our AI-powered tools to track movements and ask questions with our intelligent chat agent.
           </p>
-          <Button
-            onClick={() => navigate("/dashboard")}
-            size="lg"
-            className="bg-blue-600 hover:bg-blue-700 text-white gap-2 text-lg h-12 px-10"
-          >
-            Access Dashboard <ArrowRight className="w-5 h-5" />
-          </Button>
         </div>
       </div>
 
