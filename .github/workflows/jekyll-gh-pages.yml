@@ -40,18 +40,15 @@ jobs:
           GITHUB_PAGES: "true"
         run: pnpm run build:client
 
-      - name: Upload artifact to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "dist/spa"
+      - name: Deploy to docs folder for GitHub Pages
+        run: |
+          rm -rf docs/assets docs/index.html docs/*.js docs/*.css
+          cp -r dist/spa/* docs/
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Commit and push to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "Deploy: Update built app to docs folder" || echo "No changes to commit"
+          git push
