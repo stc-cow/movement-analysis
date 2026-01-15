@@ -39,19 +39,18 @@ export default function Main() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/ai-movement")}
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white gap-2 text-lg h-12 px-8"
             >
-              Go to Dashboard <ArrowRight className="w-5 h-5" />
+              AI Movement <ArrowRight className="w-5 h-5" />
             </Button>
             <Button
-              variant="outline"
+              onClick={() => navigate("/ai-chat")}
               size="lg"
-              className="border-blue-400 text-blue-300 hover:bg-blue-500/10 gap-2 text-lg h-12 px-8"
-              onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
+              className="bg-purple-600 hover:bg-purple-700 text-white gap-2 text-lg h-12 px-8"
             >
-              Learn More
+              AI Chat Agent <ArrowRight className="w-5 h-5" />
             </Button>
           </div>
         </div>
