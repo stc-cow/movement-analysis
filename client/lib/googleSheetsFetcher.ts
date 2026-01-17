@@ -48,6 +48,65 @@ function parseCSVLine(line: string): string[] {
 }
 
 /**
+ * Safely parse date strings to ISO format
+ * Handles various date formats and invalid dates
+ */
+function parseDate(dateStr: string): string {
+  if (!dateStr || dateStr.trim() === "") {
+    return "1900-01-01T00:00:00Z";
+  }
+
+  try {
+    const trimmed = dateStr.trim();
+
+    // Try parsing as ISO first
+    if (trimmed.includes("T")) {
+      const date = new Date(trimmed);
+      if (!isNaN(date.getTime())) {
+        return date.toISOString();
+      }
+    }
+
+    // Try YYYY-MM-DD format
+    if (trimmed.match(/^\d{4}-\d{2}-\d{2}/)) {
+      const date = new Date(trimmed + "T00:00:00Z");
+      if (!isNaN(date.getTime())) {
+        return date.toISOString();
+      }
+    }
+
+    // Try DD MMM YYYY format (e.g., "15 Dec 2024")
+    if (trimmed.match(/^\d{1,2}\s+\w+\s+\d{4}/)) {
+      const date = new Date(trimmed);
+      if (!isNaN(date.getTime())) {
+        return date.toISOString();
+      }
+    }
+
+    // Try M/D/YYYY format
+    if (trimmed.includes("/")) {
+      const date = new Date(trimmed);
+      if (!isNaN(date.getTime())) {
+        return date.toISOString();
+      }
+    }
+
+    // Fallback
+    const date = new Date(trimmed);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString();
+    }
+
+    // If all parsing fails, return safe fallback
+    console.warn(`⚠️  Could not parse date: "${dateStr}"`);
+    return "1900-01-01T00:00:00Z";
+  } catch (e) {
+    console.warn(`⚠️  Date parsing error for "${dateStr}":`, e);
+    return "1900-01-01T00:00:00Z";
+  }
+}
+
+/**
  * Parse movement data from Google Sheets CSV
  */
 function parseMovementData(csvText: string): DashboardDataResponse {
@@ -119,8 +178,8 @@ function parseMovementData(csvText: string): DashboardDataResponse {
       From_Sub_Location: cells[17]?.trim() || undefined,
       To_Location_ID: `LOC-${toLoc.toLowerCase().replace(/[^a-z0-9]/g, "-")}`,
       To_Sub_Location: cells[21]?.trim() || undefined,
-      Moved_DateTime: movedDate ? new Date(movedDate).toISOString() : "1900-01-01T00:00:00Z",
-      Reached_DateTime: reachedDate ? new Date(reachedDate).toISOString() : "1900-01-01T00:00:00Z",
+      Moved_DateTime: parseDate(movedDate),
+      Reached_DateTime: parseDate(reachedDate),
       Movement_Type: movementType.includes("Full") ? "Full" : movementType.includes("Half") ? "Half" : "Zero",
       Top_Event: cells[11]?.trim() || undefined,
       Distance_KM: parseFloat(distanceStr) || 0,
