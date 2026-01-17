@@ -905,34 +905,60 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
     });
 
     // Auto-detect column indices (flexible mapping)
-    const findColumnIndex = (headerCells: string[], keywords: string[]): number => {
-      const lower = headerCells.map(h => h.toLowerCase().trim());
+    const findColumnIndex = (
+      headerCells: string[],
+      keywords: string[],
+    ): number => {
+      const lower = headerCells.map((h) => h.toLowerCase().trim());
       for (const keyword of keywords) {
-        const idx = lower.findIndex(h => h.includes(keyword.toLowerCase()));
+        const idx = lower.findIndex((h) => h.includes(keyword.toLowerCase()));
         if (idx >= 0) return idx;
       }
       return -1;
     };
 
-    const COW_ID_IDX = findColumnIndex(headerCells, ["cow", "id", "cows id"]) ?? 0;
+    const COW_ID_IDX =
+      findColumnIndex(headerCells, ["cow", "id", "cows id"]) ?? 0;
     const REGION_IDX = findColumnIndex(headerCells, ["region"]) ?? 1;
-    const LOCATION_IDX = findColumnIndex(headerCells, ["location", "current location"]) ?? 2;
+    const LOCATION_IDX =
+      findColumnIndex(headerCells, ["location", "current location"]) ?? 2;
     const LATITUDE_IDX = findColumnIndex(headerCells, ["latitude", "lat"]) ?? 3;
-    const LONGITUDE_IDX = findColumnIndex(headerCells, ["longitude", "lng", "long"]) ?? 4;
-    const STATUS_IDX = findColumnIndex(headerCells, ["status", "onair", "on-air"]) ?? 5;
-    const FIRST_DEPLOY_IDX = findColumnIndex(headerCells, ["first", "deploy", "deployment date"]) ?? 6;
-    const LAST_DEPLOY_IDX = findColumnIndex(headerCells, ["last", "deploy", "deployment date"]) ?? 7;
-    const VENDOR_IDX = findColumnIndex(headerCells, ["vendor", "supplier"]) ?? 8;
+    const LONGITUDE_IDX =
+      findColumnIndex(headerCells, ["longitude", "lng", "long"]) ?? 4;
+    const STATUS_IDX =
+      findColumnIndex(headerCells, ["status", "onair", "on-air"]) ?? 5;
+    const FIRST_DEPLOY_IDX =
+      findColumnIndex(headerCells, ["first", "deploy", "deployment date"]) ?? 6;
+    const LAST_DEPLOY_IDX =
+      findColumnIndex(headerCells, ["last", "deploy", "deployment date"]) ?? 7;
+    const VENDOR_IDX =
+      findColumnIndex(headerCells, ["vendor", "supplier"]) ?? 8;
 
     console.log(`\n🔍 Detected column indices:`);
-    console.log(`   COW_ID: ${COW_ID_IDX} (${headerCells[COW_ID_IDX] || "MISSING"})`);
-    console.log(`   REGION: ${REGION_IDX} (${headerCells[REGION_IDX] || "MISSING"})`);
-    console.log(`   LOCATION: ${LOCATION_IDX} (${headerCells[LOCATION_IDX] || "MISSING"})`);
-    console.log(`   LATITUDE: ${LATITUDE_IDX} (${headerCells[LATITUDE_IDX] || "MISSING"})`);
-    console.log(`   LONGITUDE: ${LONGITUDE_IDX} (${headerCells[LONGITUDE_IDX] || "MISSING"})`);
-    console.log(`   STATUS: ${STATUS_IDX} (${headerCells[STATUS_IDX] || "MISSING"})`);
-    console.log(`   FIRST_DEPLOY: ${FIRST_DEPLOY_IDX} (${headerCells[FIRST_DEPLOY_IDX] || "MISSING"})`);
-    console.log(`   VENDOR: ${VENDOR_IDX} (${headerCells[VENDOR_IDX] || "MISSING"})`);
+    console.log(
+      `   COW_ID: ${COW_ID_IDX} (${headerCells[COW_ID_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   REGION: ${REGION_IDX} (${headerCells[REGION_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   LOCATION: ${LOCATION_IDX} (${headerCells[LOCATION_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   LATITUDE: ${LATITUDE_IDX} (${headerCells[LATITUDE_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   LONGITUDE: ${LONGITUDE_IDX} (${headerCells[LONGITUDE_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   STATUS: ${STATUS_IDX} (${headerCells[STATUS_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   FIRST_DEPLOY: ${FIRST_DEPLOY_IDX} (${headerCells[FIRST_DEPLOY_IDX] || "MISSING"})`,
+    );
+    console.log(
+      `   VENDOR: ${VENDOR_IDX} (${headerCells[VENDOR_IDX] || "MISSING"})`,
+    );
 
     // Parse Never Moved COWs data
     const neverMovedCows: any[] = [];
@@ -944,7 +970,7 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       const cells = parseCSVLine(lines[i]);
 
       // Skip empty rows
-      if (cells.length === 0 || !cells.some(c => c?.trim())) {
+      if (cells.length === 0 || !cells.some((c) => c?.trim())) {
         skippedCount++;
         continue;
       }
@@ -984,7 +1010,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
 
       // Normalize ON-AIR status
       const normalizedStatus =
-        status.toUpperCase() === "ON-AIR" || status === "1" || status.toLowerCase() === "on-air"
+        status.toUpperCase() === "ON-AIR" ||
+        status === "1" ||
+        status.toLowerCase() === "on-air"
           ? "ON-AIR"
           : "OFF-AIR";
 
@@ -1010,7 +1038,9 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       neverMovedCows.push(neverMovedCow);
 
       if (neverMovedCows.length <= 3) {
-        console.log(`   ✓ ${i}: ${cowId} in "${location}" (${normalizedStatus})`);
+        console.log(
+          `   ✓ ${i}: ${cowId} in "${location}" (${normalizedStatus})`,
+        );
       }
     }
 
