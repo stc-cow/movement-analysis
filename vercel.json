@@ -10,5 +10,6 @@
       "src": "^/(.*)$",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "note": "This project uses GitHub Pages and Express server. Vercel config kept for reference."
 }
