@@ -1,6 +1,23 @@
 // Mapping of region/governorate names to Highcharts map region keys
 // Supports both old region names (WEST, EAST, etc.) and new Column AD governorate names
 export const regionToHcKey: Record<string, string> = {
+  // ===== SIMPLE REGION NAMES (FROM CSV COLUMNS AA & AB) =====
+  CENTRAL: "sa-ri",
+  Central: "sa-ri",
+  central: "sa-ri",
+  WEST: "sa-mk",
+  West: "sa-mk",
+  west: "sa-mk",
+  EAST: "sa-sh",
+  East: "sa-sh",
+  east: "sa-sh",
+  SOUTH: "sa-as",
+  South: "sa-as",
+  south: "sa-as",
+  NORTH: "sa-tb",
+  North: "sa-tb",
+  north: "sa-tb",
+
   // ===== COLUMN AD GOVERNORATE NAMES (PRIMARY) =====
   // Riyadh / Central
   "Ar Riyad": "sa-ri",
