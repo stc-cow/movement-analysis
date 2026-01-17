@@ -40,9 +40,13 @@ function setCached(key: string, data: any, ttlSeconds: number = 300): void {
 const FETCH_TIMEOUT = 60000; // 60 seconds - allows time for Google Sheets to respond
 const CACHE_TTL = 300; // 5 minutes cache for data endpoints
 
-// Google Sheet Configuration - Published CSV URL (Single Sheet)
+// Google Sheet Configuration - Published CSV URLs for both sheets
 const MOVEMENT_DATA_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1539310010&single=true&output=csv";
+
+// Never-Moved-COWs Sheet (118 records)
+const NEVER_MOVED_COWS_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFm8lIuL_0cRCLq_jIa12vm1etX-ftVtl3XLaZuY2Jb_IDi4M7T-vq-wmFIra9T2BiAtOKkEZkbQwz/pub?gid=1685376708&single=true&output=csv";
 
 /**
  * ENHANCED CSV PARSER WITH DETAILED DEBUGGING
