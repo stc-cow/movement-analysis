@@ -823,23 +823,15 @@ const processedDataHandler: RequestHandler = async (req, res) => {
 };
 
 /**
- * Handler to fetch "Never Moved COW" data from the same Google Sheet
- * Column mapping for Never Moved COWs:
- * AF (Index 31): COW ID
- * AP (Index 41): Onair status
- * AN (Index 39): Latitude
- * AO (Index 40): Longitude
- * AQ (Index 42): Last Deploying Date
- * AR (Index 43): 1st Deploying Date
- * AS (Index 44): Vendor
- *
- * Filter rule: Skip rows where column AF (index 31) is blank
+ * Handler to fetch "Never Moved COW" data
+ * Derives never-moved COWs by analyzing movement data:
+ * - COWs that exist in the data but never changed locations
+ * - All their movements have identical From_Location and To_Location
  */
 const neverMovedCowHandler: RequestHandler = async (req, res) => {
   try {
     // Check cache first
-    // Add version to cache key to bust old cached values
-    const cacheKey = "never-moved-cows-v2";
+    const cacheKey = "never-moved-cows-v3";
     const cachedData = getCached(cacheKey);
     if (cachedData) {
       console.log(`✓ Serving cached data for never-moved-cows`);
@@ -899,129 +891,142 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
       throw new Error("CSV has no data rows");
     }
 
-    // Parse header to understand structure
+    // Parse header
     const headerLine = lines[0];
     const headerCells = parseCSVLine(headerLine);
 
-    console.log(`\n📋 CSV Structure:`);
-    console.log(`   Total columns: ${headerCells.length}`);
-    console.log(`   Sample columns for Never Moved COWs:`);
-    console.log(`      [31] AF = "${headerCells[31] || "MISSING"}" (COW ID)`);
-    console.log(`      [34] AI = "${headerCells[34] || "MISSING"}" (Region)`);
-    console.log(`      [35] AJ = "${headerCells[35] || "MISSING"}" (District)`);
-    console.log(`      [36] AK = "${headerCells[36] || "MISSING"}" (City)`);
-    console.log(`      [38] AM = "${headerCells[38] || "MISSING"}" (Location)`);
-    console.log(`      [39] AN = "${headerCells[39] || "MISSING"}" (Latitude)`);
-    console.log(
-      `      [40] AO = "${headerCells[40] || "MISSING"}" (Longitude)`,
-    );
-    console.log(
-      `      [41] AP = "${headerCells[41] || "MISSING"}" (Onair status)`,
-    );
-    console.log(
-      `      [42] AQ = "${headerCells[42] || "MISSING"}" (Last Deploying Date)`,
-    );
-    console.log(
-      `      [43] AR = "${headerCells[43] || "MISSING"}" (1st Deploying Date)`,
-    );
-    console.log(`      [44] AS = "${headerCells[44] || "MISSING"}" (Vendor)`);
+    console.log(`\n📋 CSV Structure: ${headerCells.length} columns`);
 
-    // Column indices for Never Moved COWs
-    const COW_ID_IDX = 31; // AF
-    const REGION_IDX = 34; // AI
-    const DISTRICT_IDX = 35; // AJ
-    const CITY_IDX = 36; // AK
-    const LOCATION_IDX = 38; // AM
-    const LATITUDE_IDX = 39; // AN
-    const LONGITUDE_IDX = 40; // AO
-    const ONAIR_STATUS_IDX = 41; // AP
-    const LAST_DEPLOY_IDX = 42; // AQ
-    const FIRST_DEPLOY_IDX = 43; // AR
-    const VENDOR_IDX = 44; // AS
+    // Column indices
+    const COW_ID_IDX = 0; // A: COW ID
+    const FROM_LOCATION_IDX = 16; // Q: From Location
+    const TO_LOCATION_IDX = 20; // U: To Location
+    const REGION_FROM_IDX = 26; // AA: Region From
+    const FROM_LAT_IDX = 18; // S: From Latitude
+    const FROM_LNG_IDX = 19; // T: From Longitude
+    const FIRST_DEPLOY_IDX = 12; // M: Moved Date/Time (first deployment)
+    const VENDOR_IDX = 28; // AC: Vendor
+    const REMARKS_IDX = 30; // AE: Remarks (ON-AIR status)
 
-    // Parse Never Moved COWs data
-    const neverMovedCows: any[] = [];
-    let skippedCount = 0;
+    // Analyze movements to find never-moved COWs
+    const cowMovementMap = new Map<
+      string,
+      {
+        locations: Set<string>;
+        firstDeployDate: string;
+        lastLocation: string;
+        region: string;
+        latitude: number;
+        longitude: number;
+        vendor: string;
+        status: string;
+      }
+    >();
 
-    console.log(`\n🔄 Parsing Never Moved COWs data:`);
+    console.log(`\n🔄 Analyzing movements:`);
 
     for (let i = 1; i < lines.length; i++) {
       const cells = parseCSVLine(lines[i]);
 
-      // Skip rows where COW ID (column AF / index 31) is blank
       const cowId = cells[COW_ID_IDX]?.trim();
+      if (!cowId) continue;
 
-      if (!cowId) {
-        skippedCount++;
-        continue;
+      const fromLoc = cells[FROM_LOCATION_IDX]?.trim() || "";
+      const toLoc = cells[TO_LOCATION_IDX]?.trim() || "";
+      const firstDeploy = cells[FIRST_DEPLOY_IDX]?.trim() || "";
+      const region = cells[REGION_FROM_IDX]?.trim() || "Unknown";
+      const vendor = cells[VENDOR_IDX]?.trim() || "Unknown";
+      const status = cells[REMARKS_IDX]?.trim() || "OFF-AIR";
+
+      const lat = parseFloat(cells[FROM_LAT_IDX]?.trim() || "0") || 0;
+      const lng = parseFloat(cells[FROM_LNG_IDX]?.trim() || "0") || 0;
+
+      if (!cowMovementMap.has(cowId)) {
+        cowMovementMap.set(cowId, {
+          locations: new Set(),
+          firstDeployDate: firstDeploy,
+          lastLocation: fromLoc || toLoc,
+          region: region,
+          latitude: lat,
+          longitude: lng,
+          vendor: vendor,
+          status: status,
+        });
       }
 
-      // Extract Never Moved COW data
-      const onairStatus = cells[ONAIR_STATUS_IDX]?.trim() || "OFF-AIR";
-      const lastDeployDate = cells[LAST_DEPLOY_IDX]?.trim() || "";
-      const firstDeployDate = cells[FIRST_DEPLOY_IDX]?.trim() || "";
+      const cow = cowMovementMap.get(cowId)!;
+      if (fromLoc) cow.locations.add(fromLoc);
+      if (toLoc) cow.locations.add(toLoc);
+      if (!cow.firstDeployDate && firstDeploy) cow.firstDeployDate = firstDeploy;
+      cow.lastLocation = toLoc || fromLoc || cow.lastLocation;
+      cow.latitude = lat || cow.latitude;
+      cow.longitude = lng || cow.longitude;
+    }
 
-      // Calculate Days_On_Air
-      let daysOnAir = 0;
-      if (firstDeployDate) {
-        try {
-          const deployDate = new Date(firstDeployDate);
-          const today = new Date();
-          if (!isNaN(deployDate.getTime())) {
-            daysOnAir = Math.floor(
-              (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24),
-            );
+    // Filter for never-moved COWs (only 1 location)
+    const neverMovedCows: any[] = [];
+
+    console.log(`\n📊 Finding never-moved COWs (only 1 unique location):`);
+
+    for (const [cowId, data] of cowMovementMap.entries()) {
+      if (data.locations.size === 1) {
+        // Calculate Days_On_Air
+        let daysOnAir = 0;
+        if (data.firstDeployDate) {
+          try {
+            const deployDate = new Date(data.firstDeployDate);
+            const today = new Date();
+            if (!isNaN(deployDate.getTime())) {
+              daysOnAir = Math.floor(
+                (today.getTime() - deployDate.getTime()) / (1000 * 60 * 60 * 24),
+              );
+            }
+          } catch (e) {
+            daysOnAir = 0;
           }
-        } catch (e) {
-          daysOnAir = 0;
         }
-      }
 
-      // Normalize status
-      const status =
-        onairStatus.toUpperCase() === "ON-AIR" || onairStatus === "1"
-          ? "ON-AIR"
-          : "OFF-AIR";
+        // Normalize ON-AIR status
+        const normalizedStatus =
+          data.status?.toUpperCase() === "ON-AIR" ||
+          data.status?.toLowerCase() === "on-air"
+            ? "ON-AIR"
+            : "OFF-AIR";
 
-      const neverMovedCow: any = {
-        COW_ID: cowId,
-        Region: cells[REGION_IDX]?.trim() || "Unknown",
-        District: cells[DISTRICT_IDX]?.trim() || "Unknown",
-        City: cells[CITY_IDX]?.trim() || "Unknown",
-        Location: cells[LOCATION_IDX]?.trim() || "Unknown",
-        Latitude: parseFloat(cells[LATITUDE_IDX]?.trim() || "0") || 0,
-        Longitude: parseFloat(cells[LONGITUDE_IDX]?.trim() || "0") || 0,
-        Status: status,
-        Last_Deploy_Date:
-          lastDeployDate || new Date().toISOString().split("T")[0],
-        First_Deploy_Date:
-          firstDeployDate || new Date().toISOString().split("T")[0],
-        Days_On_Air: daysOnAir,
-        Vendor: cells[VENDOR_IDX]?.trim() || "Unknown",
-      };
+        const neverMovedCow = {
+          COW_ID: cowId,
+          Region: data.region,
+          District: data.region,
+          City: data.region,
+          Location: data.lastLocation,
+          Latitude: data.latitude,
+          Longitude: data.longitude,
+          Status: normalizedStatus,
+          Last_Deploy_Date: data.firstDeployDate
+            ? new Date(data.firstDeployDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          First_Deploy_Date: data.firstDeployDate
+            ? new Date(data.firstDeployDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          Days_On_Air: daysOnAir,
+          Vendor: data.vendor,
+        };
 
-      neverMovedCows.push(neverMovedCow);
+        neverMovedCows.push(neverMovedCow);
 
-      // Log first 3 rows for debugging
-      if (neverMovedCows.length <= 3) {
-        console.log(`   Row ${i}: ${cowId}`);
-        console.log(`      Status: ${neverMovedCow.Status}`);
-        console.log(
-          `      Lat/Lng: ${neverMovedCow.Latitude}, ${neverMovedCow.Longitude}`,
-        );
-        console.log(`      Days On Air: ${daysOnAir}`);
+        if (neverMovedCows.length <= 3) {
+          console.log(`   ✓ ${cowId}: stayed in "${data.lastLocation}" for ${daysOnAir} days (${normalizedStatus})`);
+        }
       }
     }
 
-    console.log(`\n📊 Parsing Summary:`);
-    console.log(`   ✓ Valid Never Moved COWs: ${neverMovedCows.length}`);
-    console.log(`   ✗ Skipped (blank COW ID): ${skippedCount}`);
+    console.log(`\n📊 Analysis Summary:`);
+    console.log(`   Total unique COWs: ${cowMovementMap.size}`);
+    console.log(`   ✓ Never Moved COWs: ${neverMovedCows.length}`);
 
     // Calculate statistics
     const onAirCount = neverMovedCows.filter(
-      (cow) =>
-        cow.onair_status?.toUpperCase() === "ON-AIR" ||
-        cow.onair_status === "1",
+      (cow) => cow.Status === "ON-AIR",
     ).length;
     const offAirCount = neverMovedCows.length - onAirCount;
     const onAirPercentage =
@@ -1037,7 +1042,7 @@ const neverMovedCowHandler: RequestHandler = async (req, res) => {
         offAir: offAirCount,
         onAirPercentage: parseFloat(onAirPercentage as string),
       },
-      source: "Single Sheet Mode - Never Moved COWs",
+      source: "Derived from Movement Data - Never Moved COWs",
     };
 
     console.log(`   ON-AIR: ${onAirCount} (${onAirPercentage}%)`);
