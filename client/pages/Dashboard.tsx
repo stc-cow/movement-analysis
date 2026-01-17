@@ -41,10 +41,16 @@ export default function Dashboard() {
       try {
         setNeverMovedLoading(true);
 
+        // Get API base URL from environment or use relative path for dev
+        const apiBase = import.meta.env.VITE_API_BASE_URL || "/api";
+        const endpoint = `${apiBase}/data/never-moved-cows`;
+
+        console.log(`Loading Never Moved COWs from: ${endpoint}`);
+
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
-        const response = await fetch("/api/data/never-moved-cows", {
+        const response = await fetch(endpoint, {
           signal: controller.signal,
         });
 
