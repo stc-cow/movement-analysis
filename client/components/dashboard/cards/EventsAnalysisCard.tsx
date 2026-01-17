@@ -84,7 +84,7 @@ export function EventsAnalysisCard({
 
   const totalMovements = movements.length;
   const eventDataWithPercentages = eventData
-    .filter((item) => item.name !== "Normal Coverage") // Remove mock data
+    .filter((item) => item.name !== "Normal Coverage") // Filter out default/unclassified events
     .map((item) => ({
       ...item,
       percentage: ((item.value / totalMovements) * 100).toFixed(1),
