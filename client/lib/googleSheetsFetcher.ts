@@ -215,7 +215,15 @@ function parseMovementData(csvText: string): DashboardDataResponse {
       });
     }
 
-    // Add locations
+    // Add locations with region mapping
+    const fromRegion = cells[REGION_FROM_IDX]?.trim() || "CENTRAL";
+    const toRegion = cells[REGION_TO_IDX]?.trim() || "CENTRAL";
+
+    // Debug: Log first few region values
+    if (i <= 3) {
+      console.log(`Row ${i}: fromRegion="${fromRegion}", toRegion="${toRegion}"`);
+    }
+
     const fromLocId = `LOC-${fromLoc.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
     if (!locationMap.has(fromLocId)) {
       const isWarehouse = fromLoc.toUpperCase().includes("WH");
@@ -225,7 +233,7 @@ function parseMovementData(csvText: string): DashboardDataResponse {
         Sub_Location: cells[17]?.trim() || "",
         Latitude: parseFloat(cells[FROM_LAT_IDX]?.trim() || "0") || 0,
         Longitude: parseFloat(cells[FROM_LNG_IDX]?.trim() || "0") || 0,
-        Region: cells[REGION_FROM_IDX]?.trim() || "CENTRAL",
+        Region: fromRegion,
         Location_Type: isWarehouse ? "Warehouse" : "Site",
         Owner: vendor,
       });
@@ -240,7 +248,7 @@ function parseMovementData(csvText: string): DashboardDataResponse {
         Sub_Location: cells[21]?.trim() || "",
         Latitude: parseFloat(cells[TO_LAT_IDX]?.trim() || "0") || 0,
         Longitude: parseFloat(cells[TO_LNG_IDX]?.trim() || "0") || 0,
-        Region: cells[REGION_TO_IDX]?.trim() || "CENTRAL",
+        Region: toRegion,
         Location_Type: isWarehouse ? "Warehouse" : "Site",
         Owner: vendor,
       });
