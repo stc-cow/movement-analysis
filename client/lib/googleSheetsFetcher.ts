@@ -305,6 +305,7 @@ function parseNeverMovedCows(csvText: string): any[] {
           );
         }
       } catch (e) {
+        console.warn(`⚠️  Error calculating days for ${cowId}:`, e);
         daysOnAir = 0;
       }
     }
@@ -312,6 +313,10 @@ function parseNeverMovedCows(csvText: string): any[] {
     const status = cells[STATUS_IDX]?.trim() || "OFF-AIR";
     const normalizedStatus =
       status.toUpperCase() === "ON-AIR" || status === "1" ? "ON-AIR" : "OFF-AIR";
+
+    // Use parseDate helper for both fields
+    const deployISO = parseDate(firstDeployDate);
+    const datePart = deployISO.split("T")[0];
 
     neverMovedCows.push({
       COW_ID: cowId,
@@ -322,12 +327,8 @@ function parseNeverMovedCows(csvText: string): any[] {
       Latitude: parseFloat(cells[LAT_IDX]?.trim() || "0") || 0,
       Longitude: parseFloat(cells[LNG_IDX]?.trim() || "0") || 0,
       Status: normalizedStatus,
-      Last_Deploy_Date: firstDeployDate
-        ? new Date(firstDeployDate).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0],
-      First_Deploy_Date: firstDeployDate
-        ? new Date(firstDeployDate).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0],
+      Last_Deploy_Date: datePart,
+      First_Deploy_Date: datePart,
       Days_On_Air: daysOnAir,
       Vendor: cells[VENDOR_IDX]?.trim() || "Unknown",
     });
