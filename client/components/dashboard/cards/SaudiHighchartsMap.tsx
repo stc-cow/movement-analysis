@@ -24,6 +24,7 @@ let geoDataPromise: Promise<any> | null = null;
 export function SaudiHighchartsMap({
   regionMetrics,
   maxMetric,
+  movements = [],
   title = "Movements by Region",
 }: SaudiHighchartsMapProps) {
   const [saudiGeo, setSaudiGeo] = useState<any>(null);
