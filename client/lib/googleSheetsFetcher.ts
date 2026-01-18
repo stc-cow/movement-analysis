@@ -212,6 +212,7 @@ function parseMovementData(csvText: string): DashboardDataResponse {
   const REGION_FROM_IDX = 26;
   const REGION_TO_IDX = 27;
   const VENDOR_IDX = 28;
+  const GOVERNORATE_IDX = 29; // Column AD: Specific governorate name (Tabouk, Ha'il, Al Madinah, etc.)
   const EBU_ROYAL_IDX = 4;
   const MOVED_DATE_IDX = 12;
   const REACHED_DATE_IDX = 14;
