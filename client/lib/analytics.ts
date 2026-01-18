@@ -1159,7 +1159,7 @@ export function calculateOneTimeMovedCows(
   return oneTimeMovedCount;
 }
 
-// List of active warehouses to track
+// List of active warehouses to track (using canonical names)
 const ACTIVE_WAREHOUSES = [
   "stc Jeddah WH",
   "ACES Makkah WH",
