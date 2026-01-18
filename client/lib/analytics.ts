@@ -1105,29 +1105,29 @@ export function calculateAllEventsTotalMovements(
   return totalCount;
 }
 
-// Calculate count of sites with 2 or more movements
-// Supports both CowMovementsFact (PascalCase: To_Location_ID) and MapLine (camelCase: toLocationId)
+// Calculate count of COWs with 2 or more movements
+// Supports both CowMovementsFact (PascalCase: COW_ID) and MapLine (camelCase: cowId)
 export function calculateRepeatedMovementSites(
   movements: any[],
 ): number {
-  // Group movements by destination location
-  const siteCounts = new Map<string, number>();
+  // Group movements by COW ID (column A)
+  const cowCounts = new Map<string, number>();
 
   movements.forEach((mov) => {
     // Support both field name formats
-    const toLocationId = mov.To_Location_ID || mov.toLocationId;
-    if (toLocationId) {
-      siteCounts.set(toLocationId, (siteCounts.get(toLocationId) || 0) + 1);
+    const cowId = mov.COW_ID || mov.cowId;
+    if (cowId) {
+      cowCounts.set(cowId, (cowCounts.get(cowId) || 0) + 1);
     }
   });
 
-  // Count sites with 2 or more movements
-  let repeatedSitesCount = 0;
-  siteCounts.forEach((count) => {
+  // Count COWs with 2 or more movements
+  let repeatedCowsCount = 0;
+  cowCounts.forEach((count) => {
     if (count >= 2) {
-      repeatedSitesCount++;
+      repeatedCowsCount++;
     }
   });
 
-  return repeatedSitesCount;
+  return repeatedCowsCount;
 }
