@@ -240,6 +240,7 @@ function parseMovementData(csvText: string): DashboardDataResponse {
     const movedDate = cells[MOVED_DATE_IDX]?.trim() || "";
     const reachedDate = cells[REACHED_DATE_IDX]?.trim() || "";
     const vendor = cells[VENDOR_IDX]?.trim() || "Unknown";
+    const governorate = cells[GOVERNORATE_IDX]?.trim() || undefined; // Column AD: Specific governorate name
 
     // Classify EBU/Royal
     let category = "NON EBU";
