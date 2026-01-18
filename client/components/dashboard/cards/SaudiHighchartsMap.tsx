@@ -360,20 +360,34 @@ export function SaudiHighchartsMap({
           </div>
         </div>
 
-        <div className="w-full h-full overflow-hidden rounded-lg">
-          <HighchartsReact
-            key="saudi-map"
-            highcharts={Highcharts}
-            constructorType="mapChart"
-            options={options}
-            onLoad={(chart) => {
-              chartRef.current = chart;
-            }}
-            containerProps={{
-              style: { width: "100%", height: "100%" },
-            }}
-            immutable={false}
-          />
+        <div
+          className="w-full h-full overflow-hidden rounded-lg relative"
+          style={{
+            backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F949a9e12bda84b8d8dc1a14b1a06a9d5?format=webp&width=800')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+          }}
+        >
+          {/* Semi-transparent overlay to make map readable */}
+          <div className="absolute inset-0 bg-white dark:bg-slate-700 opacity-85 rounded-lg z-0" />
+
+          <div className="relative z-10 w-full h-full">
+            <HighchartsReact
+              key="saudi-map"
+              highcharts={Highcharts}
+              constructorType="mapChart"
+              options={options}
+              onLoad={(chart) => {
+                chartRef.current = chart;
+              }}
+              containerProps={{
+                style: { width: "100%", height: "100%" },
+              }}
+              immutable={false}
+            />
+          </div>
         </div>
 
         {/* Bottom Left: Total Movements */}
