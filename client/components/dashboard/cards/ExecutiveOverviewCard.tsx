@@ -157,6 +157,9 @@ export function ExecutiveOverviewCard({
     // Count COWs with exactly 1 movement dynamically
     const oneTimeMovedCows = calculateOneTimeMovedCows(currentMonth.movements);
 
+    // Count active warehouses with movements in current period
+    const activeWarehousesCount = calculateActiveWarehouses(currentMonth.movements, locations);
+
     // Use API's totalDistanceKM for "All" view (currentMonthIndex === -1) which is the accurate sum of Column Y
     // For individual months, use the timeline's aggregated distance
     const totalDistanceForDisplay =
@@ -171,12 +174,13 @@ export function ExecutiveOverviewCard({
       activeCOWs: uniqueCows.size,
       highMovedCows: highMovedCows,
       staticCOWs: oneTimeMovedCows,
+      activeWarehouses: activeWarehousesCount,
       avgMovesPerCOW:
         uniqueCows.size > 0
           ? currentMonth.movements.length / uniqueCows.size
           : 0,
     };
-  }, [currentMonth, kpis, currentMonthIndex]);
+  }, [currentMonth, kpis, currentMonthIndex, locations]);
 
   // Get static COWs data
   const staticCowsData = cowMetrics
