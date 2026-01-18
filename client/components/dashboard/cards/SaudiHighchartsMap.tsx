@@ -190,6 +190,12 @@ export function SaudiHighchartsMap({
         spacingLeft: 0,
         spacingRight: 0,
         animation: false,
+        plotBackgroundImage: {
+          url: "https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2F949a9e12bda84b8d8dc1a14b1a06a9d5?format=webp&width=800",
+          width: "100%",
+          height: "100%",
+          opacity: 0.15,
+        },
       },
       title: {
         text: null,
