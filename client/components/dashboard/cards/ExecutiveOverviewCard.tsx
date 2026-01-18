@@ -28,6 +28,7 @@ import {
 } from "recharts";
 import { SaudiHighchartsMap } from "./SaudiHighchartsMap";
 import { generateTimelineMonths, TimelineMonth } from "@/lib/saudiMapData";
+import { calculateRepeatedMovementSites } from "@/lib/analytics";
 
 interface ExecutiveOverviewCardProps {
   kpis: {
