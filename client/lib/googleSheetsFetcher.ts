@@ -48,8 +48,65 @@ function parseCSVLine(line: string): string[] {
 }
 
 /**
+ * Canonical warehouse name mappings
+ * Maps all variations to a single canonical name
+ */
+const WAREHOUSE_CANONICAL_MAP: Record<string, string> = {
+  // Normalize by owner prefix + city + "WH" suffix
+  // Canonical format: "{Owner} {City} WH"
+
+  // STC Warehouses
+  "stc jeddah wh": "stc Jeddah WH",
+  "stc al ula wh": "stc Al Ula WH",
+  "stc sharma wh": "stc Sharma WH",
+  "stc madinah wh": "stc Madinah WH",
+  "stc madina wh": "stc Madinah WH", // Spelling variant
+  "stc abha wh": "stc Abha WH",
+  "stc al kharaj wh": "stc Al Kharaj WH",
+  "stc jizan wh": "stc Jizan WH",
+  "stc arar wh": "stc Arar WH",
+  "stc umluj wh": "stc Umluj WH",
+  "stc sakaka wh": "stc Sakaka WH",
+  "stc tabouk wh": "stc Tabouk WH",
+  "stc taboulk wh": "stc Tabouk WH", // Spelling variant
+  "stc buraidah wh": "stc Buraidah WH",
+  "stc burida wh": "stc Buraidah WH", // Spelling variant
+  "stc riyadh exit 18 wh": "stc Riyadh Exit 18 WH",
+
+  // ACES Warehouses
+  "aces makkah wh": "ACES Makkah WH",
+  "aces muzahmiya wh": "ACES Muzahmiya WH",
+  "aces dammam wh": "ACES Dammam WH",
+
+  // Madaf Warehouses
+  "madaf wh": "Madaf WH",
+  "madaf huraymila wh": "Madaf WH",
+
+  // HOI Warehouses
+  "hoi al kharaj wh": "HOI Al Kharaj WH",
+
+  // Alternate orderings (WH in front or middle)
+  "stc wh jeddah": "stc Jeddah WH",
+  "stc wh al ula": "stc Al Ula WH",
+  "stc wh sharma": "stc Sharma WH",
+  "stc wh madinah": "stc Madinah WH",
+  "stc wh madina": "stc Madinah WH",
+  "stc wh abha": "stc Abha WH",
+  "stc wh al kharaj": "stc Al Kharaj WH",
+  "stc wh jizan": "stc Jizan WH",
+  "stc wh arar": "stc Arar WH",
+  "stc wh umluj": "stc Umluj WH",
+  "stc wh sakaka": "stc Sakaka WH",
+  "stc wh tabouk": "stc Tabouk WH",
+  "stc wh buraidah": "stc Buraidah WH",
+  "stc wh exit 18 riyadh": "stc Riyadh Exit 18 WH",
+  "stc wh exit 18 riyad": "stc Riyadh Exit 18 WH",
+};
+
+/**
  * Normalize warehouse names to unify duplicates
  * Handles spacing, casing, and common variations
+ * Maps all variants to a single canonical name
  */
 function normalizeWarehouseName(name: string): string {
   if (!name) return "";
@@ -57,10 +114,14 @@ function normalizeWarehouseName(name: string): string {
   // Trim and collapse multiple spaces
   let normalized = name.trim().replace(/\s+/g, " ");
 
-  // Standardize common warehouse name patterns
-  // e.g., "ACES Makkah WH", "stc Jeddah WH"
-  // Keep original casing but ensure consistent spacing
+  // Look up in canonical map (case-insensitive)
+  const key = normalized.toLowerCase();
+  if (WAREHOUSE_CANONICAL_MAP[key]) {
+    return WAREHOUSE_CANONICAL_MAP[key];
+  }
 
+  // If not in map, return the trimmed/normalized version
+  // This preserves new warehouses while normalizing whitespace
   return normalized;
 }
 
