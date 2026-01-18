@@ -365,7 +365,7 @@ export function SaudiHighchartsMap({
           style={{
             backgroundImage: `url('https://cdn.builder.io/api/v1/image/assets%2Fabc8ab05f7d144f289a582747d3e5ca3%2Fae02b2de9335434abe15dbb9023ffb2a?format=webp&width=800')`,
             backgroundSize: 'contain',
-            backgroundPosition: 'center',
+            backgroundPosition: 'center 70%',
             backgroundRepeat: 'no-repeat',
           }}
         >
