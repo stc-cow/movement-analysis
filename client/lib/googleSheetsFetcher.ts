@@ -345,6 +345,7 @@ function parseMovementData(csvText: string): DashboardDataResponse {
         Latitude: parseFloat(cells[TO_LAT_IDX]?.trim() || "0") || 0,
         Longitude: parseFloat(cells[TO_LNG_IDX]?.trim() || "0") || 0,
         Region: toRegion,
+        Governorate: governorate, // Column AD: Specific governorate name
         Location_Type: isWarehouse ? "Warehouse" : "Site",
         Owner: vendor,
       });
