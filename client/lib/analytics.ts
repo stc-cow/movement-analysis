@@ -1106,14 +1106,16 @@ export function calculateAllEventsTotalMovements(
 }
 
 // Calculate count of sites with 2 or more movements
+// Supports both CowMovementsFact (PascalCase: To_Location_ID) and MapLine (camelCase: toLocationId)
 export function calculateRepeatedMovementSites(
-  movements: CowMovementsFact[],
+  movements: any[],
 ): number {
-  // Group movements by destination location (To_Location_ID)
+  // Group movements by destination location
   const siteCounts = new Map<string, number>();
 
   movements.forEach((mov) => {
-    const toLocationId = mov.To_Location_ID;
+    // Support both field name formats
+    const toLocationId = mov.To_Location_ID || mov.toLocationId;
     if (toLocationId) {
       siteCounts.set(toLocationId, (siteCounts.get(toLocationId) || 0) + 1);
     }
