@@ -57,19 +57,6 @@ export function generateTimelineMonths(
   const locMap = new Map(locations.map((l) => [l.Location_ID, l]));
   const cowMap = new Map(cows.map((c) => [c.COW_ID, c]));
 
-  // DEBUG: Log location region distribution
-  const regionCounts: Record<string, number> = {};
-  locations.forEach((loc) => {
-    regionCounts[loc.Region] = (regionCounts[loc.Region] || 0) + 1;
-  });
-  console.log("📍 Locations by Region:", regionCounts);
-  console.log("📍 Sample locations:", locations.slice(0, 5).map(l => ({
-    name: l.Location_Name,
-    region: l.Region,
-    lat: l.Latitude,
-    lon: l.Longitude,
-  })));
-
   const monthsMap = new Map<string, TimelineMonth & { sortKey: number }>();
 
   movements.forEach((mov) => {
