@@ -4,13 +4,14 @@ import path from "path";
 import fs from "fs";
 
 // https://vitejs.dev/config/
-// For GitHub Pages: if GITHUB_PAGES env var is set and we have a repo name, use /repo-name/
-// Otherwise use / (for Vercel, local dev, or root domain deployments)
-// GITHUB_REPOSITORY is automatically set by GitHub Actions in the format: owner/repo
-const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1] || "";
-const isGitHubPages = process.env.GITHUB_PAGES === "true";
-const base =
-  isGitHubPages && repoName ? `/${repoName}/` : process.env.BASE_URL || "/";
+// CRITICAL: Use relative base './' for subpath-safe deployment
+// This ensures the app works on:
+// - GitHub Pages (/repo-name/)
+// - Vercel (root or subpath)
+// - STC Cypher (internal subpaths)
+// - Builder static export
+// DO NOT use absolute paths - they break on subpath deployments
+const base = "./";  // Relative base is mandatory for all deployment targets
 
 export default defineConfig(({ mode }) => ({
   // For GitHub Pages: if deployed to https://username.github.io/repo-name/
