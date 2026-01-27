@@ -324,14 +324,24 @@ function transformNeverMovedCows(rawData: any[]): any[] {
 
 /**
  * Load movement data from local JSON file
+ * Uses BASE_URL to support subpath deployments (GitHub Pages, Builder export)
  */
 export async function loadMovementData(): Promise<DashboardDataResponse> {
   try {
     console.log("📥 Loading Movement Data from local JSON...");
 
-    const response = await fetch("/movement-data.json");
+    // Use BASE_URL for dynamic path resolution based on deployment
+    // In dev: BASE_URL is '/' (root)
+    // On GitHub Pages: BASE_URL is '/repo-name/'
+    // On Builder: BASE_URL is configured by the platform
+    const base = import.meta.env.BASE_URL || './';
+    const url = `${base}movement-data.json`;
+
+    console.log(`📍 Fetching from: ${url}`);
+
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: Failed to load movement data`);
+      throw new Error(`HTTP ${response.status}: Failed to load movement data from ${url}`);
     }
 
     const rawData = await response.json();
