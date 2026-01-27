@@ -14,16 +14,32 @@ function getRegionFromCoordinates(latitude, longitude) {
     return "UNKNOWN";
   }
 
-  for (const bounds of REGION_BOUNDS) {
-    if (
-      latitude >= bounds.minLat &&
-      latitude <= bounds.maxLat &&
-      longitude >= bounds.minLon &&
-      longitude <= bounds.maxLon
-    ) {
-      return bounds.name;
-    }
+  // NORTH: lat > 30.5 (all longitudes)
+  if (latitude > 30.5) {
+    return "NORTH";
   }
+
+  // SOUTH: lat < 23 (all longitudes)
+  if (latitude < 23.0) {
+    return "SOUTH";
+  }
+
+  // For middle band (lat 23-30.5): use longitude to separate
+  // EAST: lon > 47.5
+  if (longitude > 47.5) {
+    return "EAST";
+  }
+
+  // CENTRAL: lon 41-47.5
+  if (longitude >= 41.0 && longitude <= 47.5) {
+    return "CENTRAL";
+  }
+
+  // WEST: lon < 41
+  if (longitude < 41.0) {
+    return "WEST";
+  }
+
   return "OUT_OF_BOUNDS";
 }
 
