@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 export function createServer() {
   const app = express();
@@ -9,6 +10,10 @@ export function createServer() {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  // Serve static files from /public folder
+  // This allows /movement-data.json and /never-moved-cows.json to be served
+  app.use(express.static(path.join(__dirname, "../public")));
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {
