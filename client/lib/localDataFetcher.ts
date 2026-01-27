@@ -4,6 +4,8 @@
  * No API calls - all data served locally
  */
 
+import { getRegionFromCoordinates } from "./coordinateRegionMapper";
+
 interface DashboardDataResponse {
   movements: any[];
   cows: any[];
