@@ -134,7 +134,7 @@ function transformMovementData(rawData: any[]): DashboardDataResponse {
     const fromLoc = normalizeWarehouseName(
       row.from_location?.trim() || "Unknown",
     );
-    const toLoc = normalizeWarehouseName(row.to_locatio?.trim() || "Unknown");
+    const toLoc = normalizeWarehouseName(row.to_location?.trim() || "Unknown");
 
     // Parse region and governorate
     // If region_from/region_to not in CSV, determine from coordinates
