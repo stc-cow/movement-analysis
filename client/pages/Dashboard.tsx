@@ -138,18 +138,20 @@ export default function Dashboard() {
   );
 
   const vendors = useMemo(() => {
-    const allVendors = Array.from(new Set(cows.map((c) => c.Vendor)));
+    // Get vendors from movements (not from COWs)
+    // This matches the filter logic which filters by movement.Vendor
+    const allVendors = Array.from(new Set(enrichedMovements.map((m) => m.Vendor)));
     const nonUnknownVendors = allVendors
       .filter((v) => v && v !== "Unknown")
       .sort();
 
     // Debug logging
     console.debug(
-      `[Vendors] Total cows: ${cows.length}, All unique vendors: ${JSON.stringify(allVendors)}, Non-unknown: ${JSON.stringify(nonUnknownVendors)}`,
+      `[Vendors] Total movements: ${enrichedMovements.length}, All unique vendors: ${JSON.stringify(allVendors)}, Non-unknown: ${JSON.stringify(nonUnknownVendors)}`,
     );
 
     return nonUnknownVendors;
-  }, [cows]);
+  }, [enrichedMovements]);
 
   // Show loading state
   if (loading) {
