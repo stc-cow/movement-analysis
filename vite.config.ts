@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     fs: {
-      allow: ["./client", "./shared", "./node_modules"],
+      allow: ["./client", "./shared", "./public", "./node_modules"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
     // HMR configuration to prevent "send was called before connect" errors
