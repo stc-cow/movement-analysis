@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dataRoutes from "./routes/data";
 
 export function createServer() {
   const app = express();
@@ -16,12 +15,15 @@ export function createServer() {
     res.json({
       status: "ok",
       message: "API is running",
-      deploymentMode: "GitHub Pages with Google Sheets",
+      deploymentMode: "Static with Local JSON Files",
+      note: "All data is served from local JSON files - no external API calls",
     });
   });
 
-  // Data routes - Single source of truth: Google Sheets
-  app.use("/api/data", dataRoutes);
+  // Note: Data is served from static JSON files in /public
+  // No API routes needed for dashboard data
+  // - Movement data: /movement-data.json
+  // - Never-moved cows: /never-moved-cows.json
 
   return app;
 }
