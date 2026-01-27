@@ -3,6 +3,12 @@
   "outputDirectory": "docs",
   "framework": "vite",
   "env": {
-    "VITE_BASE_URL": "./"
-  }
+    "GITHUB_PAGES": "false"
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
