@@ -32,7 +32,9 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: "dist/spa",
+    // Output directly to /docs for GitHub Pages + Vercel deployment
+    // /docs is the single source of truth for all production deployments
+    outDir: "docs",
   },
   plugins: [react(), expressPlugin(), copyJsonPlugin()],
   resolve: {
