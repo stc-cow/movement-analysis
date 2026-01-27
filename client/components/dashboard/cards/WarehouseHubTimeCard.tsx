@@ -280,8 +280,9 @@ export function WarehouseHubTimeCard({
             </ResponsiveContainer>
           </div>
           {!hasChartData && (
-            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded text-sm text-gray-600 dark:text-gray-400">
-              No Off-Air (Half/Zero) movements found in the current dataset.
+            <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded text-sm text-amber-700 dark:text-amber-300">
+              <p className="font-semibold mb-1">No Data Available</p>
+              <p>No Off-Air (Half/Zero) movements found in the current dataset. This card displays warehouse idle time analysis for COWs that were temporarily parked at warehouses.</p>
             </div>
           )}
         </div>
