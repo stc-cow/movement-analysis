@@ -5,10 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>stc COW Analysis</title>
     <script>
-      const redirectTo = new URL(window.location.href);
-      const segments = redirectTo.pathname.split("/").filter(Boolean);
-      redirectTo.pathname = segments.length > 0 ? `/${segments[0]}/` : "/";
-      window.location.replace(redirectTo.toString());
+      // This 404.html file enables client-side routing for Single Page Applications (SPAs)
+      // on GitHub Pages when deployed to a subpath like /cmms-2Fanalysis/
+
+      // Extract the subpath (first directory in URL) for GitHub Pages subpath deployments
+      // e.g., /cmms-2Fanalysis/some-route -> /cmms-2Fanalysis/index.html?route=/some-route
+      const pathname = window.location.pathname;
+      const segments = pathname.split("/").filter(Boolean);
+
+      if (segments.length >= 1) {
+        const basePath = "/" + segments[0] + "/";
+        const remainingPath = pathname.substring(basePath.length);
+
+        if (remainingPath && remainingPath !== "") {
+          // Redirect to index.html with the path preserved as a query parameter
+          // The SPA will handle routing based on window.location.pathname
+          const redirectUrl = new URL(window.location.href);
+          redirectUrl.pathname = basePath + "index.html";
+          window.location.replace(redirectUrl.toString());
+        }
+      }
     </script>
   </head>
   <body></body>
