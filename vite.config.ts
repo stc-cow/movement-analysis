@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist/spa",
   },
-  plugins: [react(), expressPlugin()],
+  plugins: [react(), expressPlugin(), copyJsonPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
