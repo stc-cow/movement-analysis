@@ -422,8 +422,9 @@ export function WarehouseHubTimeCard({
             </ResponsiveContainer>
           </div>
           {shortIdleChartData.every((d) => d.count === 0) && (
-            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded text-sm text-gray-600 dark:text-gray-400">
-              No short idle time (1-15 days) found in warehouse placements.
+            <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded text-sm text-amber-700 dark:text-amber-300">
+              <p className="font-semibold mb-1">No Data Available</p>
+              <p>No short idle time (1-15 days) found in warehouse placements. Short idle time shows COWs that stayed at warehouses briefly.</p>
             </div>
           )}
         </div>
