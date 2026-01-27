@@ -58,14 +58,14 @@ function expressPlugin(): Plugin {
 
 // Copy JSON files from public folder to build output
 // This ensures movement-data.json and never-moved-cows.json are available at build root
+// Note: Vite's public folder is automatically copied to build root, but this plugin
+// ensures the JSON files are explicitly included for better reliability
 function copyJsonPlugin(): Plugin {
+  const fs = require("fs");
   return {
     name: "copy-json-plugin",
     apply: "build", // Only apply during production build
-    async generateBundle() {
-      const fs = await import("fs");
-      const path = await import("path");
-
+    generateBundle() {
       // Read JSON files from public folder
       const publicPath = path.resolve(__dirname, "public");
       const jsonFiles = ["movement-data.json", "never-moved-cows.json"];
@@ -82,7 +82,7 @@ function copyJsonPlugin(): Plugin {
           });
           console.log(`✅ Copied ${file} to build output`);
         } catch (error) {
-          console.error(`⚠️  Failed to copy ${file}:`, error);
+          console.warn(`⚠️  Could not copy ${file} (may already be in public):`, error.message);
         }
       }
     },
