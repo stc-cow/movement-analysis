@@ -18,42 +18,48 @@ export interface RegionBounds {
   maxLon: number;
 }
 
-// Saudi Arabia's major regions with approximate geographic boundaries
+// Saudi Arabia's major regions with non-overlapping geographic boundaries
+// Carefully designed to avoid overlaps and ensure proper regional classification
 const REGION_BOUNDS: RegionBounds[] = [
+  // NORTH: Tabuk, Northern Borders - highest latitude
   {
     name: "NORTH",
-    minLat: 31.5,
+    minLat: 30.5,
     maxLat: 33.1,
-    minLon: 34.5,
-    maxLon: 40.8,
+    minLon: 34.0,
+    maxLon: 55.0, // Extends across full width when in northern latitudes
   },
+  // EAST: Eastern Province (Dammam, Khobar) - eastern longitude
+  {
+    name: "EAST",
+    minLat: 24.0,
+    maxLat: 30.5,
+    minLon: 47.5,
+    maxLon: 55.0,
+  },
+  // CENTRAL: Riyadh, Qassim - central longitude and latitude
+  {
+    name: "CENTRAL",
+    minLat: 23.0,
+    maxLat: 27.5,
+    minLon: 41.0,
+    maxLat: 47.5,
+  },
+  // WEST: Makkah, Madinah - western coast
   {
     name: "WEST",
     minLat: 19.0,
-    maxLat: 26.0,
-    minLon: 35.0,
-    maxLon: 41.5,
-  },
-  {
-    name: "CENTRAL",
-    minLat: 23.5,
     maxLat: 27.5,
-    minLon: 42.0,
-    maxLon: 48.0,
+    minLon: 34.0,
+    maxLon: 41.0,
   },
-  {
-    name: "EAST",
-    minLat: 24.5,
-    maxLat: 27.5,
-    minLon: 47.5,
-    maxLon: 52.0,
-  },
+  // SOUTH: Asir, Jazan, Najran - southern regions
   {
     name: "SOUTH",
-    minLat: 16.5,
+    minLat: 16.0,
     maxLat: 23.0,
-    minLon: 41.5,
-    maxLon: 48.0,
+    minLon: 41.0,
+    maxLon: 49.0,
   },
 ];
 
