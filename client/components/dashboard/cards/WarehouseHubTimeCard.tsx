@@ -332,6 +332,39 @@ export function WarehouseHubTimeCard({
                 data={shortIdleChartData}
                 margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
               >
+                <defs>
+                  {/* Gradient definitions for short idle time buckets */}
+                  <linearGradient
+                    id="shortIdleGradient0"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#FF375E" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#CC2C4B" stopOpacity={1} />
+                  </linearGradient>
+                  <linearGradient
+                    id="shortIdleGradient1"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#1Bced8" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#159CA3" stopOpacity={1} />
+                  </linearGradient>
+                  <linearGradient
+                    id="shortIdleGradient2"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#4F008C" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#3A0066" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis
                   dataKey="name"
@@ -348,7 +381,7 @@ export function WarehouseHubTimeCard({
                     borderRadius: "8px",
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                   }}
-                  formatter={(value: number) => `count: ${value} Move`}
+                  formatter={(value: number) => `${value} COWs`}
                   cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
                 />
                 <Bar
@@ -359,7 +392,7 @@ export function WarehouseHubTimeCard({
                     fill: "#374151",
                     fontSize: 11,
                     fontWeight: "bold",
-                    formatter: (value: number) => `count: ${value} Move`,
+                    formatter: (value: number) => value.toString(),
                   }}
                   onClick={(state: any) => {
                     if (state && state.name) {
