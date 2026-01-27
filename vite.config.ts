@@ -1,6 +1,7 @@
 import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import fs from "fs";
 
 // https://vitejs.dev/config/
 // For GitHub Pages: if GITHUB_PAGES env var is set and we have a repo name, use /repo-name/
