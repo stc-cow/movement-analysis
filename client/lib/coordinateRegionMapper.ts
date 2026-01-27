@@ -43,7 +43,7 @@ const REGION_BOUNDS: RegionBounds[] = [
     minLat: 23.0,
     maxLat: 27.5,
     minLon: 41.0,
-    maxLat: 47.5,
+    maxLon: 47.5,
   },
   // WEST: Makkah, Madinah - western coast
   {
