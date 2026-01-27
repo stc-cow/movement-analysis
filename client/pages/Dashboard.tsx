@@ -140,7 +140,9 @@ export default function Dashboard() {
   const vendors = useMemo(() => {
     // Get vendors from movements (not from COWs)
     // This matches the filter logic which filters by movement.Vendor
-    const allVendors = Array.from(new Set(enrichedMovements.map((m) => m.Vendor)));
+    const allVendors = Array.from(
+      new Set(enrichedMovements.map((m) => m.Vendor)),
+    );
     const nonUnknownVendors = allVendors
       .filter((v) => v && v !== "Unknown")
       .sort();

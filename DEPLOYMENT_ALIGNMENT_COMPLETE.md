@@ -22,7 +22,8 @@ build: {
 }
 ```
 
-**Why**: 
+**Why**:
+
 - Relative base `./` works on GitHub Pages subpath, Vercel, and STC Cypher
 - Direct `/docs` output eliminates need for file copying
 
@@ -39,6 +40,7 @@ build: {
 ```
 
 **What it does**:
+
 1. `vite build` → outputs to `docs/`
 2. `cp public/*.json docs/` → copies JSON files to `docs/`
 3. Result: Complete `/docs` folder ready for deployment
@@ -65,12 +67,14 @@ build: {
 **Status**: Fixed
 
 **Before** (broken):
+
 ```yaml
 - name: Prepare build for GitHub Pages
-  run: cp -r dist/spa/* docs/  # ❌ dist/spa/ doesn't exist!
+  run: cp -r dist/spa/* docs/ # ❌ dist/spa/ doesn't exist!
 ```
 
 **After** (working):
+
 ```yaml
 - name: Verify docs folder is ready for GitHub Pages
   run: |
@@ -80,6 +84,7 @@ build: {
 ```
 
 **Changes**:
+
 - ❌ Removed artifact copy from non-existent `dist/spa/`
 - ✅ Added verification that `docs/` has all required files
 - ✅ No more copying - build outputs directly to `docs/`
@@ -130,6 +135,7 @@ Deployment:
 ## Verification Checklist
 
 ### Local Build
+
 ```bash
 # 1. Build locally
 pnpm run build
@@ -150,6 +156,7 @@ jq . docs/never-moved-cows.json | head -5
 ```
 
 ### GitHub Actions
+
 ```
 Steps to verify:
 1. Push to main branch: git push origin main
@@ -161,6 +168,7 @@ Steps to verify:
 ```
 
 ### GitHub Pages Access
+
 ```bash
 # Check GitHub Pages is configured
 curl -I https://stc-cow.github.io/
@@ -172,6 +180,7 @@ curl https://stc-cow.github.io/never-moved-cows.json | jq . | head -5
 ```
 
 ### Dashboard Functionality
+
 1. Open: `https://stc-cow.github.io`
 2. Should load dashboard with data
 3. Try filters: Year, Region, Vendor, Movement Type
@@ -183,19 +192,20 @@ curl https://stc-cow.github.io/never-moved-cows.json | jq . | head -5
 
 ## File Changes Summary
 
-| File | Change | Status |
-|------|--------|--------|
-| `vite.config.ts` | `base: "./"`, `outDir: "docs"` | ✅ Done |
-| `package.json` | Build script copies JSON to docs | ✅ Done |
-| `vercel.json` | Create with `outputDirectory: "docs"` | ✅ Done |
-| `.github/workflows/deploy.yml` | Remove dist copy, add verification | ✅ Done |
-| `client/lib/localDataFetcher.ts` | Already correct - no changes | ✅ OK |
+| File                             | Change                                | Status  |
+| -------------------------------- | ------------------------------------- | ------- |
+| `vite.config.ts`                 | `base: "./"`, `outDir: "docs"`        | ✅ Done |
+| `package.json`                   | Build script copies JSON to docs      | ✅ Done |
+| `vercel.json`                    | Create with `outputDirectory: "docs"` | ✅ Done |
+| `.github/workflows/deploy.yml`   | Remove dist copy, add verification    | ✅ Done |
+| `client/lib/localDataFetcher.ts` | Already correct - no changes          | ✅ OK   |
 
 ---
 
 ## Deployment Status by Platform
 
 ### GitHub Pages
+
 - **Configuration**: Pages → Branch: main, folder: /docs
 - **Build**: GitHub Actions runs on push to main
 - **Output**: `https://stc-cow.github.io`
@@ -207,6 +217,7 @@ curl https://stc-cow.github.io/never-moved-cows.json | jq . | head -5
   ```
 
 ### Vercel
+
 - **Configuration**: `vercel.json` with `outputDirectory: "docs"`
 - **Build**: Runs `pnpm run build`
 - **Output**: Deployment URL (from Vercel dashboard)
@@ -218,6 +229,7 @@ curl https://stc-cow.github.io/never-moved-cows.json | jq . | head -5
   ```
 
 ### STC Cypher
+
 - **Configuration**: Static deployment of /docs
 - **Build**: `pnpm run build` then upload /docs
 - **Output**: Internal STC URL
@@ -225,6 +237,7 @@ curl https://stc-cow.github.io/never-moved-cows.json | jq . | head -5
 - **Verification**: All paths are relative, works on any subpath
 
 ### Builder Export
+
 - **Configuration**: Static content from /docs
 - **Build**: `pnpm run build`
 - **Output**: Static files
@@ -276,6 +289,7 @@ ls docs/  # Should have files
      - Missing dependencies
 
 2. Verify workflow syntax:
+
    ```bash
    # Check YAML is valid
    cat .github/workflows/deploy.yml
@@ -291,6 +305,7 @@ ls docs/  # Should have files
 ### JSON 404 on GitHub Pages
 
 1. Check file exists:
+
    ```bash
    git ls-files docs/movement-data.json
    # Should list the file
@@ -379,6 +394,6 @@ Deployment Targets:
 Result: Same deployment artifact works everywhere ✅
 ```
 
-**All deployment platforms use the same `/docs` output with no modifications needed.** 
+**All deployment platforms use the same `/docs` output with no modifications needed.**
 
 This is the correct, maintainable architecture for a static frontend application.

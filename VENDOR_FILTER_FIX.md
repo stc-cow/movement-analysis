@@ -8,14 +8,15 @@ The vendor filter in the header (`All Vendors` dropdown) was not working. When u
 
 **Data source mismatch**: The vendor filter was comparing two different vendor sources:
 
-1. **Vendors in movements**: `Movement.Vendor` (from CSV column: `vendor`) 
+1. **Vendors in movements**: `Movement.Vendor` (from CSV column: `vendor`)
    - Example: "Ericsson", "Nokia", "Huawei"
 
 2. **Vendors in COWs**: `Cow.Vendor` (from CSV column: `vehicle_make`)
    - Example: Vehicle manufacturer data
    - Completely different from movement vendors
 
-3. **Filter logic was incorrect**: 
+3. **Filter logic was incorrect**:
+
    ```typescript
    // OLD CODE - WRONG
    if (filters.vendor && cows) {
@@ -39,19 +40,21 @@ The vendor filter in the header (`All Vendors` dropdown) was not working. When u
 ### Change 1: Fix Filter Logic (`client/lib/analytics.ts`)
 
 **Before**:
+
 ```typescript
 // Filter by vendor
 if (filters.vendor && cows) {
   const cow = cows.find((c) => c.COW_ID === mov.COW_ID);
-  if (cow?.Vendor !== filters.vendor) return false;  // ❌ Uses COW vendor
+  if (cow?.Vendor !== filters.vendor) return false; // ❌ Uses COW vendor
 }
 ```
 
 **After**:
+
 ```typescript
 // Filter by vendor - use movement's Vendor field directly
 if (filters.vendor) {
-  if (mov.Vendor !== filters.vendor) return false;  // ✅ Uses movement vendor
+  if (mov.Vendor !== filters.vendor) return false; // ✅ Uses movement vendor
 }
 ```
 
@@ -62,6 +65,7 @@ if (filters.vendor) {
 ### Change 2: Fix Vendors Dropdown (`client/pages/Dashboard.tsx`)
 
 **Before**:
+
 ```typescript
 const vendors = useMemo(() => {
   const allVendors = Array.from(new Set(cows.map((c) => c.Vendor))); // ❌ From COWs
@@ -73,11 +77,14 @@ const vendors = useMemo(() => {
 ```
 
 **After**:
+
 ```typescript
 const vendors = useMemo(() => {
   // Get vendors from movements (not from COWs)
   // This matches the filter logic which filters by movement.Vendor
-  const allVendors = Array.from(new Set(enrichedMovements.map((m) => m.Vendor))); // ✅ From movements
+  const allVendors = Array.from(
+    new Set(enrichedMovements.map((m) => m.Vendor)),
+  ); // ✅ From movements
   const nonUnknownVendors = allVendors
     .filter((v) => v && v !== "Unknown")
     .sort();
@@ -92,6 +99,7 @@ const vendors = useMemo(() => {
 ## Data Flow
 
 ### Before Fix (Broken)
+
 ```
 Dropdown Shows:          "Ericsson" (from cow.vehicle_make)
                               ↓
@@ -107,6 +115,7 @@ Result:                  Filter applies but finds no matching movements
 ```
 
 ### After Fix (Working)
+
 ```
 Dropdown Shows:          "Ericsson" (from movement.Vendor)
                               ↓
@@ -126,12 +135,14 @@ Result:                  Filter works - only shows movements by Ericsson
 ## Verification
 
 ### Test 1: Dropdown Shows Vendors
+
 1. Open dashboard
 2. Click "All Vendors" dropdown
 3. Should see vendors like: Ericsson, Nokia, Huawei, etc.
 4. ✅ Vendors come from actual movements
 
 ### Test 2: Filter Works
+
 1. Select a vendor from dropdown (e.g., "Ericsson")
 2. Dashboard should filter to only show:
    - KPI cards showing only Ericsson movements
@@ -140,6 +151,7 @@ Result:                  Filter works - only shows movements by Ericsson
 3. ✅ Filter actually filters movements
 
 ### Test 3: Clear Filter
+
 1. After selecting a vendor, click "Clear" button
 2. Dashboard should show all movements again
 3. ✅ Filter can be reset
@@ -149,19 +161,23 @@ Result:                  Filter works - only shows movements by Ericsson
 ## Technical Details
 
 ### Movement Vendor Source
+
 ```typescript
 // From client/lib/localDataFetcher.ts (line 192)
 Vendor: row.vendor?.trim() || "Unknown",
 ```
+
 - **CSV Column**: `vendor`
 - **Values**: "Ericsson", "Nokia", "Huawei", "Unknown", etc.
 - **Used for**: Movement vendor filtering
 
 ### COW Vendor Source (Not Used for Filtering)
+
 ```typescript
 // From client/lib/localDataFetcher.ts (line 217)
 Vendor: row.vehicle_make?.trim() || "Unknown",
 ```
+
 - **CSV Column**: `vehicle_make`
 - **Values**: Vehicle/equipment vendor info
 - **Purpose**: Equipment information (not movement filtering)
@@ -185,12 +201,14 @@ Vendor: row.vehicle_make?.trim() || "Unknown",
 ## Impact
 
 ### What Changed
+
 - ✅ Vendor filter now works correctly
 - ✅ Dropdown shows correct vendor options
 - ✅ Filtering by vendor applies properly
 - ✅ All cards update when vendor filter is applied
 
 ### What Didn't Change
+
 - Region filter: Still works (unchanged)
 - Year filter: Still works (unchanged)
 - Movement Type filter: Still works (unchanged)
