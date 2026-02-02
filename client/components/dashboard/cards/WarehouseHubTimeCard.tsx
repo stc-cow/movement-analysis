@@ -292,11 +292,11 @@ export function WarehouseHubTimeCard({
         </div>
 
         {/* Short Idle Time Chart */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4 overflow-hidden flex flex-col flex-shrink-0 min-h-[400px]">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 sm:p-4 overflow-hidden flex flex-col flex-shrink-0">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 flex-shrink-0">
             Off-Air Warehouse Short Idle Time
           </h3>
-          <div style={{ width: "100%", height: "300px" }}>
+          <div style={{ width: "100%", height: "200px" }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={shortIdleChartData}
