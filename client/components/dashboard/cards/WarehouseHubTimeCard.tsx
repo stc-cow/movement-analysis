@@ -233,8 +233,8 @@ export function WarehouseHubTimeCard({
                   dataKey="name"
                   angle={-45}
                   textAnchor="end"
-                  height={100}
-                  tick={{ fontSize: 12, fontWeight: 500 }}
+                  height={70}
+                  tick={{ fontSize: 11, fontWeight: 500 }}
                 />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip
