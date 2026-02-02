@@ -300,7 +300,7 @@ export function WarehouseHubTimeCard({
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={shortIdleChartData}
-                margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+                margin={{ top: 15, right: 30, left: 0, bottom: 50 }}
               >
                 <defs>
                   {/* Gradient definitions for short idle time buckets */}
