@@ -167,12 +167,12 @@ export function WarehouseHubTimeCard({
             </defs>
           </svg>
 
-          <div style={{ width: "100%", height: "400px" }}>
+          <div style={{ width: "100%", height: "280px" }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 key={`chart-${forceRender}`}
                 data={chartData}
-                margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+                margin={{ top: 15, right: 30, left: 0, bottom: 50 }}
               >
                 <defs>
                   {/* Gradient definitions for Recharts */}
